@@ -28,7 +28,7 @@ public class SpawnGroupFormation
     [Column("MovementType", TypeName="tinyint")]
     public virtual int MovementType { get; set; }
 
-    [Column("Comment", TypeName="varchar")]
+    [Column("Comment")]
     [MaxLength(255)]
     public virtual string Comment { get; set; }
 

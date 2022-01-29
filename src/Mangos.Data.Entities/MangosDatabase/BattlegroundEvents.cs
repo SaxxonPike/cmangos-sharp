@@ -15,7 +15,7 @@ public class BattlegroundEvents
     [Column("event2", TypeName="tinyint")]
     public virtual byte Event2 { get; set; }
 
-    [Column("description", TypeName="varchar")]
+    [Column("description")]
     [MaxLength(255)]
     public virtual string Description { get; set; }
 

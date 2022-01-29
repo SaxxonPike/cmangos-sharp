@@ -6,7 +6,7 @@ namespace Mangos.Data.Entities.RealmDatabase;
 [Table("ip_banned")]
 public class IpBanned
 {
-    [Column("ip", TypeName="varchar")]
+    [Column("ip")]
     [MaxLength(32)]
     public virtual string Ip { get; set; }
 
@@ -16,11 +16,11 @@ public class IpBanned
     [Column("expires_at", TypeName="bigint")]
     public virtual long ExpiresAt { get; set; }
 
-    [Column("banned_by", TypeName="varchar")]
+    [Column("banned_by")]
     [MaxLength(50)]
     public virtual string BannedBy { get; set; }
 
-    [Column("reason", TypeName="varchar")]
+    [Column("reason")]
     [MaxLength(255)]
     public virtual string Reason { get; set; }
 

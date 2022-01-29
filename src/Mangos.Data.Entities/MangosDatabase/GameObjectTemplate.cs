@@ -15,7 +15,7 @@ public class GameObjectTemplate
     [Column("displayId", TypeName="mediumint")]
     public virtual uint DisplayId { get; set; }
 
-    [Column("name", TypeName="varchar")]
+    [Column("name")]
     [MaxLength(100)]
     public virtual string Name { get; set; }
 
@@ -112,7 +112,7 @@ public class GameObjectTemplate
     [Column("maxgold", TypeName="mediumint")]
     public virtual uint Maxgold { get; set; }
 
-    [Column("ScriptName", TypeName="varchar")]
+    [Column("ScriptName")]
     [MaxLength(64)]
     public virtual string ScriptName { get; set; }
 

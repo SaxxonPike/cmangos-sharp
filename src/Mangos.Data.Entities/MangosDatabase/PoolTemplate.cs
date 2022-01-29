@@ -14,7 +14,7 @@ public class PoolTemplate
     [Column("max_limit", TypeName="int")]
     public virtual uint MaxLimit { get; set; }
 
-    [Column("description", TypeName="varchar")]
+    [Column("description")]
     [MaxLength(255)]
     public virtual string Description { get; set; }
 

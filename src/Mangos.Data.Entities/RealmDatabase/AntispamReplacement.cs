@@ -6,11 +6,11 @@ namespace Mangos.Data.Entities.RealmDatabase;
 [Table("antispam_replacement")]
 public class AntispamReplacement
 {
-    [Column("from", TypeName="varchar")]
+    [Column("from")]
     [MaxLength(32)]
     public virtual string From { get; set; }
 
-    [Column("to", TypeName="varchar")]
+    [Column("to")]
     [MaxLength(32)]
     public virtual string To { get; set; }
 

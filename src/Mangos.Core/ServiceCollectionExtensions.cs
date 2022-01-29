@@ -21,14 +21,17 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddInfrastructure(this IServiceCollection serviceCollection)
     {
         var name = Assembly.GetCallingAssembly().GetName().Name;
-        
+
         return serviceCollection
             .AddSingleton(LoggerFactory.Create(f => f
                 .AddConsole(c => { c.FormatterName = "systemd"; })
                 .AddDebug()
-            ).CreateLogger(name))
-            .AddSingleton<IConfiguration>(new ConfigurationBuilder()
-                .AddJsonFile($"{name}.Settings.json", true)
-                .Build());
+            ).CreateLogger(name));
+    }
+
+    public static IServiceCollection AddConf(this IServiceCollection serviceCollection, string fileName)
+    {
+        return serviceCollection
+            .AddSingleton(typeof(IConfiguration), new MangosConfiguration(fileName));
     }
 }

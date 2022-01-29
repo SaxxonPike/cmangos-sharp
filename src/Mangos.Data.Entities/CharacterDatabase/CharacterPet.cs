@@ -45,7 +45,7 @@ public class CharacterPet
     [Column("trainpoint", TypeName="int")]
     public virtual int Trainpoint { get; set; }
 
-    [Column("name", TypeName="varchar")]
+    [Column("name")]
     [MaxLength(100)]
     public virtual string Name { get; set; }
 

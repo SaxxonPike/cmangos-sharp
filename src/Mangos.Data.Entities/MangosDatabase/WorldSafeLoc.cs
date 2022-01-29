@@ -24,7 +24,7 @@ public class WorldSafeLoc
     [Column("o", TypeName="float")]
     public virtual float O { get; set; }
 
-    [Column("name", TypeName="varchar")]
+    [Column("name")]
     [MaxLength(50)]
     public virtual string Name { get; set; }
 

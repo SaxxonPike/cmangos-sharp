@@ -18,7 +18,7 @@ public class PlayerCreateInfoSkills
     [Column("step", TypeName="smallint")]
     public virtual uint Step { get; set; }
 
-    [Column("note", TypeName="varchar")]
+    [Column("note")]
     [MaxLength(255)]
     public virtual string Note { get; set; }
 

@@ -31,12 +31,12 @@ public class GmTicket
     public virtual uint AuthorGuid { get; set; }
 
     /* Player's character name */
-    [Column("author_name", TypeName="varchar")]
+    [Column("author_name")]
     [MaxLength(12)]
     public virtual string AuthorName { get; set; }
 
     /* Player's client locale name */
-    [Column("locale", TypeName="varchar")]
+    [Column("locale")]
     [MaxLength(4)]
     public virtual string Locale { get; set; }
 
@@ -90,17 +90,17 @@ public class GmTicket
     public virtual uint AssigneeGuid { get; set; }
 
     /* Assignee's character's name */
-    [Column("assignee_name", TypeName="varchar")]
+    [Column("assignee_name")]
     [MaxLength(12)]
     public virtual string AssigneeName { get; set; }
 
     /* Assignee's final conclusion on this ticket */
-    [Column("conclusion", TypeName="varchar")]
+    [Column("conclusion")]
     [MaxLength(255)]
     public virtual string Conclusion { get; set; }
 
     /* Additional notes for GMs */
-    [Column("notes", TypeName="varchar")]
+    [Column("notes")]
     [MaxLength(10000)]
     public virtual string Notes { get; set; }
 

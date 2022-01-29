@@ -11,7 +11,7 @@ public class CreatureSpellListEntry
     public virtual int Id { get; set; }
 
     /* Description of usage */
-    [Column("Name", TypeName="varchar")]
+    [Column("Name")]
     [MaxLength(200)]
     public virtual string Name { get; set; }
 

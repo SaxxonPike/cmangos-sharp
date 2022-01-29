@@ -18,7 +18,7 @@ public class VehicleAccessory
     [Column("accessory_entry", TypeName="int")]
     public virtual uint AccessoryEntry { get; set; }
 
-    [Column("comment", TypeName="varchar")]
+    [Column("comment")]
     [MaxLength(255)]
     public virtual string Comment { get; set; }
 

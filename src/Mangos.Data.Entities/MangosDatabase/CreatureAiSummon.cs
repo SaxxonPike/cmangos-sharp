@@ -26,7 +26,7 @@ public class CreatureAiSummon
     public virtual uint Spawntimesecs { get; set; }
 
     /* Summon Comment */
-    [Column("comment", TypeName="varchar")]
+    [Column("comment")]
     [MaxLength(255)]
     public virtual string Comment { get; set; }
 

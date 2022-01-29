@@ -55,7 +55,7 @@ public class CreatureSpellList
     public virtual int RepeatMax { get; set; }
 
     /* Description of spell use */
-    [Column("Comments", TypeName="varchar")]
+    [Column("Comments")]
     [MaxLength(255)]
     public virtual string Comments { get; set; }
 

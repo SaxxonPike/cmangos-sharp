@@ -18,7 +18,7 @@ public class TaxiShortcut
     [Column("landing", TypeName="int")]
     public virtual uint Landing { get; set; }
 
-    [Column("comments", TypeName="varchar")]
+    [Column("comments")]
     [MaxLength(255)]
     public virtual string Comments { get; set; }
 

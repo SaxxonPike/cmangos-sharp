@@ -3,13 +3,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mangos.Data.Context;
 
-public class ClassicrealmdDbContext : DbContext
+public class RealmDbContext : DbContext
 {
-    public ClassicrealmdDbContext()
+    public RealmDbContext()
     {
     }
 
-    public ClassicrealmdDbContext(DbContextOptions options) : base(options)
+    public RealmDbContext(DbContextOptions options) : base(options)
     {
     }
 

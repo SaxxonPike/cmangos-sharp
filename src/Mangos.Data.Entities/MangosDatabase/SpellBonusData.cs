@@ -21,7 +21,7 @@ public class SpellBonusData
     [Column("ap_dot_bonus", TypeName="float")]
     public virtual float ApDotBonus { get; set; }
 
-    [Column("comments", TypeName="varchar")]
+    [Column("comments")]
     [MaxLength(255)]
     public virtual string Comments { get; set; }
 

@@ -12,7 +12,7 @@ public class GuildRank
     [Column("rid", TypeName="int")]
     public virtual uint Rid { get; set; }
 
-    [Column("rname", TypeName="varchar")]
+    [Column("rname")]
     [MaxLength(255)]
     public virtual string Rname { get; set; }
 

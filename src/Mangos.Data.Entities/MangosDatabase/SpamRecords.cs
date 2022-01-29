@@ -9,7 +9,7 @@ public class SpamRecords
     [Column("id", TypeName="int")]
     public virtual int Id { get; set; }
 
-    [Column("record", TypeName="varchar")]
+    [Column("record")]
     [MaxLength(512)]
     public virtual string Record { get; set; }
 

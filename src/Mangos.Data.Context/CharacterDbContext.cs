@@ -5,10 +5,10 @@ using BugReport = Mangos.Data.Entities.CharacterDatabase.BugReport;
 
 namespace Mangos.Data.Context;
 
-public class ClassiccharactersDbContext : DbContext
+public class CharacterDbContext : DbContext
 {
-    public ClassiccharactersDbContext() {}
-    public ClassiccharactersDbContext(DbContextOptions options) : base(options) {}
+    public CharacterDbContext() {}
+    public CharacterDbContext(DbContextOptions options) : base(options) {}
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.Entity<CharacterDbVersion>().HasKey(e => new { required_z2775_01_characters_raf = e.RequiredZ277501CharactersRaf });

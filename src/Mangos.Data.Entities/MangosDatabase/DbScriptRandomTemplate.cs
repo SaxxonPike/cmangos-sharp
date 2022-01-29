@@ -22,7 +22,7 @@ public class DbScriptRandomTemplate
     [Column("chance", TypeName="int")]
     public virtual int Chance { get; set; }
 
-    [Column("comments", TypeName="varchar")]
+    [Column("comments")]
     [MaxLength(500)]
     public virtual string Comments { get; set; }
 

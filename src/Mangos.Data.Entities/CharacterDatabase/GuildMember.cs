@@ -15,11 +15,11 @@ public class GuildMember
     [Column("rank", TypeName="tinyint")]
     public virtual byte Rank { get; set; }
 
-    [Column("pnote", TypeName="varchar")]
+    [Column("pnote")]
     [MaxLength(31)]
     public virtual string Pnote { get; set; }
 
-    [Column("offnote", TypeName="varchar")]
+    [Column("offnote")]
     [MaxLength(31)]
     public virtual string Offnote { get; set; }
 

@@ -63,7 +63,7 @@ public class DbScriptsOnRelay
     [Column("condition_id", TypeName="mediumint")]
     public virtual uint ConditionId { get; set; }
 
-    [Column("comments", TypeName="varchar")]
+    [Column("comments")]
     [MaxLength(255)]
     public virtual string Comments { get; set; }
 

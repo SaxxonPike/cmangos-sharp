@@ -14,7 +14,7 @@ public class Character
     [Column("account", TypeName="int")]
     public virtual uint Account { get; set; }
 
-    [Column("name", TypeName="varchar")]
+    [Column("name")]
     [MaxLength(12)]
     public virtual string Name { get; set; }
 
@@ -182,7 +182,7 @@ public class Character
     [Column("deleteInfos_Account", TypeName="int")]
     public virtual uint DeleteInfosAccount { get; set; }
 
-    [Column("deleteInfos_Name", TypeName="varchar")]
+    [Column("deleteInfos_Name")]
     [MaxLength(12)]
     public virtual string DeleteInfosName { get; set; }
 

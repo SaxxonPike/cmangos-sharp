@@ -27,7 +27,7 @@ public class CreatureSpellTargeting
     public virtual int Param3 { get; set; }
 
     /* Description of target */
-    [Column("Comments", TypeName="varchar")]
+    [Column("Comments")]
     [MaxLength(255)]
     public virtual string Comments { get; set; }
 

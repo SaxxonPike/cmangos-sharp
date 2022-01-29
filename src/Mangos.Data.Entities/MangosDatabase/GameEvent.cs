@@ -30,7 +30,7 @@ public class GameEvent
     public virtual uint LinkedTo { get; set; }
 
     /* Description of the event displayed in console */
-    [Column("description", TypeName="varchar")]
+    [Column("description")]
     [MaxLength(255)]
     public virtual string Description { get; set; }
 

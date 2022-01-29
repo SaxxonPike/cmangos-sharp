@@ -12,7 +12,7 @@ public class Petition
     [Column("petitionguid", TypeName="int")]
     public virtual uint Petitionguid { get; set; }
 
-    [Column("name", TypeName="varchar")]
+    [Column("name")]
     [MaxLength(255)]
     public virtual string Name { get; set; }
 

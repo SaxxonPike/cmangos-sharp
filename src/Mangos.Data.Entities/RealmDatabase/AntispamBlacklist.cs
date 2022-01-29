@@ -6,7 +6,7 @@ namespace Mangos.Data.Entities.RealmDatabase;
 [Table("antispam_blacklist")]
 public class AntispamBlacklist
 {
-    [Column("string", TypeName="varchar")]
+    [Column("string")]
     [MaxLength(64)]
     public virtual string String { get; set; }
 

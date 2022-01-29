@@ -11,7 +11,7 @@ public class Account
     [Column("id", TypeName="int")]
     public virtual uint Id { get; set; }
 
-    [Column("username", TypeName="varchar")]
+    [Column("username")]
     [MaxLength(32)]
     public virtual string Username { get; set; }
 
@@ -32,9 +32,9 @@ public class Account
     public virtual string Email { get; set; }
 
     [Column("joindate", TypeName="timestamp")]
-    public virtual DateTimeOffset Joindate { get; set; }
+    public virtual DateTime Joindate { get; set; }
 
-    [Column("lockedIp", TypeName="varchar")]
+    [Column("lockedIp")]
     [MaxLength(30)]
     public virtual string LockedIp { get; set; }
 
@@ -44,7 +44,7 @@ public class Account
     [Column("locked", TypeName="tinyint")]
     public virtual byte Locked { get; set; }
 
-    [Column("last_module", TypeName="char")]
+    [Column("last_module")]
     [MaxLength(32)]
     public virtual string LastModule { get; set; }
 
@@ -60,11 +60,11 @@ public class Account
     [Column("mutetime", TypeName="bigint")]
     public virtual ulong Mutetime { get; set; }
 
-    [Column("locale", TypeName="varchar")]
+    [Column("locale")]
     [MaxLength(4)]
     public virtual string Locale { get; set; }
 
-    [Column("os", TypeName="varchar")]
+    [Column("os")]
     [MaxLength(4)]
     public virtual string Os { get; set; }
 

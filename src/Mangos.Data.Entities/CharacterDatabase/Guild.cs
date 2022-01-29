@@ -9,7 +9,7 @@ public class Guild
     [Column("guildid", TypeName="int")]
     public virtual uint Guildid { get; set; }
 
-    [Column("name", TypeName="varchar")]
+    [Column("name")]
     [MaxLength(255)]
     public virtual string Name { get; set; }
 
@@ -31,11 +31,11 @@ public class Guild
     [Column("BackgroundColor", TypeName="int")]
     public virtual int BackgroundColor { get; set; }
 
-    [Column("info", TypeName="varchar")]
+    [Column("info")]
     [MaxLength(500)]
     public virtual string Info { get; set; }
 
-    [Column("motd", TypeName="varchar")]
+    [Column("motd")]
     [MaxLength(128)]
     public virtual string Motd { get; set; }
 

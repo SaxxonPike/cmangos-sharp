@@ -9,11 +9,11 @@ public class RealmList
     [Column("id", TypeName="int")]
     public virtual uint Id { get; set; }
 
-    [Column("name", TypeName="varchar")]
+    [Column("name")]
     [MaxLength(32)]
     public virtual string Name { get; set; }
 
-    [Column("address", TypeName="varchar")]
+    [Column("address")]
     [MaxLength(32)]
     public virtual string Address { get; set; }
 
@@ -36,7 +36,7 @@ public class RealmList
     [Column("population", TypeName="float")]
     public virtual float Population { get; set; }
 
-    [Column("realmbuilds", TypeName="varchar")]
+    [Column("realmbuilds")]
     [MaxLength(64)]
     public virtual string Realmbuilds { get; set; }
 

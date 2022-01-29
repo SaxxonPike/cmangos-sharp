@@ -6,11 +6,11 @@ namespace Mangos.Data.Entities.MangosDatabase;
 [Table("db_version")]
 public class DbVersion
 {
-    [Column("version", TypeName="varchar")]
+    [Column("version")]
     [MaxLength(120)]
     public virtual string Version { get; set; }
 
-    [Column("creature_ai_version", TypeName="varchar")]
+    [Column("creature_ai_version")]
     [MaxLength(120)]
     public virtual string CreatureAiVersion { get; set; }
 

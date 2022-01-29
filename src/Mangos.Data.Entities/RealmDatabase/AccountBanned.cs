@@ -19,18 +19,18 @@ public class AccountBanned
     [Column("expires_at", TypeName="bigint")]
     public virtual long ExpiresAt { get; set; }
 
-    [Column("banned_by", TypeName="varchar")]
+    [Column("banned_by")]
     [MaxLength(50)]
     public virtual string BannedBy { get; set; }
 
     [Column("unbanned_at", TypeName="bigint")]
     public virtual long UnbannedAt { get; set; }
 
-    [Column("unbanned_by", TypeName="varchar")]
+    [Column("unbanned_by")]
     [MaxLength(50)]
     public virtual string UnbannedBy { get; set; }
 
-    [Column("reason", TypeName="varchar")]
+    [Column("reason")]
     [MaxLength(255)]
     public virtual string Reason { get; set; }
 

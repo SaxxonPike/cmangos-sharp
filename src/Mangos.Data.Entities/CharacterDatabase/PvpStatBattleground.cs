@@ -19,6 +19,6 @@ public class PvpStatBattleground
     public virtual byte Type { get; set; }
 
     [Column("date", TypeName="datetime")]
-    public virtual DateTimeOffset Date { get; set; }
+    public virtual DateTime Date { get; set; }
 
 }

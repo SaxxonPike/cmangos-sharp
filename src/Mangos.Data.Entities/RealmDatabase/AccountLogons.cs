@@ -13,12 +13,12 @@ public class AccountLogons
     [Column("accountId", TypeName="int")]
     public virtual uint AccountId { get; set; }
 
-    [Column("ip", TypeName="varchar")]
+    [Column("ip")]
     [MaxLength(30)]
     public virtual string Ip { get; set; }
 
     [Column("loginTime", TypeName="timestamp")]
-    public virtual DateTimeOffset LoginTime { get; set; }
+    public virtual DateTime LoginTime { get; set; }
 
     [Column("loginSource", TypeName="int")]
     public virtual uint LoginSource { get; set; }

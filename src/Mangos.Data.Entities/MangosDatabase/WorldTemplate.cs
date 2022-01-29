@@ -9,7 +9,7 @@ public class WorldTemplate
     [Column("map", TypeName="smallint")]
     public virtual uint Map { get; set; }
 
-    [Column("ScriptName", TypeName="varchar")]
+    [Column("ScriptName")]
     [MaxLength(128)]
     public virtual string ScriptName { get; set; }
 

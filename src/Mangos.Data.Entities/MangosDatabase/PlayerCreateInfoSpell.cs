@@ -15,7 +15,7 @@ public class PlayerCreateInfoSpell
     [Column("Spell", TypeName="mediumint")]
     public virtual uint Spell { get; set; }
 
-    [Column("Note", TypeName="varchar")]
+    [Column("Note")]
     [MaxLength(255)]
     public virtual string Note { get; set; }
 

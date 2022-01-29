@@ -24,7 +24,7 @@ public class GameTele
     [Column("map", TypeName="smallint")]
     public virtual uint Map { get; set; }
 
-    [Column("name", TypeName="varchar")]
+    [Column("name")]
     [MaxLength(100)]
     public virtual string Name { get; set; }
 

@@ -11,7 +11,7 @@ public class SpellScripts
     public virtual int Id { get; set; }
 
     /* Core Spell Script Name */
-    [Column("ScriptName", TypeName="char")]
+    [Column("ScriptName")]
     [MaxLength(64)]
     public virtual string ScriptName { get; set; }
 

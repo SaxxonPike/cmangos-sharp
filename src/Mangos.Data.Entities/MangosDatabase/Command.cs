@@ -6,7 +6,7 @@ namespace Mangos.Data.Entities.MangosDatabase;
 [Table("command")]
 public class Command
 {
-    [Column("name", TypeName="varchar")]
+    [Column("name")]
     [MaxLength(50)]
     public virtual string Name { get; set; }
 

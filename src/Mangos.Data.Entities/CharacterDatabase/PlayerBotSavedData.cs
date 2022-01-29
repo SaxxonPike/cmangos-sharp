@@ -18,11 +18,11 @@ public class PlayerBotSavedData
     [Column("secondary_target", TypeName="int")]
     public virtual uint SecondaryTarget { get; set; }
 
-    [Column("pname", TypeName="varchar")]
+    [Column("pname")]
     [MaxLength(12)]
     public virtual string Pname { get; set; }
 
-    [Column("sname", TypeName="varchar")]
+    [Column("sname")]
     [MaxLength(12)]
     public virtual string Sname { get; set; }
 

@@ -9,7 +9,7 @@ public class ReferenceLootTemplateNames
     [Column("entry", TypeName="int")]
     public virtual uint Entry { get; set; }
 
-    [Column("name", TypeName="varchar")]
+    [Column("name")]
     [MaxLength(255)]
     public virtual string Name { get; set; }
 

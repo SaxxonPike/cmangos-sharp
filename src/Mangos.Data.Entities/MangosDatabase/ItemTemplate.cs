@@ -15,7 +15,7 @@ public class ItemTemplate
     [Column("subclass", TypeName="tinyint")]
     public virtual byte Subclass { get; set; }
 
-    [Column("name", TypeName="varchar")]
+    [Column("name")]
     [MaxLength(255)]
     public virtual string Name { get; set; }
 
@@ -325,7 +325,7 @@ public class ItemTemplate
     [Column("bonding", TypeName="tinyint")]
     public virtual byte Bonding { get; set; }
 
-    [Column("description", TypeName="varchar")]
+    [Column("description")]
     [MaxLength(255)]
     public virtual string Description { get; set; }
 
@@ -371,7 +371,7 @@ public class ItemTemplate
     [Column("BagFamily", TypeName="mediumint")]
     public virtual int BagFamily { get; set; }
 
-    [Column("ScriptName", TypeName="varchar")]
+    [Column("ScriptName")]
     [MaxLength(64)]
     public virtual string ScriptName { get; set; }
 

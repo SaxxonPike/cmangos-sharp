@@ -9,11 +9,11 @@ public class CreatureTemplateArmor
     [Column("Entry", TypeName="mediumint")]
     public virtual uint Entry { get; set; }
 
-    [Column("Name", TypeName="char")]
+    [Column("Name")]
     [MaxLength(100)]
     public virtual string Name { get; set; }
 
-    [Column("SubName", TypeName="char")]
+    [Column("SubName")]
     [MaxLength(100)]
     public virtual string SubName { get; set; }
 
@@ -224,11 +224,11 @@ public class CreatureTemplateArmor
     [Column("Civilian", TypeName="tinyint")]
     public virtual byte Civilian { get; set; }
 
-    [Column("AIName", TypeName="char")]
+    [Column("AIName")]
     [MaxLength(64)]
     public virtual string AiName { get; set; }
 
-    [Column("ScriptName", TypeName="char")]
+    [Column("ScriptName")]
     [MaxLength(64)]
     public virtual string ScriptName { get; set; }
 

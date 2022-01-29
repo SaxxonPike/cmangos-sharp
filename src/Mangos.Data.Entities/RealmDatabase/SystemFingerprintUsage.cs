@@ -16,7 +16,7 @@ public class SystemFingerprintUsage
     [Column("account", TypeName="int")]
     public virtual uint Account { get; set; }
 
-    [Column("ip", TypeName="varchar")]
+    [Column("ip")]
     [MaxLength(16)]
     public virtual string Ip { get; set; }
 
@@ -24,13 +24,13 @@ public class SystemFingerprintUsage
     public virtual uint Realm { get; set; }
 
     [Column("time", TypeName="datetime")]
-    public virtual DateTimeOffset Time { get; set; }
+    public virtual DateTime Time { get; set; }
 
-    [Column("architecture", TypeName="varchar")]
+    [Column("architecture")]
     [MaxLength(16)]
     public virtual string Architecture { get; set; }
 
-    [Column("cputype", TypeName="varchar")]
+    [Column("cputype")]
     [MaxLength(64)]
     public virtual string Cputype { get; set; }
 

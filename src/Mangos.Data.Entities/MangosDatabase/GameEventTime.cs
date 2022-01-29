@@ -12,10 +12,10 @@ public class GameEventTime
 
     /* Absolute start date, the event will never start before */
     [Column("start_time", TypeName="datetime")]
-    public virtual DateTimeOffset StartTime { get; set; }
+    public virtual DateTime StartTime { get; set; }
 
     /* Absolute end date, the event will never start after */
     [Column("end_time", TypeName="datetime")]
-    public virtual DateTimeOffset EndTime { get; set; }
+    public virtual DateTime EndTime { get; set; }
 
 }

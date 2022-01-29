@@ -3,13 +3,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mangos.Data.Context;
 
-public class ClassicmangosDbContext : DbContext
+public class MangosDbContext : DbContext
 {
-    public ClassicmangosDbContext()
+    public MangosDbContext()
     {
     }
 
-    public ClassicmangosDbContext(DbContextOptions options) : base(options)
+    public MangosDbContext(DbContextOptions options) : base(options)
     {
     }
 

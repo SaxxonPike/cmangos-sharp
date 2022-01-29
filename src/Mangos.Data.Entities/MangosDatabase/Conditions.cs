@@ -33,7 +33,7 @@ public class Conditions
     [Column("flags", TypeName="tinyint")]
     public virtual byte Flags { get; set; }
 
-    [Column("comments", TypeName="varchar")]
+    [Column("comments")]
     [MaxLength(500)]
     public virtual string Comments { get; set; }
 

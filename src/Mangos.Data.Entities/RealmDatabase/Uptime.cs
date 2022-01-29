@@ -12,7 +12,7 @@ public class Uptime
     [Column("starttime", TypeName="bigint")]
     public virtual ulong Starttime { get; set; }
 
-    [Column("startstring", TypeName="varchar")]
+    [Column("startstring")]
     [MaxLength(64)]
     public virtual string Startstring { get; set; }
 

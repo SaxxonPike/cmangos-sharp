@@ -11,7 +11,7 @@ public class BroadcastTextLocale
     public virtual int Id { get; set; }
 
     /* Locale */
-    [Column("Locale", TypeName="varchar")]
+    [Column("Locale")]
     [MaxLength(10)]
     public virtual string Locale { get; set; }
 

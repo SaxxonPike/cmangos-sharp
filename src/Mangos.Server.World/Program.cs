@@ -1,4 +1,6 @@
-﻿using Mangos.Core;
+﻿using System.Linq;
+using Mangos.Core;
+using Mangos.Server.Core;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Mangos.Server.World;
@@ -16,8 +18,10 @@ public static class Program
     /// </summary>
     private static IServiceCollection AddApp(this IServiceCollection serviceCollection) =>
         serviceCollection
-            .MapServices(new[]
-            {
-                (typeof(App), typeof(App))
-            });
+            .MapServices(MangosServerWorldTypes.Get()
+                .Concat(MangosCoreTypes.Get())
+                .Concat(MangosServerCoreTypes.Get())
+            )
+            .AddLogging()
+            .AddConf("mangosd.conf");
 }

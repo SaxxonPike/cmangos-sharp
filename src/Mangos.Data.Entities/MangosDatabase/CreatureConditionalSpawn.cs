@@ -18,7 +18,7 @@ public class CreatureConditionalSpawn
     [Column("EntryHorde", TypeName="mediumint")]
     public virtual uint EntryHorde { get; set; }
 
-    [Column("Comments", TypeName="varchar")]
+    [Column("Comments")]
     [MaxLength(255)]
     public virtual string Comments { get; set; }
 

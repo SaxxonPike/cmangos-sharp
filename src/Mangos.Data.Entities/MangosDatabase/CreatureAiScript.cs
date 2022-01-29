@@ -86,7 +86,7 @@ public class CreatureAiScript
     public virtual int Action3Param3 { get; set; }
 
     /* Event Comment */
-    [Column("comment", TypeName="varchar")]
+    [Column("comment")]
     [MaxLength(255)]
     public virtual string Comment { get; set; }
 

@@ -16,8 +16,5 @@ public static class Program
     /// </summary>
     private static IServiceCollection AddApp(this IServiceCollection serviceCollection) =>
         serviceCollection
-            .MapServices(new[]
-            {
-                (typeof(App), typeof(App))
-            });
+            .MapServices(MangosToolExtractDbcTypes.Get());
 }

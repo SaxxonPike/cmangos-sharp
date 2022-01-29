@@ -15,7 +15,7 @@ public class PoolPool
     [Column("chance", TypeName="float")]
     public virtual float Chance { get; set; }
 
-    [Column("description", TypeName="varchar")]
+    [Column("description")]
     [MaxLength(255)]
     public virtual string Description { get; set; }
 
