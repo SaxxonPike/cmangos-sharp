@@ -33,15 +33,8 @@ public sealed class MangosConfiguration : IConfigurationRoot
 
     public string this[string key]
     {
-        get => Sections.TryGetValue(string.Empty, out var section)
-            ? section[key]
-            : default;
-        set
-        {
-            if (!Sections.TryGetValue(string.Empty, out var section))
-                return;
-            section[key] = value;
-        }
+        get => TryGet(key, out var value) ? value : default;
+        set => Set(key, value);
     }
 
     public void Reload()
@@ -71,11 +64,11 @@ public sealed class MangosConfiguration : IConfigurationRoot
             }
             else if (line.Contains('='))
             {
-                var key = line[..line.IndexOf('=')].Trim().ToLowerInvariant();
+                var key = line[..line.IndexOf('=')].ToLowerInvariant();
                 var value = line[(key.Length + 1)..].Trim();
                 if (value.StartsWith('\"') && value.EndsWith('\"'))
                     value = value.Substring(1, value.Length - 2);
-                section[key] = value;
+                section[key.Trim()] = value;
             }
         }
 
