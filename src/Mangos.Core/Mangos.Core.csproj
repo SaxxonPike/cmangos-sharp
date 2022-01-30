@@ -9,8 +9,6 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Config" />
+    <PackageReference Include="System.Runtime.Numerics" Version="4.3.0" />
   </ItemGroup>
 </Project>

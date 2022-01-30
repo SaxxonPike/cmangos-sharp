@@ -1,4 +1,6 @@
-﻿using Mangos.Core;
+﻿using System.Linq;
+using Mangos.Core;
+using Mangos.Server.Core;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Mangos.Server.Realm;
@@ -16,7 +18,12 @@ public static class Program
     /// </summary>
     private static IServiceCollection AddApp(this IServiceCollection serviceCollection) =>
         serviceCollection
-            .MapServices(MangosServerRealmTypes.Get())
+            .MapServices(
+                MangosServerRealmTypes.Get(),
+                MangosCoreTypes.Get(),
+                MangosServerCoreTypes.Get()
+            )
             .AddLogging()
-            .AddConf("realmd.conf");
+            .AddConf("realmd.conf")
+            .AddDatabase("RealmdConf");
 }

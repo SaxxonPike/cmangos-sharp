@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using Mangos.Core.Config;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -11,9 +13,9 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection MapServices(
         this IServiceCollection sc, 
-        IEnumerable<(Type Service, Type Implementation)> map)
+        params IEnumerable<(Type Service, Type Implementation)>[] maps)
     {
-        foreach (var (service, implementation) in map)
+        foreach (var (service, implementation) in maps.SelectMany(m => m))
             sc.AddSingleton(service, implementation);
         return sc;
     }

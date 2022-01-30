@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Mangos.Entities;
+﻿namespace Mangos.Entities;
 
 public class Constants
 {

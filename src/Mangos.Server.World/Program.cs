@@ -18,10 +18,12 @@ public static class Program
     /// </summary>
     private static IServiceCollection AddApp(this IServiceCollection serviceCollection) =>
         serviceCollection
-            .MapServices(MangosServerWorldTypes.Get()
-                .Concat(MangosCoreTypes.Get())
-                .Concat(MangosServerCoreTypes.Get())
+            .MapServices(
+                MangosServerWorldTypes.Get(),
+                MangosCoreTypes.Get(),
+                MangosServerCoreTypes.Get()
             )
             .AddLogging()
-            .AddConf("mangosd.conf");
+            .AddConf("mangosd.conf")
+            .AddDatabase("MangosdConf");
 }
