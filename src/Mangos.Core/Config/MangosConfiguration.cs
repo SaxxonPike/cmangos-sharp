@@ -202,9 +202,8 @@ public sealed class MangosConfiguration : IConfigurationRoot
             _values = values;
             Key = key;
         }
-    
-        public IConfigurationSection GetSection(string key) => 
-            EmptySection.Instance;
+
+        public IConfigurationSection GetSection(string key) => this;
 
         public IEnumerable<IConfigurationSection> GetChildren() => 
             Enumerable.Empty<IConfigurationSection>();
@@ -214,8 +213,8 @@ public sealed class MangosConfiguration : IConfigurationRoot
 
         public string this[string key]
         {
-            get => _values.TryGetValue(key, out var value) ? value : default;
-            set => _values[key] = value;
+            get => TryGet(key, out var value) ? value : default;
+            set => Set(key, value);
         }
 
         public string Key { get; }

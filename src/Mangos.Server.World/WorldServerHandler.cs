@@ -5,17 +5,17 @@ namespace Mangos.Server.World;
 
 public class WorldServerHandler : ISocketHandler
 {
-    public void HandleConnect(ISocketEgress egress)
+    public void HandleConnect(SocketStream stream)
     {
         throw new NotImplementedException();
     }
 
-    public void HandleData(ISocketIngress ingress, ISocketEgress egress)
+    public void HandleData(SocketStream stream)
     {
         throw new NotImplementedException();
     }
 
-    public void HandleDisconnect(ISocketEndpoints endpoints)
+    public void HandleDisconnect(SocketStream stream)
     {
         throw new NotImplementedException();
     }

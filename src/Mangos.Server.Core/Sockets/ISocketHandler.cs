@@ -4,8 +4,8 @@ namespace Mangos.Server.Core.Sockets;
 
 public interface ISocketHandler
 {
-    void HandleConnect(ISocketEgress egress);
-    void HandleData(ISocketIngress ingress, ISocketEgress egress);
-    void HandleDisconnect(ISocketEndpoints endpoints);
+    void HandleConnect(SocketStream stream);
+    void HandleData(SocketStream stream);
+    void HandleDisconnect(SocketStream stream);
     void HandleException(ISocketEndpoints endpoints, Exception e);
 }

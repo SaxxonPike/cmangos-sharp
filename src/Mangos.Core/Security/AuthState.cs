@@ -4,7 +4,7 @@ namespace Mangos.Core.Security;
 
 public sealed class AuthState
 {
-    public int AccountId { get; set; }
+    public long AccountId { get; set; }
     public ReadOnlyMemory<byte> SessionKey { get; set; }
     public DateTimeOffset Expiry { get; set; }
     public int EncryptionKeyIndex { get; set; }

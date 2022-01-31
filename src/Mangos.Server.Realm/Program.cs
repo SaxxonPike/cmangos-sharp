@@ -23,7 +23,8 @@ public static class Program
                 MangosCoreTypes.Get(),
                 MangosServerCoreTypes.Get()
             )
+            .AddInfrastructure()
             .AddLogging()
-            .AddConf("realmd.conf")
-            .AddDatabase("RealmdConf");
+            .AddConf("realmd.conf", "RealmdConf")
+            .AddDatabase();
 }

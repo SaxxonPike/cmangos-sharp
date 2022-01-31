@@ -1,13 +1,16 @@
 using System;
+using Mangos.Server.Core.Sockets;
 
 namespace Mangos.Server.World.Messaging;
 
-public interface IOpcodeGateway
+public interface IWorldOpcodeGateway
 {
-    void StoreOpcode(Opcodes opcode, string name, SessionStatus status, PacketProcessing packetProcessing,
+    void StoreOpcode(WorldOpcode worldOpcode, string name, SessionStatus status, PacketProcessing packetProcessing,
         Action handler);
 
     void ConfigureOpcodes(int count);
+
+    void HandleOpcode(int opcode, SocketStream stream);
     
     void Handle_NULL();
     void Handle_ServerSide();

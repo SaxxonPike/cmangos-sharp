@@ -11,17 +11,15 @@ public class Database : IDatabase
 {
     private readonly IConfiguration _configuration;
     private readonly ILogger _logger;
-    private readonly string _configSection;
     private DbContextOptions _mangosDbOptions;
     private DbContextOptions _realmDbOptions;
     private DbContextOptions _characterDbOptions;
     private DbContextOptions _logsDbOptions;
 
-    public Database(IConfiguration configuration, ILogger logger, string configSection)
+    public Database(IConfiguration configuration, ILogger logger)
     {
         _configuration = configuration;
         _logger = logger;
-        _configSection = configSection;
         RegisterConfigCallback();
         Configure();
     }
@@ -33,10 +31,10 @@ public class Database : IDatabase
 
     private void Configure()
     {
-        _logsDbOptions = GetMySqlOptions(_configuration[$"{_configSection}.LogsDatabaseInfo"]);
-        _mangosDbOptions = GetMySqlOptions(_configuration[$"{_configSection}.WorldDatabaseInfo"]);
-        _characterDbOptions = GetMySqlOptions(_configuration[$"{_configSection}.CharacterDatabaseInfo"]);
-        _realmDbOptions = GetMySqlOptions(_configuration[$"{_configSection}.LoginDatabaseInfo"]);
+        _logsDbOptions = GetMySqlOptions("LogsDatabaseInfo");
+        _mangosDbOptions = GetMySqlOptions("WorldDatabaseInfo");
+        _characterDbOptions = GetMySqlOptions("CharacterDatabaseInfo");
+        _realmDbOptions = GetMySqlOptions("LoginDatabaseInfo");
     }
 
     private DbContextOptions GetMySqlOptions(string configValue)
@@ -66,10 +64,22 @@ public class Database : IDatabase
         context(db);
     }
 
+    public T UseLogin<T>(Func<RealmDbContext, T> context)
+    {
+        using var db = new RealmDbContext(_realmDbOptions);
+        return context(db);
+    }
+
     public void UseWorld(Action<MangosDbContext> context)
     {
         using var db = new MangosDbContext(_mangosDbOptions);
         context(db);
+    }
+
+    public T UseWorld<T>(Func<MangosDbContext, T> context)
+    {
+        using var db = new MangosDbContext(_mangosDbOptions);
+        return context(db);
     }
 
     public void UseCharacter(Action<CharacterDbContext> context)
@@ -78,15 +88,33 @@ public class Database : IDatabase
         context(db);
     }
 
+    public T UseCharacter<T>(Func<CharacterDbContext, T> context)
+    {
+        using var db = new CharacterDbContext(_characterDbOptions);
+        return context(db);
+    }
+
     public void UseLogs(Action<LogsDbContext> context)
     {
         using var db = new LogsDbContext(_logsDbOptions);
         context(db);
+    }
+    
+    public T UseLogs<T>(Func<LogsDbContext, T> context)
+    {
+        using var db = new LogsDbContext(_logsDbOptions);
+        return context(db);
     }
 
     public void UseClient(Action<ClientDbContext> context)
     {
         using var db = new ClientDbContext(_logger);
         context(db);
+    }
+    
+    public T UseClient<T>(Func<ClientDbContext, T> context)
+    {
+        using var db = new ClientDbContext(_logger);
+        return context(db);
     }
 }

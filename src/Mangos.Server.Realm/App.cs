@@ -28,8 +28,8 @@ public class App
     public void Run(string[] args)
     {
         var worldEndpoint = new IPEndPoint(
-            IPAddress.Parse(_configuration["RealmdConf.BindIP"]),
-            int.Parse(_configuration["RealmdConf.RealmServerPort"]));
+            IPAddress.Parse(_configuration["BindIP"]),
+            int.Parse(_configuration["RealmServerPort"]));
 
         var cancel = new CancellationTokenSource();
         _socketDaemon.ListenAsync(worldEndpoint, _socketHandler, cancel.Token);

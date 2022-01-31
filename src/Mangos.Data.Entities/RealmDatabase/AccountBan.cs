@@ -3,12 +3,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Mangos.Data.Entities.RealmDatabase;
 
-[Table("ip_banned")]
-public class IpBanned
+[Table("account_banned")]
+public class AccountBan
 {
-    [Column("ip")]
-    [MaxLength(32)]
-    public virtual string Ip { get; set; }
+    [Column("id", TypeName="int")]
+    public virtual long Id { get; set; }
+
+    /* Account id */
+    [Column("account_id", TypeName="int")]
+    public virtual long AccountId { get; set; }
 
     [Column("banned_at", TypeName="bigint")]
     public virtual long BannedAt { get; set; }
@@ -20,8 +23,18 @@ public class IpBanned
     [MaxLength(50)]
     public virtual string BannedBy { get; set; }
 
+    [Column("unbanned_at", TypeName="bigint")]
+    public virtual long UnbannedAt { get; set; }
+
+    [Column("unbanned_by")]
+    [MaxLength(50)]
+    public virtual string UnbannedBy { get; set; }
+
     [Column("reason")]
     [MaxLength(255)]
     public virtual string Reason { get; set; }
+
+    [Column("active", TypeName="tinyint")]
+    public virtual int Active { get; set; }
 
 }

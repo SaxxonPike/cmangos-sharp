@@ -5,13 +5,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Mangos.Data.Entities.RealmDatabase;
 
 [Table("account_logons")]
-public class AccountLogons
+public class AccountLogon
 {
     [Column("id", TypeName="int")]
     public virtual int Id { get; set; }
 
     [Column("accountId", TypeName="int")]
-    public virtual uint AccountId { get; set; }
+    public virtual long AccountId { get; set; }
 
     [Column("ip")]
     [MaxLength(30)]

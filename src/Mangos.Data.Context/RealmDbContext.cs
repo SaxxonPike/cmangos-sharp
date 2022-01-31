@@ -17,10 +17,10 @@ public class RealmDbContext : DbContext
     {
         builder.Entity<RealmdDbVersion>().HasKey(e => new { required_z2778_01_realmd_anticheat = e.RequiredZ277801RealmdAnticheat });
         builder.Entity<Account>().HasKey(e => new { id = e.Id });
-        builder.Entity<AccountBanned>().HasKey(e => new { id = e.Id });
-        builder.Entity<AccountLogons>().HasKey(e => new { id = e.Id });
+        builder.Entity<AccountBan>().HasKey(e => new { id = e.Id });
+        builder.Entity<AccountLogon>().HasKey(e => new { id = e.Id });
         builder.Entity<AccountRaf>().HasKey(e => new { referrer = e.Referrer, referred = e.Referred });
-        builder.Entity<IpBanned>().HasKey(e => new { ip = e.Ip, banned_at = e.BannedAt });
+        builder.Entity<IpBan>().HasKey(e => new { ip = e.Ip, banned_at = e.BannedAt });
         builder.Entity<RealmCharacters>().HasKey(e => new { realmid = e.Realmid, acctid = e.Acctid });
         builder.Entity<RealmList>().HasKey(e => new { id = e.Id });
         builder.Entity<Uptime>().HasKey(e => new { realmid = e.Realmid, starttime = e.Starttime });
@@ -32,10 +32,10 @@ public class RealmDbContext : DbContext
 
     public DbSet<RealmdDbVersion> RealmdDbVersions { get; set; }
     public DbSet<Account> Accounts { get; set; }
-    public DbSet<AccountBanned> AccountBanneds { get; set; }
-    public DbSet<AccountLogons> AccountLogonss { get; set; }
+    public DbSet<AccountBan> AccountBans { get; set; }
+    public DbSet<AccountLogon> AccountLogons { get; set; }
     public DbSet<AccountRaf> AccountRafs { get; set; }
-    public DbSet<IpBanned> IpBanneds { get; set; }
+    public DbSet<IpBan> IpBans { get; set; }
     public DbSet<RealmCharacters> Realmcharacterss { get; set; }
     public DbSet<RealmList> Realmlists { get; set; }
     public DbSet<Uptime> Uptimes { get; set; }

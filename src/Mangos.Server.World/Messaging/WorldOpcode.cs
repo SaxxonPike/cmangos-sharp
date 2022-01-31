@@ -3,7 +3,7 @@
 
 namespace Mangos.Server.World.Messaging;
 
-public enum Opcodes
+public enum WorldOpcode
 {
     MSG_NULL_ACTION                                 = 0x000,
     CMSG_BOOTME                                     = 0x001,

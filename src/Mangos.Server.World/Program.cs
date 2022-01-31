@@ -23,7 +23,8 @@ public static class Program
                 MangosCoreTypes.Get(),
                 MangosServerCoreTypes.Get()
             )
+            .AddInfrastructure()
             .AddLogging()
-            .AddConf("mangosd.conf")
-            .AddDatabase("MangosdConf");
+            .AddConf("mangosd.conf", "MangosdConf")
+            .AddDatabase();
 }

@@ -9,7 +9,7 @@ public class Account
 {
     /* Identifier */
     [Column("id", TypeName="int")]
-    public virtual uint Id { get; set; }
+    public virtual long Id { get; set; }
 
     [Column("username")]
     [MaxLength(32)]

@@ -15,15 +15,15 @@ public sealed class SocketDaemon : ISocketDaemon
 
     private readonly ConcurrentDictionary<string, Socket> _sockets = new();
     private readonly ConcurrentDictionary<string, int> _locks = new();
-    private readonly ConcurrentDictionary<string, SocketWrapper> _wrappers = new();
+    private readonly ConcurrentDictionary<string, SocketStream> _wrappers = new();
 
     public SocketDaemon(ILogger logger)
     {
         _logger = logger;
     }
 
-    private SocketWrapper GetWrapper(string socketEndPoint, Socket socket, CancellationToken cancel) =>
-        _wrappers.AddOrUpdate(socketEndPoint, _ => new SocketWrapper(socket, cancel), (_, w) => w);
+    private SocketStream GetWrapper(string socketEndPoint, Socket socket, CancellationToken cancel) =>
+        _wrappers.AddOrUpdate(socketEndPoint, _ => new SocketStream(socket, cancel), (_, w) => w);
 
     private void IncrementLock(string socketEndPoint) =>
         _locks.AddOrUpdate(socketEndPoint, _ => 1, (_, v) => v + 1);
@@ -31,27 +31,35 @@ public sealed class SocketDaemon : ISocketDaemon
     private void DecrementLock(string socketEndPoint) =>
         _locks.AddOrUpdate(socketEndPoint, _ => 0, (_, v) => v - 1);
 
+    private bool IsLocked(string socketEndPoint) =>
+        _locks.TryGetValue(socketEndPoint, out var count) && count > 0;
+
     public Task ListenAsync(IPEndPoint endpoint, ISocketHandler handler, CancellationToken cancel)
     {
         _logger.LogInformation("Launching socket daemon: endpoint={}", endpoint);
         
         // ReSharper disable once LocalFunctionHidesMethod
-        SocketWrapper GetWrapper(string socketEndPoint, Socket socket) =>
+        SocketStream GetWrapper(string socketEndPoint, Socket socket) =>
             this.GetWrapper(socketEndPoint, socket, cancel);
 
         void StartHandlerLoopAsync()
         {
             _logger.LogDebug("{} started", nameof(StartHandlerLoopAsync));
             
-            while (!cancel.IsCancellationRequested)
+            while (true)
             {
-                SpinWait.SpinUntil(() => cancel.IsCancellationRequested, 2000);
+                SpinWait.SpinUntil(() => cancel.IsCancellationRequested, 1);
+                if (cancel.IsCancellationRequested)
+                    break;
 
                 foreach (var (socketEndPoint, socket) in _sockets.ToList())
                 {
                     try
                     {
                         // Socket ingress.
+                        if (IsLocked(socketEndPoint))
+                            continue;
+
                         if (socket.Connected && socket.Available > 0)
                         {
                             IncrementLock(socketEndPoint);
@@ -60,7 +68,7 @@ public sealed class SocketDaemon : ISocketDaemon
                                 var wrapper = GetWrapper(socketEndPoint, s);
                                 try
                                 {
-                                    handler.HandleData(wrapper, wrapper);
+                                    handler.HandleData(wrapper);
                                 }
                                 catch (Exception ie)
                                 {
@@ -72,9 +80,6 @@ public sealed class SocketDaemon : ISocketDaemon
                                 }
                             }, socket, false);
                         }
-
-                        if (_locks.ContainsKey(socketEndPoint))
-                            continue;
 
                         if (socket.Connected)
                             continue;
@@ -123,13 +128,14 @@ public sealed class SocketDaemon : ISocketDaemon
             _logger.LogDebug("{} started", nameof(StartSocketLoopAsync));
             
             var listener = new TcpListener(endpoint);
-            while (!cancel.IsCancellationRequested)
+            listener.Start();
+            while (true)
             {
                 try
                 {
                     var socket = await listener.AcceptSocketAsync(cancel);
                     if (cancel.IsCancellationRequested)
-                        return;
+                        break;
 
                     var socketEndPoint = socket.RemoteEndPoint?.ToString();
                     if (socketEndPoint == default)
@@ -164,9 +170,9 @@ public sealed class SocketDaemon : ISocketDaemon
                         }
                     }, socket, false);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    // Do nothing, continue loop.
+                    handler.HandleException(new SocketEndpoints((IPEndPoint)listener.LocalEndpoint, default), e);
                 }
             }
             
@@ -182,7 +188,7 @@ public sealed class SocketDaemon : ISocketDaemon
         return Task.WhenAll(socketLoop, handlerLoop);
     }
 
-    public Task SendAsync(IPEndPoint endPoint, Action<ISocketEgress> func, CancellationToken cancel)
+    public Task SendAsync(IPEndPoint endPoint, Action<SocketStream> func, CancellationToken cancel)
     {
         var socketEndPoint = endPoint.ToString();
         if (!_sockets.TryGetValue(socketEndPoint, out var socket))

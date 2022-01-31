@@ -32,8 +32,8 @@ public class App
     public void Run(string[] args)
     {
         var worldEndpoint = new IPEndPoint(
-            IPAddress.Parse(_configuration["MangosdConf.BindIP"]),
-            int.Parse(_configuration["MangosdConf.WorldServerPort"]));
+            IPAddress.Parse(_configuration["BindIP"]),
+            int.Parse(_configuration["WorldServerPort"]));
 
         var cancel = new CancellationTokenSource();
         _socketDaemon.ListenAsync(worldEndpoint, _socketHandler, cancel.Token);

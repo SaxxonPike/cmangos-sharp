@@ -31,9 +31,9 @@ public static class ServiceCollectionExtensions
             ).CreateLogger(name));
     }
 
-    public static IServiceCollection AddConf(this IServiceCollection serviceCollection, string fileName)
+    public static IServiceCollection AddConf(this IServiceCollection serviceCollection, string fileName, string section)
     {
         return serviceCollection
-            .AddSingleton(typeof(IConfiguration), new MangosConfiguration(fileName));
+            .AddSingleton(typeof(IConfiguration), new MangosConfiguration(fileName).GetSection(section));
     }
 }

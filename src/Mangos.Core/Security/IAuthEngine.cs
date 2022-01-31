@@ -4,9 +4,9 @@ namespace Mangos.Core.Security;
 
 public interface IAuthEngine
 {
-    AuthChallengeClient CreateChallenge(string ip, int id, string username, ReadOnlyMemory<byte> passwordVerifier, ReadOnlyMemory<byte> salt);
+    AuthChallengeClient CreateChallenge(string ip, long id, string username, ReadOnlyMemory<byte> passwordVerifier, ReadOnlyMemory<byte> salt);
     AuthChallengeServer VerifyChallenge(string ip, ReadOnlySpan<byte> clientPublicKey, ReadOnlySpan<byte> clientProof);
-    AuthState CreateState(string endpoint, int id, string username, ReadOnlyMemory<byte> sessionKey);
+    AuthState CreateState(string endpoint, long id, string username, ReadOnlyMemory<byte> sessionKey);
     AuthState RefreshState(string ip);
     AuthState GetState(string ip);
     void DeleteState(string ip);

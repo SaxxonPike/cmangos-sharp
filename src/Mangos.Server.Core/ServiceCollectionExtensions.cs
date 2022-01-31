@@ -7,10 +7,10 @@ namespace Mangos.Server.Core;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddDatabase(this IServiceCollection serviceCollection, string confSection)
+    public static IServiceCollection AddDatabase(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddSingleton(typeof(IDatabase),
-            c => new Database(c.GetService<IConfiguration>(), c.GetService<ILogger>(), confSection));
+            c => new Database(c.GetService<IConfiguration>(), c.GetService<ILogger>()));
         return serviceCollection;
     }
 }
