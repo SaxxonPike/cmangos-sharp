@@ -8,7 +8,7 @@ using System.Text;
 
 namespace MangosSharp.Core.Security;
 
-public sealed class AuthEngine : IAuthEngine
+public sealed class AuthService : IAuthService
 {
     // WoW uses a key exchange method called SRP6, slightly modified.
     // Reference: https://gtker.com/implementation-guide-for-the-world-of-warcraft-flavor-of-srp6/

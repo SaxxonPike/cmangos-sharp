@@ -26,17 +26,17 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
     private readonly ILogger _logger;
     private readonly IDatabase _database;
     private readonly IConfiguration _configuration;
-    private readonly IAuthEngine _authEngine;
+    private readonly IAuthService _authService;
     private readonly IRealmListService _realmListService;
     private readonly IDictionary<string, LoginSession> _sessions;
 
-    public RealmPacketHandler(ILogger logger, IDatabase database, IConfiguration configuration, IAuthEngine authEngine,
+    public RealmPacketHandler(ILogger logger, IDatabase database, IConfiguration configuration, IAuthService authService,
         IRealmListService realmListService)
     {
         _logger = logger;
         _database = database;
         _configuration = configuration;
-        _authEngine = authEngine;
+        _authService = authService;
         _realmListService = realmListService;
         _sessions = new Dictionary<string, LoginSession>();
     }
@@ -198,7 +198,7 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
             var accountV = Convert.FromHexString(account.V).AsSpan().Reversed();
             var accountS = Convert.FromHexString(account.S).AsSpan().Reversed();
 
-            var challenge = _authEngine.CreateChallenge(stream.RemoteEndPoint, account.Id, account.Username.AsMemory(),
+            var challenge = _authService.CreateChallenge(stream.RemoteEndPoint, account.Id, account.Username.AsMemory(),
                 accountV, accountS);
             writer.Write((byte)AuthLogonResult.SUCCESS);
 
@@ -289,7 +289,7 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
             return false;
         }
 
-        var result = _authEngine.VerifyChallenge(stream.RemoteEndPoint, a, m1);
+        var result = _authService.VerifyChallenge(stream.RemoteEndPoint, a, m1);
         if (result is { SessionKey.IsEmpty: false })
         {
             if (!string.IsNullOrEmpty(session.Token) || session.Flags.HasFlag(SecurityFlag.AUTHENTICATOR))

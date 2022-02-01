@@ -2,7 +2,7 @@ using System;
 
 namespace MangosSharp.Core.Security;
 
-public interface IAuthEngine
+public interface IAuthService
 {
     AuthChallengeClient CreateChallenge(string endpoint, long id, ReadOnlyMemory<char> username, ReadOnlyMemory<byte> passwordVerifier, ReadOnlyMemory<byte> salt);
     AuthChallengeServer VerifyChallenge(string endpoint, ReadOnlySpan<byte> clientPublicKey, ReadOnlySpan<byte> clientProof);
