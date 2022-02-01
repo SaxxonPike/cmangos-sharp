@@ -1,15 +1,15 @@
 ﻿using System;
-using MangosSharp.Core.Security;
+using MangosSharp.Server.Realm.Enums;
 
-namespace MangosSharp.Server.Realm.Messaging;
+namespace MangosSharp.Server.Realm.Records;
 
-public class LoginSession
+public sealed class LoginSession
 {
     public long AccountId { get; set; }
     public string Name { get; set; }
     public int Build { get; set; }
     public SessionStatus Status { get; set; }
-    public AccountTypes Level { get; set; }
+    public AccountType Level { get; set; }
     public DateTimeOffset Created { get; set; }
     public SecurityFlag Flags { get; set; }
     public string Token { get; set; }

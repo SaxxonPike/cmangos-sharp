@@ -39,7 +39,7 @@ public class LogsAnticheat
     public virtual uint Realm { get; set; }
 
     [Column("time", TypeName="datetime")]
-    public virtual DateTimeOffset Time { get; set; }
+    public virtual DateTime Time { get; set; }
 
 }
 [Table("logs_spamdetect")]

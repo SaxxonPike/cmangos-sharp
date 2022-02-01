@@ -1,17 +1,17 @@
 using System;
 
-namespace MangosSharp.Server.Realm.Messaging;
+namespace MangosSharp.Server.Realm.Records;
 
 public sealed class RealmBuildInfo
 {
-    public RealmBuildInfo(int build, int major, int minor, int revision, char sub, ReadOnlyMemory<byte> winHash,
+    public RealmBuildInfo(int build, int major, int minor, int revision, char bugfix, ReadOnlyMemory<byte> winHash,
         ReadOnlyMemory<byte> macHash)
     {
         Build = build;
         Major = major;
         Minor = minor;
         Revision = revision;
-        Sub = sub;
+        Bugfix = bugfix;
         WindowsHash = winHash;
         MacHash = macHash;
     }
@@ -20,7 +20,7 @@ public sealed class RealmBuildInfo
     public int Revision { get; }
     public int Minor { get; }
     public int Major { get; }
-    public char Sub { get; }
+    public char Bugfix { get; }
     public ReadOnlyMemory<byte> WindowsHash { get; }
     public ReadOnlyMemory<byte> MacHash { get; }
 }

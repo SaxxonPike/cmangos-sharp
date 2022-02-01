@@ -36,8 +36,6 @@ public sealed class SocketDaemon : ISocketDaemon
 
     public Task ListenAsync(IPEndPoint endpoint, ISocketHandler handler, CancellationToken cancel)
     {
-        _logger.LogInformation("Launching socket daemon: endpoint={}", endpoint);
-        
         // ReSharper disable once LocalFunctionHidesMethod
         SocketStream GetWrapper(string socketEndPoint, Socket socket) =>
             this.GetWrapper(socketEndPoint, socket, cancel);
@@ -45,7 +43,7 @@ public sealed class SocketDaemon : ISocketDaemon
         void StartHandlerLoopAsync()
         {
             _logger.LogDebug("{} started", nameof(StartHandlerLoopAsync));
-            
+
             while (true)
             {
                 SpinWait.SpinUntil(() => cancel.IsCancellationRequested, 1);
@@ -119,14 +117,14 @@ public sealed class SocketDaemon : ISocketDaemon
                     }
                 }
             }
-            
+
             _logger.LogDebug("{} stopped", nameof(StartHandlerLoopAsync));
         }
 
         async void StartSocketLoopAsync()
         {
             _logger.LogDebug("{} started", nameof(StartSocketLoopAsync));
-            
+
             var listener = new TcpListener(endpoint);
             listener.Start();
             while (true)
@@ -175,17 +173,31 @@ public sealed class SocketDaemon : ISocketDaemon
                     handler.HandleException(new SocketEndpoints((IPEndPoint)listener.LocalEndpoint, default), e);
                 }
             }
-            
+
             _logger.LogDebug("{} stopped", nameof(StartSocketLoopAsync));
         }
 
-        var socketLoop = new Task(StartSocketLoopAsync, cancel, TaskCreationOptions.LongRunning);
-        var handlerLoop = new Task(StartHandlerLoopAsync, cancel, TaskCreationOptions.LongRunning);
 
-        socketLoop.Start();
-        handlerLoop.Start();
-        
-        return Task.WhenAll(socketLoop, handlerLoop);
+        var task = new Task<Task>(() =>
+        {
+            _logger.LogWarning("Started socket daemon: endpoint={}", endpoint);
+            var socketLoop = new Task(StartSocketLoopAsync, cancel, TaskCreationOptions.LongRunning);
+            var handlerLoop = new Task(StartHandlerLoopAsync, cancel, TaskCreationOptions.LongRunning);
+            socketLoop.Start();
+            handlerLoop.Start();
+            return Task.WhenAll(socketLoop, handlerLoop);
+        });
+
+        task.Unwrap()
+            .ContinueWith(t =>
+            {
+                _logger.LogWarning("Stopped socket daemon: endpoint={}", endpoint);
+                if (t.Exception is { } exception)
+                    _logger.LogWarning("Socket daemon reported exception: {}", exception);
+            }, TaskContinuationOptions.ExecuteSynchronously);
+
+        task.Start();
+        return task;
     }
 
     public Task SendAsync(IPEndPoint endPoint, Action<SocketStream> func, CancellationToken cancel)

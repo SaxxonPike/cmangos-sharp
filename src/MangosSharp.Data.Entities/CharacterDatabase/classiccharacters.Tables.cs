@@ -1570,7 +1570,7 @@ public class PvpstatsBattlegrounds
     public virtual byte BracketId { get; set; }
 
     [Column("date", TypeName="datetime")]
-    public virtual DateTimeOffset Date { get; set; }
+    public virtual DateTime Date { get; set; }
 
     [Column("id", TypeName="bigint")]
     public virtual ulong Id { get; set; }

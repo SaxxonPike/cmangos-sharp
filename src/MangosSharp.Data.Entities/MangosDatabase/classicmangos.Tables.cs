@@ -1110,7 +1110,7 @@ public class CreatureSpellTargeting
 [Table("creature_template")]
 public class CreatureTemplate
 {
-    [Column("AIName", TypeName="char")]
+    [Column("AIName")]
     [MaxLength(64)]
     public virtual string AIName { get; set; }
 
@@ -1253,7 +1253,7 @@ public class CreatureTemplate
     [Column("MovementType", TypeName="tinyint")]
     public virtual byte MovementType { get; set; }
 
-    [Column("Name", TypeName="char")]
+    [Column("Name")]
     [MaxLength(100)]
     public virtual string Name { get; set; }
 
@@ -1312,7 +1312,7 @@ public class CreatureTemplate
     [Column("SchoolImmuneMask", TypeName="int")]
     public virtual uint SchoolImmuneMask { get; set; }
 
-    [Column("ScriptName", TypeName="char")]
+    [Column("ScriptName")]
     [MaxLength(64)]
     public virtual string ScriptName { get; set; }
 
@@ -1329,7 +1329,7 @@ public class CreatureTemplate
     [Column("SpellList", TypeName="int")]
     public virtual int SpellList { get; set; }
 
-    [Column("SubName", TypeName="char")]
+    [Column("SubName")]
     [MaxLength(100)]
     public virtual string SubName { get; set; }
 
@@ -1397,7 +1397,7 @@ public class CreatureTemplateAddon
 [Table("creature_template_armor")]
 public class CreatureTemplateArmor
 {
-    [Column("AIName", TypeName="char")]
+    [Column("AIName")]
     [MaxLength(64)]
     public virtual string AIName { get; set; }
 
@@ -1527,7 +1527,7 @@ public class CreatureTemplateArmor
     [Column("MovementType", TypeName="tinyint")]
     public virtual byte MovementType { get; set; }
 
-    [Column("Name", TypeName="char")]
+    [Column("Name")]
     [MaxLength(100)]
     public virtual string Name { get; set; }
 
@@ -1582,7 +1582,7 @@ public class CreatureTemplateArmor
     [Column("SchoolImmuneMask", TypeName="int")]
     public virtual uint SchoolImmuneMask { get; set; }
 
-    [Column("ScriptName", TypeName="char")]
+    [Column("ScriptName")]
     [MaxLength(64)]
     public virtual string ScriptName { get; set; }
 
@@ -1595,7 +1595,7 @@ public class CreatureTemplateArmor
     [Column("SpeedWalk", TypeName="float")]
     public virtual float SpeedWalk { get; set; }
 
-    [Column("SubName", TypeName="char")]
+    [Column("SubName")]
     [MaxLength(100)]
     public virtual string SubName { get; set; }
 
@@ -2689,7 +2689,7 @@ public class GameEventTime
 {
     /* Absolute end date, the event will never start after */
     [Column("end_time", TypeName="datetime")]
-    public virtual DateTimeOffset EndTime { get; set; }
+    public virtual DateTime EndTime { get; set; }
 
     /* Entry of the game event */
     [Column("entry", TypeName="mediumint")]
@@ -2697,7 +2697,7 @@ public class GameEventTime
 
     /* Absolute start date, the event will never start before */
     [Column("start_time", TypeName="datetime")]
-    public virtual DateTimeOffset StartTime { get; set; }
+    public virtual DateTime StartTime { get; set; }
 
 }
 [Table("game_graveyard_zone")]
@@ -6635,7 +6635,7 @@ public class ScriptedAreatrigger
     [Column("entry", TypeName="mediumint")]
     public virtual int Entry { get; set; }
 
-    [Column("ScriptName", TypeName="char")]
+    [Column("ScriptName")]
     [MaxLength(64)]
     public virtual string ScriptName { get; set; }
 
@@ -6646,7 +6646,7 @@ public class ScriptedEventId
     [Column("id", TypeName="mediumint")]
     public virtual int Id { get; set; }
 
-    [Column("ScriptName", TypeName="char")]
+    [Column("ScriptName")]
     [MaxLength(64)]
     public virtual string ScriptName { get; set; }
 
@@ -7102,7 +7102,7 @@ public class SpellScripts
     public virtual int Id { get; set; }
 
     /* Core Spell Script Name */
-    [Column("ScriptName", TypeName="char")]
+    [Column("ScriptName")]
     [MaxLength(64)]
     public virtual string ScriptName { get; set; }
 

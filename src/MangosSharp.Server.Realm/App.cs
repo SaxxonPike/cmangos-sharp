@@ -1,5 +1,6 @@
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 using MangosSharp.Core.Infrastructure;
 using MangosSharp.Server.Core.Sockets;
 using Microsoft.Extensions.Configuration;
@@ -27,13 +28,15 @@ public class App
     
     public void Run(string[] args)
     {
+        _logger.LogInformation("Realm server args ({}) {}", args.Length, string.Join(" ", args));
+        
         var worldEndpoint = new IPEndPoint(
             IPAddress.Parse(_configuration["BindIP"]),
             int.Parse(_configuration["RealmServerPort"]));
 
         var cancel = new CancellationTokenSource();
-        _socketDaemon.ListenAsync(worldEndpoint, _socketHandler, cancel.Token);
-        while (!cancel.IsCancellationRequested)
+        var listen = _socketDaemon.ListenAsync(worldEndpoint, _socketHandler, cancel.Token);
+        while (!cancel.IsCancellationRequested && !listen.IsCompleted)
         {
             _consoleProvider.In.ReadLine();
             cancel.Cancel();

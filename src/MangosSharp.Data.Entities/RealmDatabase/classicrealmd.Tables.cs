@@ -37,7 +37,7 @@ public class Account
     [Column("joindate", TypeName="timestamp")]
     public virtual DateTimeOffset Joindate { get; set; }
 
-    [Column("last_module", TypeName="char")]
+    [Column("last_module")]
     [MaxLength(32)]
     public virtual string LastModule { get; set; }
 
@@ -88,7 +88,7 @@ public class AccountBanned
     public virtual int AccountId { get; set; }
 
     [Column("active", TypeName="tinyint")]
-    public virtual sbyte Active { get; set; }
+    public virtual byte Active { get; set; }
 
     [Column("banned_at", TypeName="bigint")]
     public virtual long BannedAt { get; set; }
@@ -282,7 +282,7 @@ public class SystemFingerprintUsage
     public virtual uint Realm { get; set; }
 
     [Column("time", TypeName="datetime")]
-    public virtual DateTimeOffset Time { get; set; }
+    public virtual DateTime Time { get; set; }
 
     [Column("totalcpus", TypeName="int")]
     public virtual uint Totalcpus { get; set; }

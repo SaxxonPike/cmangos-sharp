@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using MangosSharp.Server.Core.Messages;
 using MangosSharp.Server.Core.Sockets;
 using MangosSharp.Server.Realm.Messaging;
+using MangosSharp.Server.Realm.Services;
 
 namespace MangosSharp.Server.Realm;
 
@@ -13,5 +14,6 @@ public static class MangosServerRealmTypes
         yield return (typeof(App), typeof(App));
         yield return (typeof(ISocketHandler), typeof(RealmSocketHandler));
         yield return (typeof(IPacketHandler), typeof(RealmPacketHandler));
+        yield return (typeof(IRealmListService), typeof(RealmListService));
     }
 }

@@ -1,12 +1,8 @@
-using System;
-using System.Linq;
 using System.Net;
 using System.Threading;
 using MangosSharp.Core.Infrastructure;
-using MangosSharp.Data.Context;
 using MangosSharp.Server.Core.Services;
 using MangosSharp.Server.Core.Sockets;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace MangosSharp.Server.World;

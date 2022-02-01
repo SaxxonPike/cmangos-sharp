@@ -152,7 +152,7 @@ public sealed class App
                         "float" => "float",
                         "double" => "double",
                         "char" => "string",
-                        "datetime" => "DateTimeOffset",
+                        "datetime" => "DateTime",
                         _ => throw new Exception($"Unsupported type {column.DataType}")
                     };
 
@@ -180,6 +180,7 @@ public sealed class App
                     {
                         case "":
                         case "varchar":
+                        case "char":
                             break;
                         default:
                             schemaWriter.Write($", TypeName=\"{column.DataType}\"");

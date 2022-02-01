@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using MangosSharp.Core;
+﻿using MangosSharp.Core;
 using MangosSharp.Server.Core;
 using Microsoft.Extensions.DependencyInjection;
 

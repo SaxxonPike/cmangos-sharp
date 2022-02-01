@@ -1,6 +1,6 @@
-﻿namespace MangosSharp.Server.Realm.Messaging;
+﻿namespace MangosSharp.Server.Realm.Enums;
 
-public enum AccountTypes
+public enum AccountType
 {
     PLAYER = 0,
     MODERATOR = 1,
