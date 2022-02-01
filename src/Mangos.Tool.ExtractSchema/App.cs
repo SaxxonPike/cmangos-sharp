@@ -216,6 +216,8 @@ public sealed class App
             contextWriter.WriteLine("using System.ComponentModel.DataAnnotations;");
             contextWriter.WriteLine("using System.ComponentModel.DataAnnotations.Schema;");
             contextWriter.WriteLine();
+            contextWriter.WriteLine("// ReSharper disable All");
+            contextWriter.WriteLine();
             contextWriter.WriteLine("namespace Mangos.Data.Context;");
             contextWriter.WriteLine();
             contextWriter.WriteLine($"public class {fancySchemaName}DbContext : DbContext");
