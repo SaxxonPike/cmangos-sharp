@@ -3,27 +3,27 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mangos.Core", "Mangos.Core\Mangos.Core.csproj", "{0B1A5E3C-AD69-4F36-9EEC-0F7F4C4ACAB6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangosSharp.Core", "MangosSharp.Core\MangosSharp.Core.csproj", "{0B1A5E3C-AD69-4F36-9EEC-0F7F4C4ACAB6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mangos.Data", "Mangos.Data\Mangos.Data.csproj", "{10DB1A76-0B62-4731-AD57-39F30B805E02}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangosSharp.Data", "MangosSharp.Data\MangosSharp.Data.csproj", "{10DB1A76-0B62-4731-AD57-39F30B805E02}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mangos.Data.Context", "Mangos.Data.Context\Mangos.Data.Context.csproj", "{E9030C13-800A-420D-AB7C-7421F9B8CB10}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangosSharp.Data.Context", "MangosSharp.Data.Context\MangosSharp.Data.Context.csproj", "{E9030C13-800A-420D-AB7C-7421F9B8CB10}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mangos.Data.Entities", "Mangos.Data.Entities\Mangos.Data.Entities.csproj", "{0995A0FE-6EA9-43AC-AEA7-A683D8300CDE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangosSharp.Data.Entities", "MangosSharp.Data.Entities\MangosSharp.Data.Entities.csproj", "{0995A0FE-6EA9-43AC-AEA7-A683D8300CDE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mangos.Entities", "Mangos.Entities\Mangos.Entities.csproj", "{29689326-3553-49CC-BC3A-3896C1D40E7A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangosSharp.Entities", "MangosSharp.Entities\MangosSharp.Entities.csproj", "{29689326-3553-49CC-BC3A-3896C1D40E7A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mangos.Server.Instance", "Mangos.Server.Instance\Mangos.Server.Instance.csproj", "{ADFE0885-6E56-44B0-999A-D34B82A1717A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangosSharp.Server.Instance", "MangosSharp.Server.Instance\MangosSharp.Server.Instance.csproj", "{ADFE0885-6E56-44B0-999A-D34B82A1717A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mangos.Server.Realm", "Mangos.Server.Realm\Mangos.Server.Realm.csproj", "{AA619CAD-7DB8-47FB-AD35-E9BF303C3ED7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangosSharp.Server.Realm", "MangosSharp.Server.Realm\MangosSharp.Server.Realm.csproj", "{AA619CAD-7DB8-47FB-AD35-E9BF303C3ED7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mangos.Server.World", "Mangos.Server.World\Mangos.Server.World.csproj", "{37D05174-173C-468F-A128-637FD94852CF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangosSharp.Server.World", "MangosSharp.Server.World\MangosSharp.Server.World.csproj", "{37D05174-173C-468F-A128-637FD94852CF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mangos.Server.Core", "Mangos.Server.Core\Mangos.Server.Core.csproj", "{477A14C4-51C9-4890-86F6-913B2D4DAA88}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangosSharp.Server.Core", "MangosSharp.Server.Core\MangosSharp.Server.Core.csproj", "{477A14C4-51C9-4890-86F6-913B2D4DAA88}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mangos.Tool.ExtractDbc", "Mangos.Tool.ExtractDbc\Mangos.Tool.ExtractDbc.csproj", "{DA7C777D-D5AD-46C0-AA84-33C7F5EB1510}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangosSharp.Tool.ExtractDbc", "MangosSharp.Tool.ExtractDbc\MangosSharp.Tool.ExtractDbc.csproj", "{DA7C777D-D5AD-46C0-AA84-33C7F5EB1510}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mangos.Tool.ExtractSchema", "Mangos.Tool.ExtractSchema\Mangos.Tool.ExtractSchema.csproj", "{5555284A-5B33-4E5D-82EC-997762CD5618}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangosSharp.Tool.ExtractSchema", "MangosSharp.Tool.ExtractSchema\MangosSharp.Tool.ExtractSchema.csproj", "{5555284A-5B33-4E5D-82EC-997762CD5618}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{43AA50C6-E1DE-43B9-8F91-BC5EF2106C70}"
 	ProjectSection(SolutionItems) = preProject
