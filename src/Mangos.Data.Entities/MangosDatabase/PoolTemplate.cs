@@ -6,6 +6,10 @@ namespace Mangos.Data.Entities.MangosDatabase;
 [Table("pool_template")]
 public class PoolTemplate
 {
+    [Column("description")]
+    [MaxLength(255)]
+    public virtual string Description { get; set; }
+
     /* Pool entry */
     [Column("entry", TypeName="mediumint")]
     public virtual uint Entry { get; set; }
@@ -13,9 +17,5 @@ public class PoolTemplate
     /* Max number of objects (0) is no limit */
     [Column("max_limit", TypeName="int")]
     public virtual uint MaxLimit { get; set; }
-
-    [Column("description")]
-    [MaxLength(255)]
-    public virtual string Description { get; set; }
 
 }

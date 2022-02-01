@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 
@@ -11,12 +10,10 @@ namespace Mangos.Tool.ExtractSchema;
 
 public sealed class App
 {
-    private readonly IConfiguration _configuration;
     private readonly ILogger _logger;
 
-    public App(IConfiguration configuration, ILogger logger)
+    public App(ILogger logger)
     {
-        _configuration = configuration;
         _logger = logger;
     }
 
@@ -58,6 +55,9 @@ public sealed class App
             .GroupBy(ci => ci.TableSchema)
             .ToDictionary(g => g.Key, g => g.ToList());
 
+        string GetFancyName(string a) =>
+            string.Join("", a.Split('_').Select(s => $"{s[..1].ToUpper()}{s[1..]}"));
+                
         foreach (var (schemaName, schemaInfos) in schemas)
         {
             using var output = File.Open($"{schemaName}.cs", FileMode.Create, FileAccess.Write);
@@ -67,7 +67,14 @@ public sealed class App
             writer.WriteLine("using System.ComponentModel.DataAnnotations;");
             writer.WriteLine("using System.ComponentModel.DataAnnotations.Schema;");
             writer.WriteLine();
-            writer.WriteLine("namespace Mangos.Entities;");
+            writer.WriteLine("// ReSharper disable StringLiteralTypo");
+            writer.WriteLine("// ReSharper disable InconsistentNaming");
+            writer.WriteLine("// ReSharper disable IdentifierTypo");
+            writer.WriteLine("// ReSharper disable UnusedType.Global");
+            writer.WriteLine("// ReSharper disable UnusedMember.Global");
+            writer.WriteLine("// ReSharper disable CommentTypo");
+            writer.WriteLine();
+            writer.WriteLine("namespace Mangos.Data.Entities;");
             writer.WriteLine();
             
             var tables = schemaInfos
@@ -78,8 +85,14 @@ public sealed class App
 
             foreach (var (tableName, tableInfos) in tables)
             {
+                if (tableName.Equals("db_version", StringComparison.InvariantCultureIgnoreCase) ||
+                    tableName.EndsWith("_db_version", StringComparison.InvariantCultureIgnoreCase))
+                    continue;
+
+                var fancyTableName = GetFancyName(tableName);
+                
                 writer.WriteLine($"[Table(\"{tableName}\")]");
-                writer.WriteLine($"public class {tableName}");
+                writer.WriteLine($"public class {fancyTableName}");
                 writer.WriteLine('{');
 
                 var forceKey = !tableInfos
@@ -94,8 +107,8 @@ public sealed class App
 
                     var type = column.DataType switch
                     {
-                        "tinyint" => unsigned ? "uint" : "int",
-                        "smallint" => unsigned ? "uint" : "int",
+                        "tinyint" => unsigned ? "byte" : "sbyte",
+                        "smallint" => unsigned ? "ushort" : "short",
                         "mediumint" => unsigned ? "uint" : "int",
                         "int" => unsigned ? "uint" : "int",
                         "bigint" => unsigned ? "ulong" : "long",
@@ -104,7 +117,7 @@ public sealed class App
                         "text" => "string",
                         "tinytext" => "string",
                         "timestamp" => "DateTimeOffset",
-                        "bit" => "boolean",
+                        "bit" => "bool",
                         "float" => "float",
                         "double" => "double",
                         "char" => "string",
@@ -116,8 +129,12 @@ public sealed class App
                     {
                         "class" => "Class",
                         "event" => "Event",
+                        "checked" => "Checked",
+                        "unchecked" => "Unchecked",
                         _ => column.ColumnName
                     };
+                    
+                    var fancyColumnName = GetFancyName(name);
                     
                     if (!string.IsNullOrEmpty(column.ColumnComment))
                         writer.WriteLine($"    /* {column.ColumnComment} */");
@@ -127,10 +144,20 @@ public sealed class App
                             pkeys[tableName] = new List<string>();
                         pkeys[tableName].Add(name);
                     }
-                    writer.WriteLine($"    [Column(\"{column.ColumnName}\", TypeName=\"{column.DataType}\")]");
+                    writer.Write($"    [Column(\"{name}\"");
+                    switch (column.DataType)
+                    {
+                        case "":
+                        case "varchar":
+                            break;
+                        default:
+                            writer.Write($", TypeName=\"{column.DataType}\"");
+                            break;
+                    }
+                    writer.WriteLine(")]");
                     if (column.CharacterMaximumLength is > 0 and < int.MaxValue)
                         writer.WriteLine($"    [MaxLength({column.CharacterMaximumLength})]");
-                    writer.Write($"    public virtual {type} {name} ");
+                    writer.Write($"    public virtual {type} {fancyColumnName} ");
                     writer.Write('{');
                     writer.Write(" get; set; ");
                     writer.Write('}');
@@ -143,18 +170,23 @@ public sealed class App
                 
                 writer.WriteLine('}');
             }
-            
-            writer.WriteLine($"public class {schemaName}_DbContext : DbContext");
+
+            var fancySchemaName = GetFancyName(schemaName);
+            writer.WriteLine($"public class {fancySchemaName}DbContext : DbContext");
             writer.WriteLine('{');
-            writer.WriteLine($"    public {schemaName}_DbContext() {{}}");
-            writer.WriteLine($"    public {schemaName}_DbContext(DbContextOptions options) : base(options) {{}}");
+            writer.WriteLine($"    public {fancySchemaName}DbContext() {{}}");
+            writer.WriteLine($"    public {fancySchemaName}DbContext(DbContextOptions options) : base(options) {{}}");
             writer.WriteLine($"    protected override void OnModelCreating(ModelBuilder builder)");
             writer.WriteLine("    {");
 
             foreach (var tableName in pkeys.Keys)
             {
-                writer.Write($"        builder.Entity<{tableName}>().HasKey(e => new {{ ");
-                writer.Write(string.Join(", ", pkeys[tableName].Select(pk => $"e.{pk}")));
+                if (tableName.Equals("db_version", StringComparison.InvariantCultureIgnoreCase) ||
+                    tableName.EndsWith("_db_version", StringComparison.InvariantCultureIgnoreCase))
+                    continue;
+                var fancyTableName = GetFancyName(tableName);
+                writer.Write($"        builder.Entity<{fancyTableName}>().HasKey(e => new {{ ");
+                writer.Write(string.Join(", ", pkeys[tableName].Select(pk => $"e.{GetFancyName(pk)}")));
                 writer.WriteLine($" }});");
             }
             
@@ -163,7 +195,11 @@ public sealed class App
 
             foreach (var (tableName, _) in tables)
             {
-                writer.WriteLine($"    public DbSet<{tableName}> {tableName}s {{ get; set; }}");
+                if (tableName.Equals("db_version", StringComparison.InvariantCultureIgnoreCase) ||
+                    tableName.EndsWith("_db_version", StringComparison.InvariantCultureIgnoreCase))
+                    continue;
+                var fancyTableName = GetFancyName(tableName);
+                writer.WriteLine($"    public virtual DbSet<{fancyTableName}> {fancyTableName}s {{ get; set; }}");
             }
 
             writer.WriteLine('}');

@@ -11,6 +11,6 @@ public class SpellFacing
 
     /* flag for facing state, usually 1 */
     [Column("facingcasterflag", TypeName="tinyint")]
-    public virtual int Facingcasterflag { get; set; }
+    public virtual sbyte Facingcasterflag { get; set; }
 
 }

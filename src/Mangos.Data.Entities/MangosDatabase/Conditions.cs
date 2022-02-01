@@ -6,13 +6,20 @@ namespace Mangos.Data.Entities.MangosDatabase;
 [Table("conditions")]
 public class Conditions
 {
+    [Column("comments")]
+    [MaxLength(500)]
+    public virtual string Comments { get; set; }
+
     /* Identifier */
     [Column("condition_entry", TypeName="mediumint")]
     public virtual uint ConditionEntry { get; set; }
 
+    [Column("flags", TypeName="tinyint")]
+    public virtual byte Flags { get; set; }
+
     /* Type of the condition */
     [Column("type", TypeName="tinyint")]
-    public virtual int Type { get; set; }
+    public virtual sbyte Type { get; set; }
 
     /* data field one for the condition */
     [Column("value1", TypeName="mediumint")]
@@ -29,12 +36,5 @@ public class Conditions
     /* data field four for the condition */
     [Column("value4", TypeName="mediumint")]
     public virtual uint Value4 { get; set; }
-
-    [Column("flags", TypeName="tinyint")]
-    public virtual byte Flags { get; set; }
-
-    [Column("comments")]
-    [MaxLength(500)]
-    public virtual string Comments { get; set; }
 
 }

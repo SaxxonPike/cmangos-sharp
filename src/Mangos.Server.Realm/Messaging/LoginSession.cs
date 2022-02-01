@@ -1,6 +1,5 @@
 ﻿using System;
 using Mangos.Core.Security;
-using Org.BouncyCastle.Math;
 
 namespace Mangos.Server.Realm.Messaging;
 
@@ -17,7 +16,4 @@ public class LoginSession
     public string Locale { get; set; }
     public string Os { get; set; }
     public string Platform { get; set; }
-    public string Country { get; set; }
-    public Srp6 Srp { get; set; }
-    public BigInteger ReconnectProof { get; set; }
 }

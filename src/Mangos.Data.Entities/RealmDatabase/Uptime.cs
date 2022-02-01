@@ -6,20 +6,20 @@ namespace Mangos.Data.Entities.RealmDatabase;
 [Table("uptime")]
 public class Uptime
 {
+    [Column("maxplayers", TypeName="smallint")]
+    public virtual ushort Maxplayers { get; set; }
+
     [Column("realmid", TypeName="int")]
     public virtual uint Realmid { get; set; }
-
-    [Column("starttime", TypeName="bigint")]
-    public virtual ulong Starttime { get; set; }
 
     [Column("startstring")]
     [MaxLength(64)]
     public virtual string Startstring { get; set; }
 
-    [Column("uptime", TypeName="bigint")]
-    public virtual ulong Time { get; set; }
+    [Column("starttime", TypeName="bigint")]
+    public virtual ulong Starttime { get; set; }
 
-    [Column("maxplayers", TypeName="smallint")]
-    public virtual uint Maxplayers { get; set; }
+    [Column("uptime", TypeName="bigint")]
+    public virtual ulong UpTime { get; set; }
 
 }

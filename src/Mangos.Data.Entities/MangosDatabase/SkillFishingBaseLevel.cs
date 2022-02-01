@@ -11,6 +11,6 @@ public class SkillFishingBaseLevel
 
     /* Base skill level requirement */
     [Column("skill", TypeName="smallint")]
-    public virtual int Skill { get; set; }
+    public virtual short Skill { get; set; }
 
 }

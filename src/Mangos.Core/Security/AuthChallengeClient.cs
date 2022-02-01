@@ -10,7 +10,7 @@ public sealed class AuthChallengeClient
     public ReadOnlyMemory<byte> Generator { get; set; }
     public ReadOnlyMemory<byte> LargeSafePrime { get; set; }
     public ReadOnlyMemory<byte> Salt { get; set; }
-    public string Username { get; set; }
+    public ReadOnlyMemory<char> Username { get; set; }
     public ReadOnlyMemory<byte> PasswordVerifier { get; set; }
     public long AccountId { get; set; }
 }

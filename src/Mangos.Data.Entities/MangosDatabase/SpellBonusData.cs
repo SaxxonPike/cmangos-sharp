@@ -6,15 +6,6 @@ namespace Mangos.Data.Entities.MangosDatabase;
 [Table("spell_bonus_data")]
 public class SpellBonusData
 {
-    [Column("entry", TypeName="smallint")]
-    public virtual uint Entry { get; set; }
-
-    [Column("direct_bonus", TypeName="float")]
-    public virtual float DirectBonus { get; set; }
-
-    [Column("dot_bonus", TypeName="float")]
-    public virtual float DotBonus { get; set; }
-
     [Column("ap_bonus", TypeName="float")]
     public virtual float ApBonus { get; set; }
 
@@ -24,5 +15,14 @@ public class SpellBonusData
     [Column("comments")]
     [MaxLength(255)]
     public virtual string Comments { get; set; }
+
+    [Column("direct_bonus", TypeName="float")]
+    public virtual float DirectBonus { get; set; }
+
+    [Column("dot_bonus", TypeName="float")]
+    public virtual float DotBonus { get; set; }
+
+    [Column("entry", TypeName="smallint")]
+    public virtual ushort Entry { get; set; }
 
 }

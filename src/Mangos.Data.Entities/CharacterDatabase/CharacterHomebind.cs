@@ -13,10 +13,6 @@ public class CharacterHomebind
     [Column("map", TypeName="int")]
     public virtual uint Map { get; set; }
 
-    /* Zone Identifier */
-    [Column("zone", TypeName="int")]
-    public virtual uint Zone { get; set; }
-
     [Column("position_x", TypeName="float")]
     public virtual float PositionX { get; set; }
 
@@ -25,5 +21,9 @@ public class CharacterHomebind
 
     [Column("position_z", TypeName="float")]
     public virtual float PositionZ { get; set; }
+
+    /* Zone Identifier */
+    [Column("zone", TypeName="int")]
+    public virtual uint Zone { get; set; }
 
 }

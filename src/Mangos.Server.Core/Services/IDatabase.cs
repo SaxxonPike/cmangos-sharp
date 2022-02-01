@@ -5,14 +5,14 @@ namespace Mangos.Server.Core.Services;
 
 public interface IDatabase
 {
-    void UseLogin(Action<RealmDbContext> context);
-    T UseLogin<T>(Func<RealmDbContext, T> context);
-    void UseWorld(Action<MangosDbContext> context);
-    T UseWorld<T>(Func<MangosDbContext, T> context);
-    void UseCharacter(Action<CharacterDbContext> context);
-    T UseCharacter<T>(Func<CharacterDbContext, T> context);
-    void UseLogs(Action<LogsDbContext> context);
-    T UseLogs<T>(Func<LogsDbContext, T> context);
+    void UseLogin(Action<ClassicrealmdDbContext> context);
+    T UseLogin<T>(Func<ClassicrealmdDbContext, T> context);
+    void UseWorld(Action<ClassicmangosDbContext> context);
+    T UseWorld<T>(Func<ClassicmangosDbContext, T> context);
+    void UseCharacter(Action<ClassiccharactersDbContext> context);
+    T UseCharacter<T>(Func<ClassiccharactersDbContext, T> context);
+    void UseLogs(Action<ClassiclogsDbContext> context);
+    T UseLogs<T>(Func<ClassiclogsDbContext, T> context);
     void UseClient(Action<ClientDbContext> context);
     T UseClient<T>(Func<ClientDbContext, T> context);
 }

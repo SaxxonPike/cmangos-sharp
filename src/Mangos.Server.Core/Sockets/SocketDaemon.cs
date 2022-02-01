@@ -155,7 +155,7 @@ public sealed class SocketDaemon : ISocketDaemon
                     IncrementLock(socketEndPoint);
                     ThreadPool.QueueUserWorkItem(s =>
                     {
-                        var wrapper = GetWrapper(socketEndPoint, socket0);
+                        var wrapper = GetWrapper(socketEndPoint, s);
                         try
                         {
                             handler.HandleConnect(wrapper);
@@ -168,7 +168,7 @@ public sealed class SocketDaemon : ISocketDaemon
                         {
                             DecrementLock(socketEndPoint);
                         }
-                    }, socket, false);
+                    }, socket0, false);
                 }
                 catch (Exception e)
                 {

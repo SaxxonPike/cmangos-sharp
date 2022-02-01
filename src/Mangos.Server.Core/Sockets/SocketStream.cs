@@ -25,8 +25,8 @@ public sealed class SocketStream : Stream, ISocketEndpoints
     }
     
     public int Available => _socket?.Connected ?? false ? _socket.Available : 0;
-    public string LocalEndPoint => _socket?.LocalEndPoint?.ToString();
-    public string RemoteEndPoint => _socket?.RemoteEndPoint?.ToString();
+    public string LocalEndPoint => _socket.Connected ? _socket?.LocalEndPoint?.ToString() : default;
+    public string RemoteEndPoint => _socket.Connected ? _socket?.RemoteEndPoint?.ToString() : default;
 
     public void Disconnect() => _socket?.Close();
 
@@ -38,6 +38,8 @@ public sealed class SocketStream : Stream, ISocketEndpoints
         lock (_outputBuffer)
         {
             _socket.Send(_outputBuffer.AsSpan());
+            _outputBuffer.Position = 0;
+            _outputBuffer.SetLength(0);
         }
     }
 

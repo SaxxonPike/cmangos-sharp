@@ -5,8 +5,14 @@ namespace Mangos.Data.Entities.MangosDatabase;
 [Table("game_weather")]
 public class GameWeather
 {
-    [Column("zone", TypeName="mediumint")]
-    public virtual uint Zone { get; set; }
+    [Column("fall_rain_chance", TypeName="tinyint")]
+    public virtual byte FallRainChance { get; set; }
+
+    [Column("fall_snow_chance", TypeName="tinyint")]
+    public virtual byte FallSnowChance { get; set; }
+
+    [Column("fall_storm_chance", TypeName="tinyint")]
+    public virtual byte FallStormChance { get; set; }
 
     [Column("spring_rain_chance", TypeName="tinyint")]
     public virtual byte SpringRainChance { get; set; }
@@ -26,15 +32,6 @@ public class GameWeather
     [Column("summer_storm_chance", TypeName="tinyint")]
     public virtual byte SummerStormChance { get; set; }
 
-    [Column("fall_rain_chance", TypeName="tinyint")]
-    public virtual byte FallRainChance { get; set; }
-
-    [Column("fall_snow_chance", TypeName="tinyint")]
-    public virtual byte FallSnowChance { get; set; }
-
-    [Column("fall_storm_chance", TypeName="tinyint")]
-    public virtual byte FallStormChance { get; set; }
-
     [Column("winter_rain_chance", TypeName="tinyint")]
     public virtual byte WinterRainChance { get; set; }
 
@@ -43,5 +40,8 @@ public class GameWeather
 
     [Column("winter_storm_chance", TypeName="tinyint")]
     public virtual byte WinterStormChance { get; set; }
+
+    [Column("zone", TypeName="mediumint")]
+    public virtual uint Zone { get; set; }
 
 }

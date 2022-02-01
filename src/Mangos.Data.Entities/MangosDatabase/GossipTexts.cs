@@ -6,8 +6,9 @@ namespace Mangos.Data.Entities.MangosDatabase;
 [Table("gossip_texts")]
 public class GossipTexts
 {
-    [Column("entry", TypeName="mediumint")]
-    public virtual int Entry { get; set; }
+    [Column("comment", TypeName="text")]
+    [MaxLength(65535)]
+    public virtual string Comment { get; set; }
 
     [Column("content_default", TypeName="text")]
     [MaxLength(65535)]
@@ -45,8 +46,7 @@ public class GossipTexts
     [MaxLength(65535)]
     public virtual string ContentLoc8 { get; set; }
 
-    [Column("comment", TypeName="text")]
-    [MaxLength(65535)]
-    public virtual string Comment { get; set; }
+    [Column("entry", TypeName="mediumint")]
+    public virtual int Entry { get; set; }
 
 }

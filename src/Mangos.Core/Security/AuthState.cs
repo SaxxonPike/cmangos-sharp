@@ -12,5 +12,5 @@ public sealed class AuthState
     public int DecryptionKeyIndex { get; set; }
     public byte LastDecryptedValue { get; set; }
     public bool Encrypted { get; set; }
-    public string Username { get; set; }
+    public ReadOnlyMemory<char> Username { get; set; }
 }

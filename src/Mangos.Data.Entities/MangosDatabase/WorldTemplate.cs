@@ -7,7 +7,7 @@ namespace Mangos.Data.Entities.MangosDatabase;
 public class WorldTemplate
 {
     [Column("map", TypeName="smallint")]
-    public virtual uint Map { get; set; }
+    public virtual ushort Map { get; set; }
 
     [Column("ScriptName")]
     [MaxLength(128)]

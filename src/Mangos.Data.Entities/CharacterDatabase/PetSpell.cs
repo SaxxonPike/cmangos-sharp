@@ -5,6 +5,9 @@ namespace Mangos.Data.Entities.CharacterDatabase;
 [Table("pet_spell")]
 public class PetSpell
 {
+    [Column("active", TypeName="int")]
+    public virtual uint Active { get; set; }
+
     /* Global Unique Identifier */
     [Column("guid", TypeName="int")]
     public virtual uint Guid { get; set; }
@@ -12,8 +15,5 @@ public class PetSpell
     /* Spell Identifier */
     [Column("spell", TypeName="int")]
     public virtual uint Spell { get; set; }
-
-    [Column("active", TypeName="int")]
-    public virtual uint Active { get; set; }
 
 }

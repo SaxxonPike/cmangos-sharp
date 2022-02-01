@@ -6,8 +6,9 @@ namespace Mangos.Data.Entities.MangosDatabase;
 [Table("battleground_events")]
 public class BattlegroundEvents
 {
-    [Column("map", TypeName="smallint")]
-    public virtual int Map { get; set; }
+    [Column("description")]
+    [MaxLength(255)]
+    public virtual string Description { get; set; }
 
     [Column("event1", TypeName="tinyint")]
     public virtual byte Event1 { get; set; }
@@ -15,8 +16,7 @@ public class BattlegroundEvents
     [Column("event2", TypeName="tinyint")]
     public virtual byte Event2 { get; set; }
 
-    [Column("description")]
-    [MaxLength(255)]
-    public virtual string Description { get; set; }
+    [Column("map", TypeName="smallint")]
+    public virtual short Map { get; set; }
 
 }

@@ -6,6 +6,14 @@ namespace Mangos.Data.Entities.MangosDatabase;
 [Table("creature_spell_list_entry")]
 public class CreatureSpellListEntry
 {
+    /* Chance of ranged attack per tick */
+    [Column("ChanceRangedAttack", TypeName="int")]
+    public virtual int ChanceRangedAttack { get; set; }
+
+    /* Chance of support action per tick */
+    [Column("ChanceSupportAction", TypeName="int")]
+    public virtual int ChanceSupportAction { get; set; }
+
     /* List ID */
     [Column("Id", TypeName="int")]
     public virtual int Id { get; set; }
@@ -14,13 +22,5 @@ public class CreatureSpellListEntry
     [Column("Name")]
     [MaxLength(200)]
     public virtual string Name { get; set; }
-
-    /* Chance of support action per tick */
-    [Column("ChanceSupportAction", TypeName="int")]
-    public virtual int ChanceSupportAction { get; set; }
-
-    /* Chance of ranged attack per tick */
-    [Column("ChanceRangedAttack", TypeName="int")]
-    public virtual int ChanceRangedAttack { get; set; }
 
 }

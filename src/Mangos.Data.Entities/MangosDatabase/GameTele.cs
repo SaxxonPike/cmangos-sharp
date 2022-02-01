@@ -9,6 +9,16 @@ public class GameTele
     [Column("id", TypeName="mediumint")]
     public virtual uint Id { get; set; }
 
+    [Column("map", TypeName="smallint")]
+    public virtual ushort Map { get; set; }
+
+    [Column("name")]
+    [MaxLength(100)]
+    public virtual string Name { get; set; }
+
+    [Column("orientation", TypeName="float")]
+    public virtual float Orientation { get; set; }
+
     [Column("position_x", TypeName="float")]
     public virtual float PositionX { get; set; }
 
@@ -17,15 +27,5 @@ public class GameTele
 
     [Column("position_z", TypeName="float")]
     public virtual float PositionZ { get; set; }
-
-    [Column("orientation", TypeName="float")]
-    public virtual float Orientation { get; set; }
-
-    [Column("map", TypeName="smallint")]
-    public virtual uint Map { get; set; }
-
-    [Column("name")]
-    [MaxLength(100)]
-    public virtual string Name { get; set; }
 
 }

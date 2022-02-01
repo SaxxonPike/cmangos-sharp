@@ -15,15 +15,15 @@ public class BroadcastTextLocale
     [MaxLength(10)]
     public virtual string Locale { get; set; }
 
-    /* Male text */
-    [Column("Text_lang", TypeName="text")]
-    [MaxLength(65535)]
-    public virtual string TextLang { get; set; }
-
     /* Female text */
     [Column("Text1_lang", TypeName="text")]
     [MaxLength(65535)]
     public virtual string Text1Lang { get; set; }
+
+    /* Male text */
+    [Column("Text_lang", TypeName="text")]
+    [MaxLength(65535)]
+    public virtual string TextLang { get; set; }
 
     /* Build of bruteforce */
     [Column("VerifiedBuild", TypeName="int")]

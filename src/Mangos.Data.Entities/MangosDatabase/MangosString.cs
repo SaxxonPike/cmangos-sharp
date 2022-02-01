@@ -6,9 +6,6 @@ namespace Mangos.Data.Entities.MangosDatabase;
 [Table("mangos_string")]
 public class MangosString
 {
-    [Column("entry", TypeName="mediumint")]
-    public virtual uint Entry { get; set; }
-
     [Column("content_default", TypeName="text")]
     [MaxLength(65535)]
     public virtual string ContentDefault { get; set; }
@@ -44,5 +41,8 @@ public class MangosString
     [Column("content_loc8", TypeName="text")]
     [MaxLength(65535)]
     public virtual string ContentLoc8 { get; set; }
+
+    [Column("entry", TypeName="mediumint")]
+    public virtual uint Entry { get; set; }
 
 }

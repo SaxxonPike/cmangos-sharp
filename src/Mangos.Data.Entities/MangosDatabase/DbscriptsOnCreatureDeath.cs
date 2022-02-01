@@ -6,32 +6,18 @@ namespace Mangos.Data.Entities.MangosDatabase;
 [Table("dbscripts_on_creature_death")]
 public class DbscriptsOnCreatureDeath
 {
-    [Column("id", TypeName="mediumint")]
-    public virtual uint Id { get; set; }
-
-    [Column("delay", TypeName="int")]
-    public virtual uint Delay { get; set; }
-
-    [Column("priority", TypeName="int")]
-    public virtual uint Priority { get; set; }
+    [Column("buddy_entry", TypeName="int")]
+    public virtual uint BuddyEntry { get; set; }
 
     [Column("command", TypeName="mediumint")]
     public virtual uint Command { get; set; }
 
-    [Column("datalong", TypeName="int")]
-    public virtual uint Datalong { get; set; }
+    [Column("comments")]
+    [MaxLength(255)]
+    public virtual string Comments { get; set; }
 
-    [Column("datalong2", TypeName="int")]
-    public virtual uint Datalong2 { get; set; }
-
-    [Column("datalong3", TypeName="int")]
-    public virtual uint Datalong3 { get; set; }
-
-    [Column("buddy_entry", TypeName="int")]
-    public virtual uint BuddyEntry { get; set; }
-
-    [Column("search_radius", TypeName="int")]
-    public virtual uint SearchRadius { get; set; }
+    [Column("condition_id", TypeName="mediumint")]
+    public virtual uint ConditionId { get; set; }
 
     [Column("data_flags", TypeName="int")]
     public virtual uint DataFlags { get; set; }
@@ -48,6 +34,30 @@ public class DbscriptsOnCreatureDeath
     [Column("dataint4", TypeName="int")]
     public virtual int Dataint4 { get; set; }
 
+    [Column("datalong", TypeName="int")]
+    public virtual uint Datalong { get; set; }
+
+    [Column("datalong2", TypeName="int")]
+    public virtual uint Datalong2 { get; set; }
+
+    [Column("datalong3", TypeName="int")]
+    public virtual uint Datalong3 { get; set; }
+
+    [Column("delay", TypeName="int")]
+    public virtual uint Delay { get; set; }
+
+    [Column("id", TypeName="mediumint")]
+    public virtual uint Id { get; set; }
+
+    [Column("o", TypeName="float")]
+    public virtual float O { get; set; }
+
+    [Column("priority", TypeName="int")]
+    public virtual uint Priority { get; set; }
+
+    [Column("search_radius", TypeName="int")]
+    public virtual uint SearchRadius { get; set; }
+
     [Column("x", TypeName="float")]
     public virtual float X { get; set; }
 
@@ -56,15 +66,5 @@ public class DbscriptsOnCreatureDeath
 
     [Column("z", TypeName="float")]
     public virtual float Z { get; set; }
-
-    [Column("o", TypeName="float")]
-    public virtual float O { get; set; }
-
-    [Column("condition_id", TypeName="mediumint")]
-    public virtual uint ConditionId { get; set; }
-
-    [Column("comments")]
-    [MaxLength(255)]
-    public virtual string Comments { get; set; }
 
 }

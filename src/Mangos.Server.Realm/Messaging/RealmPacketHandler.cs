@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
@@ -11,6 +12,7 @@ using Mangos.Data.Entities.RealmDatabase;
 using Mangos.Server.Core.Messages;
 using Mangos.Server.Core.Services;
 using Mangos.Server.Core.Sockets;
+using Mangos.Server.Realm.Enums;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -21,13 +23,15 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
     private readonly ILogger _logger;
     private readonly IDatabase _database;
     private readonly IConfiguration _configuration;
+    private readonly IAuthEngine _authEngine;
     private readonly IDictionary<string, LoginSession> _sessions;
 
-    public RealmPacketHandler(ILogger logger, IDatabase database, IConfiguration configuration)
+    public RealmPacketHandler(ILogger logger, IDatabase database, IConfiguration configuration, IAuthEngine authEngine)
     {
         _logger = logger;
         _database = database;
         _configuration = configuration;
+        _authEngine = authEngine;
         _sessions = new Dictionary<string, LoginSession>();
     }
 
@@ -194,14 +198,15 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
         if (length < packetContentLength)
             return false;
 
-        var gameName = reader.ReadBytes(4).AsSpan().NullTerminated().ToUtf8String();
+        // [fox] okay, I love span<>, but using them with extension methods is fucking nuts
+        var gameName = reader.ReadBytes(4).NullTerminated().Reversed().AsSpan().ToUtf8String();
         var version1 = reader.ReadByte();
         var version2 = reader.ReadByte();
         var version3 = reader.ReadByte();
         int build = reader.ReadUInt16();
-        var platform = reader.ReadBytes(4).AsSpan().NullTerminated().ToUtf8String();
-        var os = reader.ReadBytes(4).AsSpan().NullTerminated().ToUtf8String();
-        var country = reader.ReadBytes(4).AsSpan().NullTerminated().ToUtf8String();
+        var platform = reader.ReadBytes(4).NullTerminated().Reversed().AsSpan().ToUtf8String();
+        var os = reader.ReadBytes(4).NullTerminated().Reversed().AsSpan().ToUtf8String();
+        var locale = reader.ReadBytes(4).NullTerminated().Reversed().AsSpan().ToUtf8String();
         long timeZoneBias = reader.ReadUInt32();
         var ip = new IPAddress(reader.ReadBytes(4)).ToString();
         var nameLength = reader.ReadByte();
@@ -215,7 +220,7 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
             Created = DateTimeOffset.Now,
             Platform = platform,
             Os = os,
-            Country = country
+            Locale = locale
         };
 
         _logger.LogDebug("[AuthChallenge] got full packet, {:X4} bytes", length + 5);
@@ -229,7 +234,7 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
         {
             var now = session.Created.ToUnixTimeSeconds();
 
-            var ipBan = db.IpBans
+            var ipBan = db.IpBanneds
                 .FirstOrDefault(x => (x.ExpiresAt == x.BannedAt || x.ExpiresAt > now) && x.Ip == ip);
 
             if (ipBan != default)
@@ -266,16 +271,14 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
                 _logger.LogDebug("[AuthChallenge] Account '{}' is not locked to ip", name);
             }
 
-            var srp = new Srp6();
-
-            if (!srp.SetSalt(account.S) || !srp.SetVerifier(account.V))
+            if (string.IsNullOrWhiteSpace(account.S) || string.IsNullOrWhiteSpace(account.V))
             {
                 _logger.LogDebug("[AuthChallenge] Broken v/s values in database for account {}!", name);
                 writer.Write((byte)AuthLogonResult.FAILED_INCORRECT_PASSWORD);
                 return default;
             }
 
-            var accountBan = db.AccountBans
+            var accountBan = db.AccountBanneds
                 .FirstOrDefault(x => x.AccountId == account.Id &&
                                      x.Active == 1 &&
                                      (x.ExpiresAt > now || x.ExpiresAt == x.BannedAt));
@@ -299,27 +302,27 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
                 account.V,
                 account.S);
 
-            session.Srp = srp;
-            srp.CalculateHostPublicEphemeral();
+            var accountV = Convert.FromHexString(account.V).AsSpan().Reversed();
+            var accountS = Convert.FromHexString(account.S).AsSpan().Reversed();
+            
+            var challenge = _authEngine.CreateChallenge(stream.RemoteEndPoint, account.Id, account.Username.AsMemory(),
+                accountV, accountS);
             writer.Write((byte)AuthLogonResult.SUCCESS);
 
             // B may be calculated < 32B so we force minimal length to 32B
-            writer.Write(srp.GetHostPublicEphemeral());
+            writer.Write(challenge.ServerPublicKey.Span);
             writer.Write((byte)1);
-            writer.Write(Srp6.GetGeneratorModulo());
+            writer.Write(challenge.Generator.Span);
             writer.Write((byte)32);
-            writer.Write(Srp6.GetPrime());
-            writer.Write(Convert.FromHexString(account.S));
+            writer.Write(challenge.LargeSafePrime.Span);
+            writer.Write(accountS);
             writer.Write(VersionChallenge);
 
             return account;
         });
 
         if (account == default)
-        {
-            session.Srp?.Dispose();
             return false;
-        }
 
         SecurityFlag securityFlags = 0;
         var token = account.Token;
@@ -393,18 +396,8 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
             return false;
         }
 
-        //var result = _authEngine.VerifyChallenge(stream.RemoteEndPoint, a, m1);
-        var srp = session.Srp;
-        if (!srp.CalculateSessionKey(a))
-        {
-            _logger.LogInformation("[AuthChallenge] Session calculation failed for account {}!", session.Name);
-            return false;
-        }
-        
-        srp.HashSessionKey();
-        srp.CalculateProof(session.Name);
-        
-        if (srp.Proof(m1))
+        var result = _authEngine.VerifyChallenge(stream.RemoteEndPoint, a, m1);
+        if (result is { SessionKey.IsEmpty: false })
         {
             if (!string.IsNullOrEmpty(session.Token) || session.Flags.HasFlag(SecurityFlag.AUTHENTICATOR))
             {
@@ -437,14 +430,14 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
                 if (account == default)
                     return;
 
-                account.Sessionkey = Convert.ToHexString(srp.GetStrongSessionKey());
+                account.Sessionkey = Convert.ToHexString(result.SessionKey.Reversed());
                 account.Locale = session.Locale;
                 account.FailedLogins = 0;
                 account.Os = session.Os;
 
-                db.AccountLogons.Add(new AccountLogon
+                db.AccountLogonss.Add(new AccountLogons
                 {
-                    AccountId = session.AccountId,
+                    AccountId = (uint) session.AccountId,
                     Ip = stream.RemoteEndPoint.Split(';')[0],
                     LoginTime = DateTime.Now,
                     LoginSource = (uint)LoginType.REALMD
@@ -453,6 +446,7 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
                 db.SaveChanges();
             });
 
+            SendProof(session, stream, result);
             return true;
         }
 
@@ -485,9 +479,9 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
 
                     if (wrongPassBanType)
                     {
-                        db.AccountBans.Add(new AccountBan
+                        db.AccountBanneds.Add(new AccountBanned
                         {
-                            AccountId = account.Id,
+                            AccountId = (int)account.Id,
                             BannedAt = DateTimeOffset.Now.ToUnixTimeSeconds(),
                             ExpiresAt = DateTimeOffset.Now.AddSeconds(wrongPassBanTime).ToUnixTimeSeconds(),
                             BannedBy = "MaNGOS realmd",
@@ -497,7 +491,7 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
                     }
                     else
                     {
-                        db.IpBans.Add(new IpBan
+                        db.IpBanneds.Add(new IpBanned
                         {
                             Ip = stream.RemoteEndPoint.Split(';')[0],
                             BannedAt = DateTimeOffset.Now.ToUnixTimeSeconds(),
@@ -512,6 +506,42 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
 
         DestroySession(stream);
         return false;
+    }
+
+    [SuppressMessage("ReSharper", "RedundantCaseLabel")]
+    private static void SendProof(LoginSession session, SocketStream stream, AuthChallengeServer result)
+    {
+        var writer = stream.Writer;
+        
+        switch (session.Build)
+        {
+            case 5875: // 1.12.1
+            case 6005: // 1.12.2
+            case 6141: // 1.12.3
+            {
+                writer.Write((byte) RealmOpcode.CMD_AUTH_LOGON_PROOF);
+                writer.Write((byte) 0); // error code
+                writer.Write(result.ServerProof.Span);
+                writer.Write(0); // flags
+                break;
+            }
+            case 8606: // 2.4.3
+            case 10505: // 3.2.2a
+            case 11159: // 3.3.0a
+            case 11403: // 3.3.2
+            case 11723: // 3.3.3a
+            case 12340: // 3.3.5a
+            default: // or later
+            {
+                writer.Write((byte) RealmOpcode.CMD_AUTH_LOGON_PROOF);
+                writer.Write((byte) 0); // error code
+                writer.Write(result.ServerProof.Span);
+                writer.Write((int) AccountFlags.ACCOUNT_FLAG_PROPASS);
+                writer.Write(0); // survey ID
+                writer.Write((short) 0); // unknown flags
+                break;
+            }
+        }
     }
 
     private bool VerifyVersion(LoginSession session, ReadOnlySpan<byte> a, ReadOnlySpan<byte> versionProof,
@@ -583,7 +613,15 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
 
     private bool HandleRealmList(RealmOpcode opcode, SocketStream stream, CancellationToken cancel)
     {
-        throw new System.NotImplementedException();
+        _logger.LogDebug($"Entering {nameof(HandleRealmList)}");
+        if (stream.Available < 4)
+            return false;
+
+        var session = GetSession(stream);
+        if (session.Status != SessionStatus.AUTHED)
+            return false;
+
+        return true;
     }
 
     private bool HandleXferAccept(RealmOpcode opcode, SocketStream stream, CancellationToken cancel)

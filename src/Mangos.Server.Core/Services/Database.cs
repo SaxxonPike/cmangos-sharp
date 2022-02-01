@@ -58,51 +58,51 @@ public class Database : IDatabase
         return options.Options;
     }
 
-    public void UseLogin(Action<RealmDbContext> context)
+    public void UseLogin(Action<ClassicrealmdDbContext> context)
     {
-        using var db = new RealmDbContext(_realmDbOptions);
+        using var db = new ClassicrealmdDbContext(_realmDbOptions);
         context(db);
     }
 
-    public T UseLogin<T>(Func<RealmDbContext, T> context)
+    public T UseLogin<T>(Func<ClassicrealmdDbContext, T> context)
     {
-        using var db = new RealmDbContext(_realmDbOptions);
+        using var db = new ClassicrealmdDbContext(_realmDbOptions);
         return context(db);
     }
 
-    public void UseWorld(Action<MangosDbContext> context)
+    public void UseWorld(Action<ClassicmangosDbContext> context)
     {
-        using var db = new MangosDbContext(_mangosDbOptions);
+        using var db = new ClassicmangosDbContext(_mangosDbOptions);
         context(db);
     }
 
-    public T UseWorld<T>(Func<MangosDbContext, T> context)
+    public T UseWorld<T>(Func<ClassicmangosDbContext, T> context)
     {
-        using var db = new MangosDbContext(_mangosDbOptions);
+        using var db = new ClassicmangosDbContext(_mangosDbOptions);
         return context(db);
     }
 
-    public void UseCharacter(Action<CharacterDbContext> context)
+    public void UseCharacter(Action<ClassiccharactersDbContext> context)
     {
-        using var db = new CharacterDbContext(_characterDbOptions);
+        using var db = new ClassiccharactersDbContext(_characterDbOptions);
         context(db);
     }
 
-    public T UseCharacter<T>(Func<CharacterDbContext, T> context)
+    public T UseCharacter<T>(Func<ClassiccharactersDbContext, T> context)
     {
-        using var db = new CharacterDbContext(_characterDbOptions);
+        using var db = new ClassiccharactersDbContext(_characterDbOptions);
         return context(db);
     }
 
-    public void UseLogs(Action<LogsDbContext> context)
+    public void UseLogs(Action<ClassiclogsDbContext> context)
     {
-        using var db = new LogsDbContext(_logsDbOptions);
+        using var db = new ClassiclogsDbContext(_logsDbOptions);
         context(db);
     }
     
-    public T UseLogs<T>(Func<LogsDbContext, T> context)
+    public T UseLogs<T>(Func<ClassiclogsDbContext, T> context)
     {
-        using var db = new LogsDbContext(_logsDbOptions);
+        using var db = new ClassiclogsDbContext(_logsDbOptions);
         return context(db);
     }
 

@@ -5,15 +5,12 @@ namespace Mangos.Data.Entities.CharacterDatabase;
 [Table("character_inventory")]
 public class CharacterInventory
 {
-    /* Global Unique Identifier */
-    [Column("guid", TypeName="int")]
-    public virtual uint Guid { get; set; }
-
     [Column("bag", TypeName="int")]
     public virtual uint Bag { get; set; }
 
-    [Column("slot", TypeName="tinyint")]
-    public virtual byte Slot { get; set; }
+    /* Global Unique Identifier */
+    [Column("guid", TypeName="int")]
+    public virtual uint Guid { get; set; }
 
     /* Item Global Unique Identifier */
     [Column("item", TypeName="int")]
@@ -22,5 +19,8 @@ public class CharacterInventory
     /* Item Identifier */
     [Column("item_template", TypeName="int")]
     public virtual uint ItemTemplate { get; set; }
+
+    [Column("slot", TypeName="tinyint")]
+    public virtual byte Slot { get; set; }
 
 }

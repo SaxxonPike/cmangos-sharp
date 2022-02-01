@@ -9,7 +9,7 @@ public class ScriptedEventId
     [Column("id", TypeName="mediumint")]
     public virtual int Id { get; set; }
 
-    [Column("ScriptName")]
+    [Column("ScriptName", TypeName="char")]
     [MaxLength(64)]
     public virtual string ScriptName { get; set; }
 

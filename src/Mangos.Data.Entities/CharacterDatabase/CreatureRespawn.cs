@@ -9,10 +9,10 @@ public class CreatureRespawn
     [Column("guid", TypeName="int")]
     public virtual uint Guid { get; set; }
 
-    [Column("respawntime", TypeName="bigint")]
-    public virtual ulong Respawntime { get; set; }
-
     [Column("instance", TypeName="mediumint")]
     public virtual uint Instance { get; set; }
+
+    [Column("respawntime", TypeName="bigint")]
+    public virtual ulong Respawntime { get; set; }
 
 }

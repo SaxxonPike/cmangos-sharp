@@ -5,14 +5,6 @@ namespace Mangos.Data.Entities.MangosDatabase;
 [Table("skill_extra_item_template")]
 public class SkillExtraItemTemplate
 {
-    /* SpellId of the item creation spell */
-    [Column("spellId", TypeName="mediumint")]
-    public virtual uint SpellId { get; set; }
-
-    /* Specialization spell id */
-    [Column("requiredSpecialization", TypeName="mediumint")]
-    public virtual uint RequiredSpecialization { get; set; }
-
     /* chance to create add */
     [Column("additionalCreateChance", TypeName="float")]
     public virtual float AdditionalCreateChance { get; set; }
@@ -20,5 +12,13 @@ public class SkillExtraItemTemplate
     /* max num of adds */
     [Column("additionalMaxNum", TypeName="tinyint")]
     public virtual byte AdditionalMaxNum { get; set; }
+
+    /* Specialization spell id */
+    [Column("requiredSpecialization", TypeName="mediumint")]
+    public virtual uint RequiredSpecialization { get; set; }
+
+    /* SpellId of the item creation spell */
+    [Column("spellId", TypeName="mediumint")]
+    public virtual uint SpellId { get; set; }
 
 }

@@ -10,7 +10,10 @@ public class SpellTargetPosition
     public virtual uint Id { get; set; }
 
     [Column("target_map", TypeName="smallint")]
-    public virtual uint TargetMap { get; set; }
+    public virtual ushort TargetMap { get; set; }
+
+    [Column("target_orientation", TypeName="float")]
+    public virtual float TargetOrientation { get; set; }
 
     [Column("target_position_x", TypeName="float")]
     public virtual float TargetPositionX { get; set; }
@@ -20,8 +23,5 @@ public class SpellTargetPosition
 
     [Column("target_position_z", TypeName="float")]
     public virtual float TargetPositionZ { get; set; }
-
-    [Column("target_orientation", TypeName="float")]
-    public virtual float TargetOrientation { get; set; }
 
 }

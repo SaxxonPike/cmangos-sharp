@@ -15,6 +15,9 @@ public class CreatureTemplateSpells
     [Column("spell1", TypeName="mediumint")]
     public virtual uint Spell1 { get; set; }
 
+    [Column("spell10", TypeName="mediumint")]
+    public virtual uint Spell10 { get; set; }
+
     [Column("spell2", TypeName="mediumint")]
     public virtual uint Spell2 { get; set; }
 
@@ -38,8 +41,5 @@ public class CreatureTemplateSpells
 
     [Column("spell9", TypeName="mediumint")]
     public virtual uint Spell9 { get; set; }
-
-    [Column("spell10", TypeName="mediumint")]
-    public virtual uint Spell10 { get; set; }
 
 }

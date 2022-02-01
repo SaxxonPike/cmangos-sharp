@@ -11,10 +11,10 @@ public class PetitionSign
     [Column("petitionguid", TypeName="int")]
     public virtual uint Petitionguid { get; set; }
 
-    [Column("playerguid", TypeName="int")]
-    public virtual uint Playerguid { get; set; }
-
     [Column("player_account", TypeName="int")]
     public virtual uint PlayerAccount { get; set; }
+
+    [Column("playerguid", TypeName="int")]
+    public virtual uint Playerguid { get; set; }
 
 }

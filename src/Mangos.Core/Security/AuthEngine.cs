@@ -10,8 +10,9 @@ namespace Mangos.Core.Security;
 
 public sealed class AuthEngine : IAuthEngine
 {
-    // Old WoW uses a key exchange method called SRP6.
+    // WoW uses a key exchange method called SRP6, slightly modified.
     // Reference: https://gtker.com/implementation-guide-for-the-world-of-warcraft-flavor-of-srp6/
+    // C# implementation: Saxxon Fox
 
     private readonly Dictionary<string, AuthState> _states = new();
     private readonly Dictionary<string, AuthChallengeClient> _challenges = new();
@@ -45,9 +46,9 @@ public sealed class AuthEngine : IAuthEngine
 
     private static readonly Encoding Utf8 = Encoding.UTF8;
 
-    private static byte[] XorCache { get; } = CalculateXorHashInternal();
+    private static readonly ReadOnlyMemory<byte> XorCache = CalculateXorHashInternal();
 
-    private static Memory<byte> Zip(ReadOnlySpan<byte> left, ReadOnlySpan<byte> right)
+    private static ReadOnlyMemory<byte> Zip(ReadOnlySpan<byte> left, ReadOnlySpan<byte> right)
     {
         if (left.Length != right.Length)
             throw new Exception("Arrays are not the same length.");
@@ -73,48 +74,48 @@ public sealed class AuthEngine : IAuthEngine
         }
     }
 
-    public AuthChallengeClient CreateChallenge(string ip, long id, string username,
+    public AuthChallengeClient CreateChallenge(string endpoint, long id, ReadOnlyMemory<char> username,
         ReadOnlyMemory<byte> passwordVerifier, ReadOnlyMemory<byte> salt)
     {
-        var serverPrivateKey = new byte[32];
-        Random.Shared.NextBytes(serverPrivateKey);
+        var secret = new byte[32];
+        Random.Shared.NextBytes(secret);
         
         var result = new AuthChallengeClient
         {
             AccountId = id,
             Username = username,
             PasswordVerifier = passwordVerifier,
-            ServerPublicKey = CalculateServerPublicKey(passwordVerifier.Span, serverPrivateKey),
-            ServerPrivateKey = serverPrivateKey,
+            ServerPublicKey = CalculateServerPublicKey(passwordVerifier.Span, secret),
+            ServerPrivateKey = secret,
             Salt = salt,
             Expiry = DateTimeOffset.Now + ChallengeTtl,
             Generator = Generator.ToByteArray(true),
             LargeSafePrime = LargeSafePrimeBytes.AsMemory()
         };
 
-        _challenges[ip] = result;
+        _challenges[endpoint] = result;
         return result;
     }
 
-    public AuthChallengeServer VerifyChallenge(string ip, ReadOnlySpan<byte> clientPublicKey,
+    public AuthChallengeServer VerifyChallenge(string endpoint, ReadOnlySpan<byte> clientPublicKey,
         ReadOnlySpan<byte> clientProof)
     {
-        if (!_challenges.TryGetValue(ip, out var challenge) || challenge.Expiry < DateTimeOffset.Now)
+        if (!_challenges.TryGetValue(endpoint, out var challenge) || challenge.Expiry < DateTimeOffset.Now)
             return default;
-        _challenges.Remove(ip);
+        _challenges.Remove(endpoint);
 
         // Verify the proofs.
         var sKey = CalculateServerSKey(clientPublicKey, challenge.PasswordVerifier.Span,
             CalculateU(clientPublicKey, challenge.ServerPublicKey.Span).Span, challenge.ServerPrivateKey.Span);
         var sessionKey = CalculateSessionKey(sKey.Span);
-        var expected = CalculateClientProof(XorCache, challenge.Username, sessionKey.Span, clientPublicKey,
+        var expected = CalculateClientProof(XorCache.Span, challenge.Username, sessionKey.Span, clientPublicKey,
             challenge.ServerPublicKey.Span, challenge.Salt.Span);
         if (!expected.Span.SequenceEqual(clientProof))
             return new AuthChallengeServer { Username = challenge.Username };
 
         // Success, now generate auth state with the key.
-        DeleteState(ip);
-        CreateState(ip, challenge.AccountId, challenge.Username, sessionKey);
+        DeleteState(endpoint);
+        CreateState(endpoint, challenge.AccountId, challenge.Username, sessionKey);
 
         return new AuthChallengeServer
         {
@@ -125,7 +126,7 @@ public sealed class AuthEngine : IAuthEngine
         };
     }
 
-    public AuthState CreateState(string endpoint, long id, string username, ReadOnlyMemory<byte> sessionKey)
+    public AuthState CreateState(string endpoint, long id, ReadOnlyMemory<char> username, ReadOnlyMemory<byte> sessionKey)
     {
         if (_states.TryGetValue(endpoint, out var existing))
             return existing;
@@ -182,7 +183,7 @@ public sealed class AuthEngine : IAuthEngine
     }
 
     // Calculates password verifier. This is what logins will be compared against.
-    public ReadOnlyMemory<byte> CalculatePasswordVerifier(string username, string password, ReadOnlySpan<byte> salt)
+    public ReadOnlyMemory<byte> CalculatePasswordVerifier(ReadOnlySpan<char> username, ReadOnlySpan<char> password, ReadOnlySpan<byte> salt)
     {
         Debug.Assert(salt.Length == 32);
 
@@ -192,7 +193,7 @@ public sealed class AuthEngine : IAuthEngine
         return result;
     }
 
-    public ReadOnlyMemory<byte> CalculateX(string username, string password, ReadOnlySpan<byte> salt)
+    public ReadOnlyMemory<byte> CalculateX(ReadOnlySpan<char> username, ReadOnlySpan<char> password, ReadOnlySpan<byte> salt)
     {
         Debug.Assert(salt.Length == 32);
 
@@ -219,21 +220,6 @@ public sealed class AuthEngine : IAuthEngine
         var bi = new BigInteger(serverPrivateKey, true);
         var result =
             ((K * vi + BigInteger.ModPow(Generator, bi, LargeSafePrime)) % LargeSafePrime).ToByteArray(32, true);
-        return result;
-    }
-
-    public ReadOnlyMemory<byte> CalculateClientSKey(ReadOnlySpan<byte> clientPrivateKey,
-        ReadOnlySpan<byte> serverPublicKey, ReadOnlySpan<byte> x, ReadOnlySpan<byte> u)
-    {
-        var xi = new BigInteger(x, true);
-        var bi = new BigInteger(serverPublicKey, true);
-        var ai = new BigInteger(clientPrivateKey, true);
-        var ui = new BigInteger(u, true);
-
-        // var result = (bi - K * Generator.ModPow(xi, LargeSafePrime)).ModPow(ai + ui * xi, LargeSafePrime)
-        //     .ToByteArray(true);
-        var result = ((bi - K) * Generator.ModPow(xi, LargeSafePrime).ModPow(ai + ui * xi, LargeSafePrime))
-            .ToByteArray(32, true);
         return result;
     }
 
@@ -290,11 +276,11 @@ public sealed class AuthEngine : IAuthEngine
     }
 
     // aka: M1
-    public ReadOnlyMemory<byte> CalculateClientProof(ReadOnlySpan<byte> xorHash, string username,
+    private static ReadOnlyMemory<byte> CalculateClientProof(ReadOnlySpan<byte> xorHash, ReadOnlyMemory<char> username,
         ReadOnlySpan<byte> sessionKey, ReadOnlySpan<byte> clientPublicKey, ReadOnlySpan<byte> serverPublicKey,
         ReadOnlySpan<byte> salt)
     {
-        var userHash = Sha1.ComputeHash(Utf8.GetBytes(username));
+        var userHash = Sha1.ComputeHash(username.Span.ToUtf8Bytes());
         // source doc's pseudocode is incorrect for this line (transposed salt/sessionKey)
         var input = new byte[xorHash.Length + userHash.Length + salt.Length + clientPublicKey.Length +
                              serverPublicKey.Length + sessionKey.Length];
@@ -316,7 +302,7 @@ public sealed class AuthEngine : IAuthEngine
     // aka: XOR_HASH - implemented this way because it can be pre-cached for performance
     public ReadOnlyMemory<byte> CalculateXorHash() => CalculateXorHashInternal();
 
-    private static byte[] CalculateXorHashInternal()
+    private static ReadOnlyMemory<byte> CalculateXorHashInternal()
     {
         var result = Sha1.ComputeHash(Generator.ToByteArray(true));
         var mask = Sha1.ComputeHash(LargeSafePrime.ToByteArray(32, true));
@@ -325,21 +311,10 @@ public sealed class AuthEngine : IAuthEngine
         return result;
     }
 
-    public ReadOnlyMemory<byte> CalculateClientPublicKey(ReadOnlySpan<byte> clientPrivateKey,
-        ReadOnlySpan<byte> generator, ReadOnlySpan<byte> largeSafePrime)
-    {
-        var gi = new BigInteger(generator, true);
-        var ai = new BigInteger(clientPrivateKey, true);
-        var ni = new BigInteger(largeSafePrime, true);
-
-        var result = BigInteger.ModPow(gi, ai, ni).ToByteArray(32, true);
-        return result;
-    }
-
-    public ReadOnlyMemory<byte> CalculateReconnectProof(string username, ReadOnlySpan<byte> clientData,
+    public ReadOnlyMemory<byte> CalculateReconnectProof(ReadOnlySpan<char> username, ReadOnlySpan<byte> clientData,
         ReadOnlySpan<byte> serverData, ReadOnlySpan<byte> sessionKey)
     {
-        var userBytes = Utf8.GetBytes(username);
+        var userBytes = username.ToUtf8Bytes();
         var input = new byte[userBytes.Length + clientData.Length + serverData.Length + sessionKey.Length];
         var cursor = input.AsSpan();
         userBytes.CopyTo(cursor);
