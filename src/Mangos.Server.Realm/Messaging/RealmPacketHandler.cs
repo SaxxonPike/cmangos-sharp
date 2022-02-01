@@ -435,7 +435,7 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
                 account.FailedLogins = 0;
                 account.Os = session.Os;
 
-                db.AccountLogonss.Add(new AccountLogons
+                db.AccountLogons.Add(new AccountLogons
                 {
                     AccountId = (uint) session.AccountId,
                     Ip = stream.RemoteEndPoint.Split(';')[0],
