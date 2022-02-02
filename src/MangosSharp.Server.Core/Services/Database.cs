@@ -1,11 +1,10 @@
 ﻿using System;
 using MangosSharp.Data.Context;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
-using MySql.EntityFrameworkCore.Diagnostics;
 
 namespace MangosSharp.Server.Core.Services;
 
@@ -13,15 +12,17 @@ public sealed class Database : IDatabase
 {
     private readonly IConfiguration _configuration;
     private readonly ILogger _logger;
+    private readonly IMemoryCache _memoryCache;
     private DbContextOptions _mangosDbOptions;
     private DbContextOptions _realmDbOptions;
     private DbContextOptions _characterDbOptions;
     private DbContextOptions _logsDbOptions;
 
-    public Database(IConfiguration configuration, ILogger logger)
+    public Database(IConfiguration configuration, ILogger logger, IMemoryCache memoryCache)
     {
         _configuration = configuration;
         _logger = logger;
+        _memoryCache = memoryCache;
         RegisterConfigCallback();
         Configure();
     }
@@ -57,6 +58,7 @@ public sealed class Database : IDatabase
 
         var options = new DbContextOptionsBuilder()
             .UseMySQL(builder.ToString())
+            .UseMemoryCache(_memoryCache)
             .ConfigureWarnings(w => w.Throw());
 
         return options.Options;
@@ -112,13 +114,13 @@ public sealed class Database : IDatabase
 
     public void UseClient(Action<ClientDbContext> context)
     {
-        using var db = new ClientDbContext(_logger);
+        using var db = new ClientDbContext(_logger, _memoryCache);
         context(db);
     }
     
     public T UseClient<T>(Func<ClientDbContext, T> context)
     {
-        using var db = new ClientDbContext(_logger);
+        using var db = new ClientDbContext(_logger, _memoryCache);
         return context(db);
     }
 }

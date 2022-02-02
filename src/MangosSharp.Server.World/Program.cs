@@ -25,5 +25,6 @@ public static class Program
             .AddInfrastructure()
             .AddLogging()
             .AddConf("mangosd.conf", "MangosdConf")
-            .AddDatabase();
+            .AddDatabase()
+            .AddMemoryCache();
 }

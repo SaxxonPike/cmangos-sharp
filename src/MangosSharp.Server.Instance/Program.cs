@@ -1,4 +1,5 @@
 ﻿using MangosSharp.Core;
+using MangosSharp.Server.Core;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MangosSharp.Server.Instance;
@@ -17,5 +18,7 @@ public static class Program
     private static IServiceCollection AddApp(this IServiceCollection serviceCollection) =>
         serviceCollection
             .MapServices(MangosServerInstanceTypes.Get())
-            .AddLogging();
+            .AddLogging()
+            .AddDatabase()
+            .AddMemoryCache();
 }

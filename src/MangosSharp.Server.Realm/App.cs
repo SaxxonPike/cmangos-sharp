@@ -1,6 +1,5 @@
 using System.Net;
 using System.Threading;
-using System.Threading.Tasks;
 using MangosSharp.Core.Infrastructure;
 using MangosSharp.Server.Core.Sockets;
 using Microsoft.Extensions.Configuration;

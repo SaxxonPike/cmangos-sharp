@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using MangosSharp.Data.Entities;
 using MangosSharp.Data.Entities.ClientDatabase;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
 #pragma warning disable CA1822
@@ -18,35 +19,31 @@ namespace MangosSharp.Data.Context;
 public sealed class ClientDbContext : IDisposable
 {
     private readonly ILogger _logger;
+    private readonly IMemoryCache _memoryCache;
 
-    public ClientDbContext(ILogger logger)
+    public ClientDbContext(ILogger logger, IMemoryCache memoryCache)
     {
         _logger = logger;
+        _memoryCache = memoryCache;
     }
     
-    private static readonly Dictionary<Type, EnumerableQuery> CachedDbs = new();
-
     private IQueryable<TEntity> Set<TEntity>()
     {
-        if (CachedDbs.TryGetValue(typeof(TEntity), out var queryable))
-            return (EnumerableQuery<TEntity>)queryable;
+        return _memoryCache.GetOrCreate(typeof(TEntity), _ =>
+        {
+            var file = typeof(TEntity).GetCustomAttribute<DbcTableAttribute>();
+            if (file == default)
+                return new EnumerableQuery<TEntity>(Enumerable.Empty<TEntity>());
 
-        var file = typeof(TEntity).GetCustomAttribute<DbcTableAttribute>();
-        if (file == default)
-            return new EnumerableQuery<TEntity>(Enumerable.Empty<TEntity>());
+            var filePath = Path.Combine("dbc", $"{file.Name}.dbc");
+            _logger.LogInformation("Caching DBC name={} path={}", file.Name, filePath);
+            using var stream = File.OpenRead(filePath);
 
-        var filePath = Path.Combine("dbc", $"{file.Name}.dbc");
-        _logger.LogInformation("Caching DBC name={} path={}", file.Name, filePath);
-        using var stream = File.OpenRead(filePath);
-
-        var data = new DbcFile(stream).ToList<TEntity>();
-        var result = new EnumerableQuery<TEntity>(data);
-        CachedDbs[typeof(TEntity)] = result;
-        return result;
+            var data = new DbcFile(stream).ToList<TEntity>();
+            var result = new EnumerableQuery<TEntity>(data);
+            return result;
+        });
     }
-
-    private static IQueryable<TEntity> Empty<TEntity>() =>
-        new EnumerableQuery<TEntity>(Enumerable.Empty<TEntity>());
 
     public IQueryable<Area> Areas => Set<Area>();
     public IQueryable<AreaTrigger> AreaTriggers => Set<AreaTrigger>();

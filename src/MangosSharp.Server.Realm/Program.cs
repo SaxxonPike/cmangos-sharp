@@ -25,5 +25,6 @@ public static class Program
             .AddInfrastructure()
             .AddLogging()
             .AddConf("realmd.conf", "RealmdConf")
-            .AddDatabase();
+            .AddDatabase()
+            .AddMemoryCache();
 }
