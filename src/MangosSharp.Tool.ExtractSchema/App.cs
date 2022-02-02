@@ -123,7 +123,7 @@ public sealed class App
                 var fancyTableName = GetFancyName(tableName);
                 
                 schemaWriter.WriteLine($"[Table(\"{tableName}\")]");
-                schemaWriter.WriteLine($"public class {fancyTableName}");
+                schemaWriter.WriteLine($"public sealed class {fancyTableName}");
                 schemaWriter.WriteLine('{');
 
                 var forceKey = !tableInfos
@@ -189,7 +189,7 @@ public sealed class App
                     schemaWriter.WriteLine(")]");
                     if (column.CharacterMaximumLength is > 0 and < int.MaxValue)
                         schemaWriter.WriteLine($"    [MaxLength({column.CharacterMaximumLength})]");
-                    schemaWriter.Write($"    public virtual {type} {fancyColumnName} ");
+                    schemaWriter.Write($"    public {type} {fancyColumnName} ");
                     schemaWriter.Write('{');
                     schemaWriter.Write(" get; set; ");
                     schemaWriter.Write('}');
@@ -221,7 +221,7 @@ public sealed class App
             contextWriter.WriteLine();
             contextWriter.WriteLine("namespace MangosSharp.Data.Context;");
             contextWriter.WriteLine();
-            contextWriter.WriteLine($"public class {fancySchemaName}DbContext : DbContext");
+            contextWriter.WriteLine($"public sealed class {fancySchemaName}DbContext : DbContext");
             contextWriter.WriteLine('{');
             contextWriter.WriteLine($"    public {fancySchemaName}DbContext() {{}}");
             contextWriter.WriteLine($"    public {fancySchemaName}DbContext(DbContextOptions options) : base(options) {{}}");
@@ -246,7 +246,7 @@ public sealed class App
                 if (IsExcludedTable(tableName))
                     continue;
                 var fancyTableName = GetFancyName(tableName);
-                contextWriter.WriteLine($"    public virtual DbSet<{fancyTableName}> {Pluralize(fancyTableName)} {{ get; set; }}");
+                contextWriter.WriteLine($"    public DbSet<{fancyTableName}> {Pluralize(fancyTableName)} {{ get; set; }}");
             }
 
             contextWriter.WriteLine('}');

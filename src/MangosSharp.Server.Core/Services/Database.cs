@@ -1,13 +1,15 @@
 ﻿using System;
 using MangosSharp.Data.Context;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
+using MySql.EntityFrameworkCore.Diagnostics;
 
 namespace MangosSharp.Server.Core.Services;
 
-public class Database : IDatabase
+public sealed class Database : IDatabase
 {
     private readonly IConfiguration _configuration;
     private readonly ILogger _logger;
@@ -53,8 +55,10 @@ public class Database : IDatabase
             Password = dbConfig[3]
         };
 
-        var options = new DbContextOptionsBuilder();
-        options.UseMySQL(builder.ToString());
+        var options = new DbContextOptionsBuilder()
+            .UseMySQL(builder.ToString())
+            .ConfigureWarnings(w => w.Throw());
+
         return options.Options;
     }
 

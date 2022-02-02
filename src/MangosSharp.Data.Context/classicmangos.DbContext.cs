@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MangosSharp.Data.Context;
 
-public class ClassicmangosDbContext : DbContext
+public sealed class ClassicmangosDbContext : DbContext
 {
     public ClassicmangosDbContext() {}
     public ClassicmangosDbContext(DbContextOptions options) : base(options) {}
@@ -196,187 +196,187 @@ public class ClassicmangosDbContext : DbContext
         builder.Entity<WorldTemplate>().HasKey(e => new { e.Map });
     }
 
-    public virtual DbSet<AreatriggerInvolvedrelation> AreatriggerInvolvedrelations { get; set; }
-    public virtual DbSet<AreatriggerTavern> AreatriggerTaverns { get; set; }
-    public virtual DbSet<AreatriggerTeleport> AreatriggerTeleports { get; set; }
-    public virtual DbSet<Auction> Auctions { get; set; }
-    public virtual DbSet<BattlegroundEvents> BattlegroundEvents { get; set; }
-    public virtual DbSet<BattlegroundTemplate> BattlegroundTemplates { get; set; }
-    public virtual DbSet<BattlemasterEntry> BattlemasterEntries { get; set; }
-    public virtual DbSet<BroadcastText> BroadcastTexts { get; set; }
-    public virtual DbSet<BroadcastTextLocale> BroadcastTextLocales { get; set; }
-    public virtual DbSet<Bugreport> Bugreports { get; set; }
-    public virtual DbSet<Command> Commands { get; set; }
-    public virtual DbSet<Conditions> Conditions { get; set; }
-    public virtual DbSet<Creature> Creatures { get; set; }
-    public virtual DbSet<CreatureAddon> CreatureAddons { get; set; }
-    public virtual DbSet<CreatureAiScripts> CreatureAiScripts { get; set; }
-    public virtual DbSet<CreatureAiSummons> CreatureAiSummons { get; set; }
-    public virtual DbSet<CreatureAiTexts> CreatureAiTexts { get; set; }
-    public virtual DbSet<CreatureBattleground> CreatureBattlegrounds { get; set; }
-    public virtual DbSet<CreatureConditionalSpawn> CreatureConditionalSpawns { get; set; }
-    public virtual DbSet<CreatureCooldowns> CreatureCooldowns { get; set; }
-    public virtual DbSet<CreatureEquipTemplate> CreatureEquipTemplates { get; set; }
-    public virtual DbSet<CreatureImmunities> CreatureImmunities { get; set; }
-    public virtual DbSet<CreatureInvolvedrelation> CreatureInvolvedrelations { get; set; }
-    public virtual DbSet<CreatureLinking> CreatureLinkings { get; set; }
-    public virtual DbSet<CreatureLinkingTemplate> CreatureLinkingTemplates { get; set; }
-    public virtual DbSet<CreatureLootTemplate> CreatureLootTemplates { get; set; }
-    public virtual DbSet<CreatureModelInfo> CreatureModelInfos { get; set; }
-    public virtual DbSet<CreatureModelRace> CreatureModelRaces { get; set; }
-    public virtual DbSet<CreatureMovement> CreatureMovements { get; set; }
-    public virtual DbSet<CreatureMovementTemplate> CreatureMovementTemplates { get; set; }
-    public virtual DbSet<CreatureOnkillReputation> CreatureOnkillReputations { get; set; }
-    public virtual DbSet<CreatureQuestrelation> CreatureQuestrelations { get; set; }
-    public virtual DbSet<CreatureSpawnData> CreatureSpawnDatas { get; set; }
-    public virtual DbSet<CreatureSpawnDataTemplate> CreatureSpawnDataTemplates { get; set; }
-    public virtual DbSet<CreatureSpawnEntry> CreatureSpawnEntries { get; set; }
-    public virtual DbSet<CreatureSpellList> CreatureSpellLists { get; set; }
-    public virtual DbSet<CreatureSpellListEntry> CreatureSpellListEntries { get; set; }
-    public virtual DbSet<CreatureSpellTargeting> CreatureSpellTargetings { get; set; }
-    public virtual DbSet<CreatureTemplate> CreatureTemplates { get; set; }
-    public virtual DbSet<CreatureTemplateAddon> CreatureTemplateAddons { get; set; }
-    public virtual DbSet<CreatureTemplateArmor> CreatureTemplateArmors { get; set; }
-    public virtual DbSet<CreatureTemplateClasslevelstats> CreatureTemplateClasslevelstats { get; set; }
-    public virtual DbSet<CreatureTemplateSpells> CreatureTemplateSpells { get; set; }
-    public virtual DbSet<CustomTexts> CustomTexts { get; set; }
-    public virtual DbSet<DbscriptRandomTemplates> DbscriptRandomTemplates { get; set; }
-    public virtual DbSet<DbscriptString> DbscriptStrings { get; set; }
-    public virtual DbSet<DbscriptStringTemplate> DbscriptStringTemplates { get; set; }
-    public virtual DbSet<DbscriptsOnCreatureDeath> DbscriptsOnCreatureDeaths { get; set; }
-    public virtual DbSet<DbscriptsOnCreatureMovement> DbscriptsOnCreatureMovements { get; set; }
-    public virtual DbSet<DbscriptsOnEvent> DbscriptsOnEvents { get; set; }
-    public virtual DbSet<DbscriptsOnGoTemplateUse> DbscriptsOnGoTemplateUses { get; set; }
-    public virtual DbSet<DbscriptsOnGoUse> DbscriptsOnGoUses { get; set; }
-    public virtual DbSet<DbscriptsOnGossip> DbscriptsOnGossips { get; set; }
-    public virtual DbSet<DbscriptsOnQuestEnd> DbscriptsOnQuestEnds { get; set; }
-    public virtual DbSet<DbscriptsOnQuestStart> DbscriptsOnQuestStarts { get; set; }
-    public virtual DbSet<DbscriptsOnRelay> DbscriptsOnRelaies { get; set; }
-    public virtual DbSet<DbscriptsOnSpell> DbscriptsOnSpells { get; set; }
-    public virtual DbSet<DisenchantLootTemplate> DisenchantLootTemplates { get; set; }
-    public virtual DbSet<ExplorationBasexp> ExplorationBasexps { get; set; }
-    public virtual DbSet<FishingLootTemplate> FishingLootTemplates { get; set; }
-    public virtual DbSet<GameEvent> GameEvents { get; set; }
-    public virtual DbSet<GameEventCreature> GameEventCreatures { get; set; }
-    public virtual DbSet<GameEventCreatureData> GameEventCreatureDatas { get; set; }
-    public virtual DbSet<GameEventGameobject> GameEventGameobjects { get; set; }
-    public virtual DbSet<GameEventMail> GameEventMails { get; set; }
-    public virtual DbSet<GameEventQuest> GameEventQuests { get; set; }
-    public virtual DbSet<GameEventTime> GameEventTimes { get; set; }
-    public virtual DbSet<GameGraveyardZone> GameGraveyardZones { get; set; }
-    public virtual DbSet<GameTele> GameTeles { get; set; }
-    public virtual DbSet<GameWeather> GameWeathers { get; set; }
-    public virtual DbSet<Gameobject> Gameobjects { get; set; }
-    public virtual DbSet<GameobjectAddon> GameobjectAddons { get; set; }
-    public virtual DbSet<GameobjectBattleground> GameobjectBattlegrounds { get; set; }
-    public virtual DbSet<GameobjectInvolvedrelation> GameobjectInvolvedrelations { get; set; }
-    public virtual DbSet<GameobjectLootTemplate> GameobjectLootTemplates { get; set; }
-    public virtual DbSet<GameobjectQuestrelation> GameobjectQuestrelations { get; set; }
-    public virtual DbSet<GameobjectSpawnEntry> GameobjectSpawnEntries { get; set; }
-    public virtual DbSet<GameobjectTemplate> GameobjectTemplates { get; set; }
-    public virtual DbSet<GossipMenu> GossipMenus { get; set; }
-    public virtual DbSet<GossipMenuOption> GossipMenuOptions { get; set; }
-    public virtual DbSet<GossipTexts> GossipTexts { get; set; }
-    public virtual DbSet<InstanceDungeonEncounters> InstanceDungeonEncounters { get; set; }
-    public virtual DbSet<InstanceEncounters> InstanceEncounters { get; set; }
-    public virtual DbSet<InstanceTemplate> InstanceTemplates { get; set; }
-    public virtual DbSet<ItemConvert> ItemConverts { get; set; }
-    public virtual DbSet<ItemEnchantmentTemplate> ItemEnchantmentTemplates { get; set; }
-    public virtual DbSet<ItemExpireConvert> ItemExpireConverts { get; set; }
-    public virtual DbSet<ItemLootTemplate> ItemLootTemplates { get; set; }
-    public virtual DbSet<ItemRequiredTarget> ItemRequiredTargets { get; set; }
-    public virtual DbSet<ItemTemplate> ItemTemplates { get; set; }
-    public virtual DbSet<LocalesAreatriggerTeleport> LocalesAreatriggerTeleports { get; set; }
-    public virtual DbSet<LocalesCreature> LocalesCreatures { get; set; }
-    public virtual DbSet<LocalesGameobject> LocalesGameobjects { get; set; }
-    public virtual DbSet<LocalesGossipMenuOption> LocalesGossipMenuOptions { get; set; }
-    public virtual DbSet<LocalesItem> LocalesItems { get; set; }
-    public virtual DbSet<LocalesNpcText> LocalesNpcTexts { get; set; }
-    public virtual DbSet<LocalesPageText> LocalesPageTexts { get; set; }
-    public virtual DbSet<LocalesPointsOfInterest> LocalesPointsOfInterests { get; set; }
-    public virtual DbSet<LocalesQuest> LocalesQuests { get; set; }
-    public virtual DbSet<LocalesQuestgiverGreeting> LocalesQuestgiverGreetings { get; set; }
-    public virtual DbSet<LocalesTrainerGreeting> LocalesTrainerGreetings { get; set; }
-    public virtual DbSet<MailLevelReward> MailLevelRewards { get; set; }
-    public virtual DbSet<MailLootTemplate> MailLootTemplates { get; set; }
-    public virtual DbSet<MangosString> MangosStrings { get; set; }
-    public virtual DbSet<NpcGossip> NpcGossips { get; set; }
-    public virtual DbSet<NpcSpellclickSpells> NpcSpellclickSpells { get; set; }
-    public virtual DbSet<NpcText> NpcTexts { get; set; }
-    public virtual DbSet<NpcTextBroadcastText> NpcTextBroadcastTexts { get; set; }
-    public virtual DbSet<NpcTrainer> NpcTrainers { get; set; }
-    public virtual DbSet<NpcTrainerTemplate> NpcTrainerTemplates { get; set; }
-    public virtual DbSet<NpcVendor> NpcVendors { get; set; }
-    public virtual DbSet<NpcVendorTemplate> NpcVendorTemplates { get; set; }
-    public virtual DbSet<PageText> PageTexts { get; set; }
-    public virtual DbSet<PetFamilystats> PetFamilystats { get; set; }
-    public virtual DbSet<PetLevelstats> PetLevelstats { get; set; }
-    public virtual DbSet<PetLevelstatsCopy> PetLevelstatsCopies { get; set; }
-    public virtual DbSet<PetNameGeneration> PetNameGenerations { get; set; }
-    public virtual DbSet<PetcreateinfoSpell> PetcreateinfoSpells { get; set; }
-    public virtual DbSet<PickpocketingLootTemplate> PickpocketingLootTemplates { get; set; }
-    public virtual DbSet<PlayerClasslevelstats> PlayerClasslevelstats { get; set; }
-    public virtual DbSet<PlayerLevelstats> PlayerLevelstats { get; set; }
-    public virtual DbSet<PlayerXpForLevel> PlayerXpForLevels { get; set; }
-    public virtual DbSet<Playercreateinfo> Playercreateinfos { get; set; }
-    public virtual DbSet<PlayercreateinfoAction> PlayercreateinfoActions { get; set; }
-    public virtual DbSet<PlayercreateinfoItem> PlayercreateinfoItems { get; set; }
-    public virtual DbSet<PlayercreateinfoSkills> PlayercreateinfoSkills { get; set; }
-    public virtual DbSet<PlayercreateinfoSpell> PlayercreateinfoSpells { get; set; }
-    public virtual DbSet<PointsOfInterest> PointsOfInterests { get; set; }
-    public virtual DbSet<PoolCreature> PoolCreatures { get; set; }
-    public virtual DbSet<PoolCreatureTemplate> PoolCreatureTemplates { get; set; }
-    public virtual DbSet<PoolGameobject> PoolGameobjects { get; set; }
-    public virtual DbSet<PoolGameobjectTemplate> PoolGameobjectTemplates { get; set; }
-    public virtual DbSet<PoolPool> PoolPools { get; set; }
-    public virtual DbSet<PoolTemplate> PoolTemplates { get; set; }
-    public virtual DbSet<ProspectingLootTemplate> ProspectingLootTemplates { get; set; }
-    public virtual DbSet<QuestPoi> QuestPois { get; set; }
-    public virtual DbSet<QuestPoiPoints> QuestPoiPoints { get; set; }
-    public virtual DbSet<QuestTemplate> QuestTemplates { get; set; }
-    public virtual DbSet<QuestgiverGreeting> QuestgiverGreetings { get; set; }
-    public virtual DbSet<ReferenceLootTemplate> ReferenceLootTemplates { get; set; }
-    public virtual DbSet<ReferenceLootTemplateNames> ReferenceLootTemplateNames { get; set; }
-    public virtual DbSet<ReputationRewardRate> ReputationRewardRates { get; set; }
-    public virtual DbSet<ReputationSpilloverTemplate> ReputationSpilloverTemplates { get; set; }
-    public virtual DbSet<ReservedName> ReservedNames { get; set; }
-    public virtual DbSet<ScriptTexts> ScriptTexts { get; set; }
-    public virtual DbSet<ScriptWaypoint> ScriptWaypoints { get; set; }
-    public virtual DbSet<ScriptedAreatrigger> ScriptedAreatriggers { get; set; }
-    public virtual DbSet<ScriptedEventId> ScriptedEventIds { get; set; }
-    public virtual DbSet<SkillDiscoveryTemplate> SkillDiscoveryTemplates { get; set; }
-    public virtual DbSet<SkillExtraItemTemplate> SkillExtraItemTemplates { get; set; }
-    public virtual DbSet<SkillFishingBaseLevel> SkillFishingBaseLevels { get; set; }
-    public virtual DbSet<SkinningLootTemplate> SkinningLootTemplates { get; set; }
-    public virtual DbSet<SpamRecords> SpamRecords { get; set; }
-    public virtual DbSet<SpawnGroup> SpawnGroups { get; set; }
-    public virtual DbSet<SpawnGroupEntry> SpawnGroupEntries { get; set; }
-    public virtual DbSet<SpawnGroupFormation> SpawnGroupFormations { get; set; }
-    public virtual DbSet<SpawnGroupLinkedGroup> SpawnGroupLinkedGroups { get; set; }
-    public virtual DbSet<SpawnGroupSpawn> SpawnGroupSpawns { get; set; }
-    public virtual DbSet<SpellAffect> SpellAffects { get; set; }
-    public virtual DbSet<SpellArea> SpellAreas { get; set; }
-    public virtual DbSet<SpellBonusData> SpellBonusDatas { get; set; }
-    public virtual DbSet<SpellChain> SpellChains { get; set; }
-    public virtual DbSet<SpellCone> SpellCones { get; set; }
-    public virtual DbSet<SpellElixir> SpellElixirs { get; set; }
-    public virtual DbSet<SpellFacing> SpellFacings { get; set; }
-    public virtual DbSet<SpellLearnSpell> SpellLearnSpells { get; set; }
-    public virtual DbSet<SpellLootTemplate> SpellLootTemplates { get; set; }
-    public virtual DbSet<SpellPetAuras> SpellPetAuras { get; set; }
-    public virtual DbSet<SpellProcEvent> SpellProcEvents { get; set; }
-    public virtual DbSet<SpellProcItemEnchant> SpellProcItemEnchants { get; set; }
-    public virtual DbSet<SpellScriptTarget> SpellScriptTargets { get; set; }
-    public virtual DbSet<SpellScripts> SpellScripts { get; set; }
-    public virtual DbSet<SpellTargetPosition> SpellTargetPositions { get; set; }
-    public virtual DbSet<SpellTemplate> SpellTemplates { get; set; }
-    public virtual DbSet<SpellThreat> SpellThreats { get; set; }
-    public virtual DbSet<TaxiShortcuts> TaxiShortcuts { get; set; }
-    public virtual DbSet<TrainerGreeting> TrainerGreetings { get; set; }
-    public virtual DbSet<Transports> Transports { get; set; }
-    public virtual DbSet<VehicleAccessory> VehicleAccessories { get; set; }
-    public virtual DbSet<WardenScans> WardenScans { get; set; }
-    public virtual DbSet<WaypointPath> WaypointPaths { get; set; }
-    public virtual DbSet<WorldSafeLocs> WorldSafeLocs { get; set; }
-    public virtual DbSet<WorldTemplate> WorldTemplates { get; set; }
+    public DbSet<AreatriggerInvolvedrelation> AreatriggerInvolvedrelations { get; set; }
+    public DbSet<AreatriggerTavern> AreatriggerTaverns { get; set; }
+    public DbSet<AreatriggerTeleport> AreatriggerTeleports { get; set; }
+    public DbSet<Auction> Auctions { get; set; }
+    public DbSet<BattlegroundEvents> BattlegroundEvents { get; set; }
+    public DbSet<BattlegroundTemplate> BattlegroundTemplates { get; set; }
+    public DbSet<BattlemasterEntry> BattlemasterEntries { get; set; }
+    public DbSet<BroadcastText> BroadcastTexts { get; set; }
+    public DbSet<BroadcastTextLocale> BroadcastTextLocales { get; set; }
+    public DbSet<Bugreport> Bugreports { get; set; }
+    public DbSet<Command> Commands { get; set; }
+    public DbSet<Conditions> Conditions { get; set; }
+    public DbSet<Creature> Creatures { get; set; }
+    public DbSet<CreatureAddon> CreatureAddons { get; set; }
+    public DbSet<CreatureAiScripts> CreatureAiScripts { get; set; }
+    public DbSet<CreatureAiSummons> CreatureAiSummons { get; set; }
+    public DbSet<CreatureAiTexts> CreatureAiTexts { get; set; }
+    public DbSet<CreatureBattleground> CreatureBattlegrounds { get; set; }
+    public DbSet<CreatureConditionalSpawn> CreatureConditionalSpawns { get; set; }
+    public DbSet<CreatureCooldowns> CreatureCooldowns { get; set; }
+    public DbSet<CreatureEquipTemplate> CreatureEquipTemplates { get; set; }
+    public DbSet<CreatureImmunities> CreatureImmunities { get; set; }
+    public DbSet<CreatureInvolvedrelation> CreatureInvolvedrelations { get; set; }
+    public DbSet<CreatureLinking> CreatureLinkings { get; set; }
+    public DbSet<CreatureLinkingTemplate> CreatureLinkingTemplates { get; set; }
+    public DbSet<CreatureLootTemplate> CreatureLootTemplates { get; set; }
+    public DbSet<CreatureModelInfo> CreatureModelInfos { get; set; }
+    public DbSet<CreatureModelRace> CreatureModelRaces { get; set; }
+    public DbSet<CreatureMovement> CreatureMovements { get; set; }
+    public DbSet<CreatureMovementTemplate> CreatureMovementTemplates { get; set; }
+    public DbSet<CreatureOnkillReputation> CreatureOnkillReputations { get; set; }
+    public DbSet<CreatureQuestrelation> CreatureQuestrelations { get; set; }
+    public DbSet<CreatureSpawnData> CreatureSpawnDatas { get; set; }
+    public DbSet<CreatureSpawnDataTemplate> CreatureSpawnDataTemplates { get; set; }
+    public DbSet<CreatureSpawnEntry> CreatureSpawnEntries { get; set; }
+    public DbSet<CreatureSpellList> CreatureSpellLists { get; set; }
+    public DbSet<CreatureSpellListEntry> CreatureSpellListEntries { get; set; }
+    public DbSet<CreatureSpellTargeting> CreatureSpellTargetings { get; set; }
+    public DbSet<CreatureTemplate> CreatureTemplates { get; set; }
+    public DbSet<CreatureTemplateAddon> CreatureTemplateAddons { get; set; }
+    public DbSet<CreatureTemplateArmor> CreatureTemplateArmors { get; set; }
+    public DbSet<CreatureTemplateClasslevelstats> CreatureTemplateClasslevelstats { get; set; }
+    public DbSet<CreatureTemplateSpells> CreatureTemplateSpells { get; set; }
+    public DbSet<CustomTexts> CustomTexts { get; set; }
+    public DbSet<DbscriptRandomTemplates> DbscriptRandomTemplates { get; set; }
+    public DbSet<DbscriptString> DbscriptStrings { get; set; }
+    public DbSet<DbscriptStringTemplate> DbscriptStringTemplates { get; set; }
+    public DbSet<DbscriptsOnCreatureDeath> DbscriptsOnCreatureDeaths { get; set; }
+    public DbSet<DbscriptsOnCreatureMovement> DbscriptsOnCreatureMovements { get; set; }
+    public DbSet<DbscriptsOnEvent> DbscriptsOnEvents { get; set; }
+    public DbSet<DbscriptsOnGoTemplateUse> DbscriptsOnGoTemplateUses { get; set; }
+    public DbSet<DbscriptsOnGoUse> DbscriptsOnGoUses { get; set; }
+    public DbSet<DbscriptsOnGossip> DbscriptsOnGossips { get; set; }
+    public DbSet<DbscriptsOnQuestEnd> DbscriptsOnQuestEnds { get; set; }
+    public DbSet<DbscriptsOnQuestStart> DbscriptsOnQuestStarts { get; set; }
+    public DbSet<DbscriptsOnRelay> DbscriptsOnRelaies { get; set; }
+    public DbSet<DbscriptsOnSpell> DbscriptsOnSpells { get; set; }
+    public DbSet<DisenchantLootTemplate> DisenchantLootTemplates { get; set; }
+    public DbSet<ExplorationBasexp> ExplorationBasexps { get; set; }
+    public DbSet<FishingLootTemplate> FishingLootTemplates { get; set; }
+    public DbSet<GameEvent> GameEvents { get; set; }
+    public DbSet<GameEventCreature> GameEventCreatures { get; set; }
+    public DbSet<GameEventCreatureData> GameEventCreatureDatas { get; set; }
+    public DbSet<GameEventGameobject> GameEventGameobjects { get; set; }
+    public DbSet<GameEventMail> GameEventMails { get; set; }
+    public DbSet<GameEventQuest> GameEventQuests { get; set; }
+    public DbSet<GameEventTime> GameEventTimes { get; set; }
+    public DbSet<GameGraveyardZone> GameGraveyardZones { get; set; }
+    public DbSet<GameTele> GameTeles { get; set; }
+    public DbSet<GameWeather> GameWeathers { get; set; }
+    public DbSet<Gameobject> Gameobjects { get; set; }
+    public DbSet<GameobjectAddon> GameobjectAddons { get; set; }
+    public DbSet<GameobjectBattleground> GameobjectBattlegrounds { get; set; }
+    public DbSet<GameobjectInvolvedrelation> GameobjectInvolvedrelations { get; set; }
+    public DbSet<GameobjectLootTemplate> GameobjectLootTemplates { get; set; }
+    public DbSet<GameobjectQuestrelation> GameobjectQuestrelations { get; set; }
+    public DbSet<GameobjectSpawnEntry> GameobjectSpawnEntries { get; set; }
+    public DbSet<GameobjectTemplate> GameobjectTemplates { get; set; }
+    public DbSet<GossipMenu> GossipMenus { get; set; }
+    public DbSet<GossipMenuOption> GossipMenuOptions { get; set; }
+    public DbSet<GossipTexts> GossipTexts { get; set; }
+    public DbSet<InstanceDungeonEncounters> InstanceDungeonEncounters { get; set; }
+    public DbSet<InstanceEncounters> InstanceEncounters { get; set; }
+    public DbSet<InstanceTemplate> InstanceTemplates { get; set; }
+    public DbSet<ItemConvert> ItemConverts { get; set; }
+    public DbSet<ItemEnchantmentTemplate> ItemEnchantmentTemplates { get; set; }
+    public DbSet<ItemExpireConvert> ItemExpireConverts { get; set; }
+    public DbSet<ItemLootTemplate> ItemLootTemplates { get; set; }
+    public DbSet<ItemRequiredTarget> ItemRequiredTargets { get; set; }
+    public DbSet<ItemTemplate> ItemTemplates { get; set; }
+    public DbSet<LocalesAreatriggerTeleport> LocalesAreatriggerTeleports { get; set; }
+    public DbSet<LocalesCreature> LocalesCreatures { get; set; }
+    public DbSet<LocalesGameobject> LocalesGameobjects { get; set; }
+    public DbSet<LocalesGossipMenuOption> LocalesGossipMenuOptions { get; set; }
+    public DbSet<LocalesItem> LocalesItems { get; set; }
+    public DbSet<LocalesNpcText> LocalesNpcTexts { get; set; }
+    public DbSet<LocalesPageText> LocalesPageTexts { get; set; }
+    public DbSet<LocalesPointsOfInterest> LocalesPointsOfInterests { get; set; }
+    public DbSet<LocalesQuest> LocalesQuests { get; set; }
+    public DbSet<LocalesQuestgiverGreeting> LocalesQuestgiverGreetings { get; set; }
+    public DbSet<LocalesTrainerGreeting> LocalesTrainerGreetings { get; set; }
+    public DbSet<MailLevelReward> MailLevelRewards { get; set; }
+    public DbSet<MailLootTemplate> MailLootTemplates { get; set; }
+    public DbSet<MangosString> MangosStrings { get; set; }
+    public DbSet<NpcGossip> NpcGossips { get; set; }
+    public DbSet<NpcSpellclickSpells> NpcSpellclickSpells { get; set; }
+    public DbSet<NpcText> NpcTexts { get; set; }
+    public DbSet<NpcTextBroadcastText> NpcTextBroadcastTexts { get; set; }
+    public DbSet<NpcTrainer> NpcTrainers { get; set; }
+    public DbSet<NpcTrainerTemplate> NpcTrainerTemplates { get; set; }
+    public DbSet<NpcVendor> NpcVendors { get; set; }
+    public DbSet<NpcVendorTemplate> NpcVendorTemplates { get; set; }
+    public DbSet<PageText> PageTexts { get; set; }
+    public DbSet<PetFamilystats> PetFamilystats { get; set; }
+    public DbSet<PetLevelstats> PetLevelstats { get; set; }
+    public DbSet<PetLevelstatsCopy> PetLevelstatsCopies { get; set; }
+    public DbSet<PetNameGeneration> PetNameGenerations { get; set; }
+    public DbSet<PetcreateinfoSpell> PetcreateinfoSpells { get; set; }
+    public DbSet<PickpocketingLootTemplate> PickpocketingLootTemplates { get; set; }
+    public DbSet<PlayerClasslevelstats> PlayerClasslevelstats { get; set; }
+    public DbSet<PlayerLevelstats> PlayerLevelstats { get; set; }
+    public DbSet<PlayerXpForLevel> PlayerXpForLevels { get; set; }
+    public DbSet<Playercreateinfo> Playercreateinfos { get; set; }
+    public DbSet<PlayercreateinfoAction> PlayercreateinfoActions { get; set; }
+    public DbSet<PlayercreateinfoItem> PlayercreateinfoItems { get; set; }
+    public DbSet<PlayercreateinfoSkills> PlayercreateinfoSkills { get; set; }
+    public DbSet<PlayercreateinfoSpell> PlayercreateinfoSpells { get; set; }
+    public DbSet<PointsOfInterest> PointsOfInterests { get; set; }
+    public DbSet<PoolCreature> PoolCreatures { get; set; }
+    public DbSet<PoolCreatureTemplate> PoolCreatureTemplates { get; set; }
+    public DbSet<PoolGameobject> PoolGameobjects { get; set; }
+    public DbSet<PoolGameobjectTemplate> PoolGameobjectTemplates { get; set; }
+    public DbSet<PoolPool> PoolPools { get; set; }
+    public DbSet<PoolTemplate> PoolTemplates { get; set; }
+    public DbSet<ProspectingLootTemplate> ProspectingLootTemplates { get; set; }
+    public DbSet<QuestPoi> QuestPois { get; set; }
+    public DbSet<QuestPoiPoints> QuestPoiPoints { get; set; }
+    public DbSet<QuestTemplate> QuestTemplates { get; set; }
+    public DbSet<QuestgiverGreeting> QuestgiverGreetings { get; set; }
+    public DbSet<ReferenceLootTemplate> ReferenceLootTemplates { get; set; }
+    public DbSet<ReferenceLootTemplateNames> ReferenceLootTemplateNames { get; set; }
+    public DbSet<ReputationRewardRate> ReputationRewardRates { get; set; }
+    public DbSet<ReputationSpilloverTemplate> ReputationSpilloverTemplates { get; set; }
+    public DbSet<ReservedName> ReservedNames { get; set; }
+    public DbSet<ScriptTexts> ScriptTexts { get; set; }
+    public DbSet<ScriptWaypoint> ScriptWaypoints { get; set; }
+    public DbSet<ScriptedAreatrigger> ScriptedAreatriggers { get; set; }
+    public DbSet<ScriptedEventId> ScriptedEventIds { get; set; }
+    public DbSet<SkillDiscoveryTemplate> SkillDiscoveryTemplates { get; set; }
+    public DbSet<SkillExtraItemTemplate> SkillExtraItemTemplates { get; set; }
+    public DbSet<SkillFishingBaseLevel> SkillFishingBaseLevels { get; set; }
+    public DbSet<SkinningLootTemplate> SkinningLootTemplates { get; set; }
+    public DbSet<SpamRecords> SpamRecords { get; set; }
+    public DbSet<SpawnGroup> SpawnGroups { get; set; }
+    public DbSet<SpawnGroupEntry> SpawnGroupEntries { get; set; }
+    public DbSet<SpawnGroupFormation> SpawnGroupFormations { get; set; }
+    public DbSet<SpawnGroupLinkedGroup> SpawnGroupLinkedGroups { get; set; }
+    public DbSet<SpawnGroupSpawn> SpawnGroupSpawns { get; set; }
+    public DbSet<SpellAffect> SpellAffects { get; set; }
+    public DbSet<SpellArea> SpellAreas { get; set; }
+    public DbSet<SpellBonusData> SpellBonusDatas { get; set; }
+    public DbSet<SpellChain> SpellChains { get; set; }
+    public DbSet<SpellCone> SpellCones { get; set; }
+    public DbSet<SpellElixir> SpellElixirs { get; set; }
+    public DbSet<SpellFacing> SpellFacings { get; set; }
+    public DbSet<SpellLearnSpell> SpellLearnSpells { get; set; }
+    public DbSet<SpellLootTemplate> SpellLootTemplates { get; set; }
+    public DbSet<SpellPetAuras> SpellPetAuras { get; set; }
+    public DbSet<SpellProcEvent> SpellProcEvents { get; set; }
+    public DbSet<SpellProcItemEnchant> SpellProcItemEnchants { get; set; }
+    public DbSet<SpellScriptTarget> SpellScriptTargets { get; set; }
+    public DbSet<SpellScripts> SpellScripts { get; set; }
+    public DbSet<SpellTargetPosition> SpellTargetPositions { get; set; }
+    public DbSet<SpellTemplate> SpellTemplates { get; set; }
+    public DbSet<SpellThreat> SpellThreats { get; set; }
+    public DbSet<TaxiShortcuts> TaxiShortcuts { get; set; }
+    public DbSet<TrainerGreeting> TrainerGreetings { get; set; }
+    public DbSet<Transports> Transports { get; set; }
+    public DbSet<VehicleAccessory> VehicleAccessories { get; set; }
+    public DbSet<WardenScans> WardenScans { get; set; }
+    public DbSet<WaypointPath> WaypointPaths { get; set; }
+    public DbSet<WorldSafeLocs> WorldSafeLocs { get; set; }
+    public DbSet<WorldTemplate> WorldTemplates { get; set; }
 }

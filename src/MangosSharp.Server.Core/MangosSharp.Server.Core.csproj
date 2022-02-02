@@ -15,7 +15,4 @@
     <ProjectReference Include="..\MangosSharp.Core\MangosSharp.Core.csproj" />
     <ProjectReference Include="..\MangosSharp.Data.Context\MangosSharp.Data.Context.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Packets" />
-  </ItemGroup>
 </Project>

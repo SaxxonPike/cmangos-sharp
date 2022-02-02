@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MangosSharp.Data.Context;
 
-public class ClassiccharactersDbContext : DbContext
+public sealed class ClassiccharactersDbContext : DbContext
 {
     public ClassiccharactersDbContext() {}
     public ClassiccharactersDbContext(DbContextOptions options) : base(options) {}
@@ -67,58 +67,58 @@ public class ClassiccharactersDbContext : DbContext
         builder.Entity<WorldState>().HasKey(e => new { e.Id });
     }
 
-    public virtual DbSet<AccountInstancesEntered> AccountInstancesEntereds { get; set; }
-    public virtual DbSet<AhbotItems> AhbotItems { get; set; }
-    public virtual DbSet<Auction> Auctions { get; set; }
-    public virtual DbSet<Bugreport> Bugreports { get; set; }
-    public virtual DbSet<CharacterAction> CharacterActions { get; set; }
-    public virtual DbSet<CharacterAura> CharacterAuras { get; set; }
-    public virtual DbSet<CharacterBattlegroundData> CharacterBattlegroundDatas { get; set; }
-    public virtual DbSet<CharacterGifts> CharacterGifts { get; set; }
-    public virtual DbSet<CharacterHomebind> CharacterHomebinds { get; set; }
-    public virtual DbSet<CharacterHonorCp> CharacterHonorCps { get; set; }
-    public virtual DbSet<CharacterInstance> CharacterInstances { get; set; }
-    public virtual DbSet<CharacterInventory> CharacterInventories { get; set; }
-    public virtual DbSet<CharacterPet> CharacterPets { get; set; }
-    public virtual DbSet<CharacterQueststatus> CharacterQueststatus { get; set; }
-    public virtual DbSet<CharacterQueststatusWeekly> CharacterQueststatusWeeklies { get; set; }
-    public virtual DbSet<CharacterReputation> CharacterReputations { get; set; }
-    public virtual DbSet<CharacterSkills> CharacterSkills { get; set; }
-    public virtual DbSet<CharacterSocial> CharacterSocials { get; set; }
-    public virtual DbSet<CharacterSpell> CharacterSpells { get; set; }
-    public virtual DbSet<CharacterSpellCooldown> CharacterSpellCooldowns { get; set; }
-    public virtual DbSet<CharacterStats> CharacterStats { get; set; }
-    public virtual DbSet<CharacterTutorial> CharacterTutorials { get; set; }
-    public virtual DbSet<Characters> Characters { get; set; }
-    public virtual DbSet<Corpse> Corpses { get; set; }
-    public virtual DbSet<CreatureRespawn> CreatureRespawns { get; set; }
-    public virtual DbSet<GameEventStatus> GameEventStatus { get; set; }
-    public virtual DbSet<GameobjectRespawn> GameobjectRespawns { get; set; }
-    public virtual DbSet<GmSurveys> GmSurveys { get; set; }
-    public virtual DbSet<GmTickets> GmTickets { get; set; }
-    public virtual DbSet<GroupInstance> GroupInstances { get; set; }
-    public virtual DbSet<GroupMember> GroupMembers { get; set; }
-    public virtual DbSet<Groups> Groups { get; set; }
-    public virtual DbSet<Guild> Guilds { get; set; }
-    public virtual DbSet<GuildEventlog> GuildEventlogs { get; set; }
-    public virtual DbSet<GuildMember> GuildMembers { get; set; }
-    public virtual DbSet<GuildRank> GuildRanks { get; set; }
-    public virtual DbSet<Instance> Instances { get; set; }
-    public virtual DbSet<InstanceReset> InstanceResets { get; set; }
-    public virtual DbSet<ItemInstance> ItemInstances { get; set; }
-    public virtual DbSet<ItemLoot> ItemLoots { get; set; }
-    public virtual DbSet<ItemText> ItemTexts { get; set; }
-    public virtual DbSet<Mail> Mails { get; set; }
-    public virtual DbSet<MailItems> MailItems { get; set; }
-    public virtual DbSet<PetAura> PetAuras { get; set; }
-    public virtual DbSet<PetSpell> PetSpells { get; set; }
-    public virtual DbSet<PetSpellCooldown> PetSpellCooldowns { get; set; }
-    public virtual DbSet<Petition> Petitions { get; set; }
-    public virtual DbSet<PetitionSign> PetitionSigns { get; set; }
-    public virtual DbSet<PlayerbotSavedData> PlayerbotSavedDatas { get; set; }
-    public virtual DbSet<PvpstatsBattlegrounds> PvpstatsBattlegrounds { get; set; }
-    public virtual DbSet<PvpstatsPlayers> PvpstatsPlayers { get; set; }
-    public virtual DbSet<SavedVariables> SavedVariables { get; set; }
-    public virtual DbSet<World> Worlds { get; set; }
-    public virtual DbSet<WorldState> WorldStates { get; set; }
+    public DbSet<AccountInstancesEntered> AccountInstancesEntereds { get; set; }
+    public DbSet<AhbotItems> AhbotItems { get; set; }
+    public DbSet<Auction> Auctions { get; set; }
+    public DbSet<Bugreport> Bugreports { get; set; }
+    public DbSet<CharacterAction> CharacterActions { get; set; }
+    public DbSet<CharacterAura> CharacterAuras { get; set; }
+    public DbSet<CharacterBattlegroundData> CharacterBattlegroundDatas { get; set; }
+    public DbSet<CharacterGifts> CharacterGifts { get; set; }
+    public DbSet<CharacterHomebind> CharacterHomebinds { get; set; }
+    public DbSet<CharacterHonorCp> CharacterHonorCps { get; set; }
+    public DbSet<CharacterInstance> CharacterInstances { get; set; }
+    public DbSet<CharacterInventory> CharacterInventories { get; set; }
+    public DbSet<CharacterPet> CharacterPets { get; set; }
+    public DbSet<CharacterQueststatus> CharacterQueststatus { get; set; }
+    public DbSet<CharacterQueststatusWeekly> CharacterQueststatusWeeklies { get; set; }
+    public DbSet<CharacterReputation> CharacterReputations { get; set; }
+    public DbSet<CharacterSkills> CharacterSkills { get; set; }
+    public DbSet<CharacterSocial> CharacterSocials { get; set; }
+    public DbSet<CharacterSpell> CharacterSpells { get; set; }
+    public DbSet<CharacterSpellCooldown> CharacterSpellCooldowns { get; set; }
+    public DbSet<CharacterStats> CharacterStats { get; set; }
+    public DbSet<CharacterTutorial> CharacterTutorials { get; set; }
+    public DbSet<Characters> Characters { get; set; }
+    public DbSet<Corpse> Corpses { get; set; }
+    public DbSet<CreatureRespawn> CreatureRespawns { get; set; }
+    public DbSet<GameEventStatus> GameEventStatus { get; set; }
+    public DbSet<GameobjectRespawn> GameobjectRespawns { get; set; }
+    public DbSet<GmSurveys> GmSurveys { get; set; }
+    public DbSet<GmTickets> GmTickets { get; set; }
+    public DbSet<GroupInstance> GroupInstances { get; set; }
+    public DbSet<GroupMember> GroupMembers { get; set; }
+    public DbSet<Groups> Groups { get; set; }
+    public DbSet<Guild> Guilds { get; set; }
+    public DbSet<GuildEventlog> GuildEventlogs { get; set; }
+    public DbSet<GuildMember> GuildMembers { get; set; }
+    public DbSet<GuildRank> GuildRanks { get; set; }
+    public DbSet<Instance> Instances { get; set; }
+    public DbSet<InstanceReset> InstanceResets { get; set; }
+    public DbSet<ItemInstance> ItemInstances { get; set; }
+    public DbSet<ItemLoot> ItemLoots { get; set; }
+    public DbSet<ItemText> ItemTexts { get; set; }
+    public DbSet<Mail> Mails { get; set; }
+    public DbSet<MailItems> MailItems { get; set; }
+    public DbSet<PetAura> PetAuras { get; set; }
+    public DbSet<PetSpell> PetSpells { get; set; }
+    public DbSet<PetSpellCooldown> PetSpellCooldowns { get; set; }
+    public DbSet<Petition> Petitions { get; set; }
+    public DbSet<PetitionSign> PetitionSigns { get; set; }
+    public DbSet<PlayerbotSavedData> PlayerbotSavedDatas { get; set; }
+    public DbSet<PvpstatsBattlegrounds> PvpstatsBattlegrounds { get; set; }
+    public DbSet<PvpstatsPlayers> PvpstatsPlayers { get; set; }
+    public DbSet<SavedVariables> SavedVariables { get; set; }
+    public DbSet<World> Worlds { get; set; }
+    public DbSet<WorldState> WorldStates { get; set; }
 }

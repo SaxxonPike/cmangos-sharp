@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MangosSharp.Data.Context;
 
-public class ClassicrealmdDbContext : DbContext
+public sealed class ClassicrealmdDbContext : DbContext
 {
     public ClassicrealmdDbContext() {}
     public ClassicrealmdDbContext(DbContextOptions options) : base(options) {}
@@ -25,16 +25,16 @@ public class ClassicrealmdDbContext : DbContext
         builder.Entity<Uptime>().HasKey(e => new { e.Maxplayers, e.Realmid, e.Starttime });
     }
 
-    public virtual DbSet<Account> Accounts { get; set; }
-    public virtual DbSet<AccountBanned> AccountBanneds { get; set; }
-    public virtual DbSet<AccountLogons> AccountLogons { get; set; }
-    public virtual DbSet<AccountRaf> AccountRafs { get; set; }
-    public virtual DbSet<AntispamBlacklist> AntispamBlacklists { get; set; }
-    public virtual DbSet<AntispamReplacement> AntispamReplacements { get; set; }
-    public virtual DbSet<AntispamUnicodeReplacement> AntispamUnicodeReplacements { get; set; }
-    public virtual DbSet<IpBanned> IpBanneds { get; set; }
-    public virtual DbSet<Realmcharacters> Realmcharacters { get; set; }
-    public virtual DbSet<Realmlist> Realmlists { get; set; }
-    public virtual DbSet<SystemFingerprintUsage> SystemFingerprintUsages { get; set; }
-    public virtual DbSet<Uptime> Uptimes { get; set; }
+    public DbSet<Account> Accounts { get; set; }
+    public DbSet<AccountBanned> AccountBanneds { get; set; }
+    public DbSet<AccountLogons> AccountLogons { get; set; }
+    public DbSet<AccountRaf> AccountRafs { get; set; }
+    public DbSet<AntispamBlacklist> AntispamBlacklists { get; set; }
+    public DbSet<AntispamReplacement> AntispamReplacements { get; set; }
+    public DbSet<AntispamUnicodeReplacement> AntispamUnicodeReplacements { get; set; }
+    public DbSet<IpBanned> IpBanneds { get; set; }
+    public DbSet<Realmcharacters> Realmcharacters { get; set; }
+    public DbSet<Realmlist> Realmlists { get; set; }
+    public DbSet<SystemFingerprintUsage> SystemFingerprintUsages { get; set; }
+    public DbSet<Uptime> Uptimes { get; set; }
 }

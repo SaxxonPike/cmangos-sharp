@@ -9,1653 +9,1653 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace MangosSharp.Data.Entities.CharacterDatabase;
 
 [Table("account_instances_entered")]
-public class AccountInstancesEntered
+public sealed class AccountInstancesEntered
 {
     /* Player account */
     [Column("AccountId", TypeName="int")]
-    public virtual uint AccountId { get; set; }
+    public uint AccountId { get; set; }
 
     /* Time when instance was entered */
     [Column("ExpireTime", TypeName="bigint")]
-    public virtual long ExpireTime { get; set; }
+    public long ExpireTime { get; set; }
 
     /* ID of instance entered */
     [Column("InstanceId", TypeName="int")]
-    public virtual uint InstanceId { get; set; }
+    public uint InstanceId { get; set; }
 
 }
 [Table("ahbot_items")]
-public class AhbotItems
+public sealed class AhbotItems
 {
     /* Chance item is added to AH upon bot visit, 0 for normal loot sources */
     [Column("add_chance", TypeName="int")]
-    public virtual uint AddChance { get; set; }
+    public uint AddChance { get; set; }
 
     /* Item Identifier */
     [Column("item", TypeName="int")]
-    public virtual uint Item { get; set; }
+    public uint Item { get; set; }
 
     /* Max amount added, not used when add_chance is 0 */
     [Column("max_amount", TypeName="int")]
-    public virtual uint MaxAmount { get; set; }
+    public uint MaxAmount { get; set; }
 
     /* Min amount added, not used when add_chance is 0 */
     [Column("min_amount", TypeName="int")]
-    public virtual uint MinAmount { get; set; }
+    public uint MinAmount { get; set; }
 
     /* Item value, a value of 0 bans item from being sold/bought by AHBot */
     [Column("value", TypeName="int")]
-    public virtual uint Value { get; set; }
+    public uint Value { get; set; }
 
 }
 [Table("auction")]
-public class Auction
+public sealed class Auction
 {
     [Column("buyguid", TypeName="int")]
-    public virtual uint Buyguid { get; set; }
+    public uint Buyguid { get; set; }
 
     [Column("buyoutprice", TypeName="int")]
-    public virtual int Buyoutprice { get; set; }
+    public int Buyoutprice { get; set; }
 
     [Column("deposit", TypeName="int")]
-    public virtual int Deposit { get; set; }
+    public int Deposit { get; set; }
 
     [Column("houseid", TypeName="int")]
-    public virtual uint Houseid { get; set; }
+    public uint Houseid { get; set; }
 
     [Column("id", TypeName="int")]
-    public virtual uint Id { get; set; }
+    public uint Id { get; set; }
 
     [Column("item_count", TypeName="int")]
-    public virtual uint ItemCount { get; set; }
+    public uint ItemCount { get; set; }
 
     [Column("item_randompropertyid", TypeName="int")]
-    public virtual int ItemRandompropertyid { get; set; }
+    public int ItemRandompropertyid { get; set; }
 
     /* Item Identifier */
     [Column("item_template", TypeName="int")]
-    public virtual uint ItemTemplate { get; set; }
+    public uint ItemTemplate { get; set; }
 
     [Column("itemguid", TypeName="int")]
-    public virtual uint Itemguid { get; set; }
+    public uint Itemguid { get; set; }
 
     [Column("itemowner", TypeName="int")]
-    public virtual uint Itemowner { get; set; }
+    public uint Itemowner { get; set; }
 
     [Column("lastbid", TypeName="int")]
-    public virtual int Lastbid { get; set; }
+    public int Lastbid { get; set; }
 
     [Column("startbid", TypeName="int")]
-    public virtual int Startbid { get; set; }
+    public int Startbid { get; set; }
 
     [Column("time", TypeName="bigint")]
-    public virtual ulong Time { get; set; }
+    public ulong Time { get; set; }
 
 }
 [Table("bugreport")]
-public class Bugreport
+public sealed class Bugreport
 {
     [Column("content", TypeName="longtext")]
-    public virtual string Content { get; set; }
+    public string Content { get; set; }
 
     /* Identifier */
     [Column("id", TypeName="int")]
-    public virtual int Id { get; set; }
+    public int Id { get; set; }
 
     [Column("type", TypeName="longtext")]
-    public virtual string Type { get; set; }
+    public string Type { get; set; }
 
 }
 [Table("character_action")]
-public class CharacterAction
+public sealed class CharacterAction
 {
     [Column("action", TypeName="int")]
-    public virtual uint Action { get; set; }
+    public uint Action { get; set; }
 
     [Column("button", TypeName="tinyint")]
-    public virtual byte Button { get; set; }
+    public byte Button { get; set; }
 
     /* Global Unique Identifier */
     [Column("guid", TypeName="int")]
-    public virtual uint Guid { get; set; }
+    public uint Guid { get; set; }
 
     [Column("type", TypeName="tinyint")]
-    public virtual byte Type { get; set; }
+    public byte Type { get; set; }
 
 }
 [Table("character_aura")]
-public class CharacterAura
+public sealed class CharacterAura
 {
     [Column("basepoints0", TypeName="int")]
-    public virtual int Basepoints0 { get; set; }
+    public int Basepoints0 { get; set; }
 
     [Column("basepoints1", TypeName="int")]
-    public virtual int Basepoints1 { get; set; }
+    public int Basepoints1 { get; set; }
 
     [Column("basepoints2", TypeName="int")]
-    public virtual int Basepoints2 { get; set; }
+    public int Basepoints2 { get; set; }
 
     /* Full Global Unique Identifier */
     [Column("caster_guid", TypeName="bigint")]
-    public virtual ulong CasterGuid { get; set; }
+    public ulong CasterGuid { get; set; }
 
     [Column("effIndexMask", TypeName="int")]
-    public virtual uint EffIndexMask { get; set; }
+    public uint EffIndexMask { get; set; }
 
     /* Global Unique Identifier */
     [Column("guid", TypeName="int")]
-    public virtual uint Guid { get; set; }
+    public uint Guid { get; set; }
 
     [Column("item_guid", TypeName="int")]
-    public virtual uint ItemGuid { get; set; }
+    public uint ItemGuid { get; set; }
 
     [Column("maxduration", TypeName="int")]
-    public virtual int Maxduration { get; set; }
+    public int Maxduration { get; set; }
 
     [Column("periodictime0", TypeName="int")]
-    public virtual uint Periodictime0 { get; set; }
+    public uint Periodictime0 { get; set; }
 
     [Column("periodictime1", TypeName="int")]
-    public virtual uint Periodictime1 { get; set; }
+    public uint Periodictime1 { get; set; }
 
     [Column("periodictime2", TypeName="int")]
-    public virtual uint Periodictime2 { get; set; }
+    public uint Periodictime2 { get; set; }
 
     [Column("remaincharges", TypeName="int")]
-    public virtual uint Remaincharges { get; set; }
+    public uint Remaincharges { get; set; }
 
     [Column("remaintime", TypeName="int")]
-    public virtual int Remaintime { get; set; }
+    public int Remaintime { get; set; }
 
     [Column("spell", TypeName="int")]
-    public virtual uint Spell { get; set; }
+    public uint Spell { get; set; }
 
     [Column("stackcount", TypeName="int")]
-    public virtual uint Stackcount { get; set; }
+    public uint Stackcount { get; set; }
 
 }
 [Table("character_battleground_data")]
-public class CharacterBattlegroundData
+public sealed class CharacterBattlegroundData
 {
     /* Global Unique Identifier */
     [Column("guid", TypeName="int")]
-    public virtual uint Guid { get; set; }
+    public uint Guid { get; set; }
 
     [Column("instance_id", TypeName="int")]
-    public virtual uint InstanceId { get; set; }
+    public uint InstanceId { get; set; }
 
     [Column("join_map", TypeName="int")]
-    public virtual int JoinMap { get; set; }
+    public int JoinMap { get; set; }
 
     [Column("join_o", TypeName="float")]
-    public virtual float JoinO { get; set; }
+    public float JoinO { get; set; }
 
     [Column("join_x", TypeName="float")]
-    public virtual float JoinX { get; set; }
+    public float JoinX { get; set; }
 
     [Column("join_y", TypeName="float")]
-    public virtual float JoinY { get; set; }
+    public float JoinY { get; set; }
 
     [Column("join_z", TypeName="float")]
-    public virtual float JoinZ { get; set; }
+    public float JoinZ { get; set; }
 
     [Column("team", TypeName="int")]
-    public virtual uint Team { get; set; }
+    public uint Team { get; set; }
 
 }
 [Table("character_gifts")]
-public class CharacterGifts
+public sealed class CharacterGifts
 {
     [Column("entry", TypeName="int")]
-    public virtual uint Entry { get; set; }
+    public uint Entry { get; set; }
 
     [Column("flags", TypeName="int")]
-    public virtual uint Flags { get; set; }
+    public uint Flags { get; set; }
 
     [Column("guid", TypeName="int")]
-    public virtual uint Guid { get; set; }
+    public uint Guid { get; set; }
 
     [Column("item_guid", TypeName="int")]
-    public virtual uint ItemGuid { get; set; }
+    public uint ItemGuid { get; set; }
 
 }
 [Table("character_homebind")]
-public class CharacterHomebind
+public sealed class CharacterHomebind
 {
     /* Global Unique Identifier */
     [Column("guid", TypeName="int")]
-    public virtual uint Guid { get; set; }
+    public uint Guid { get; set; }
 
     /* Map Identifier */
     [Column("map", TypeName="int")]
-    public virtual uint Map { get; set; }
+    public uint Map { get; set; }
 
     [Column("position_x", TypeName="float")]
-    public virtual float PositionX { get; set; }
+    public float PositionX { get; set; }
 
     [Column("position_y", TypeName="float")]
-    public virtual float PositionY { get; set; }
+    public float PositionY { get; set; }
 
     [Column("position_z", TypeName="float")]
-    public virtual float PositionZ { get; set; }
+    public float PositionZ { get; set; }
 
     /* Zone Identifier */
     [Column("zone", TypeName="int")]
-    public virtual uint Zone { get; set; }
+    public uint Zone { get; set; }
 
 }
 [Table("character_honor_cp")]
-public class CharacterHonorCp
+public sealed class CharacterHonorCp
 {
     [Column("date", TypeName="int")]
-    public virtual uint Date { get; set; }
+    public uint Date { get; set; }
 
     /* Global Unique Identifier */
     [Column("guid", TypeName="int")]
-    public virtual uint Guid { get; set; }
+    public uint Guid { get; set; }
 
     [Column("honor", TypeName="float")]
-    public virtual float Honor { get; set; }
+    public float Honor { get; set; }
 
     [Column("type", TypeName="tinyint")]
-    public virtual byte Type { get; set; }
+    public byte Type { get; set; }
 
     /* Creature / Player Identifier */
     [Column("victim", TypeName="int")]
-    public virtual uint Victim { get; set; }
+    public uint Victim { get; set; }
 
     [Column("victim_type", TypeName="tinyint")]
-    public virtual byte VictimType { get; set; }
+    public byte VictimType { get; set; }
 
 }
 [Table("character_instance")]
-public class CharacterInstance
+public sealed class CharacterInstance
 {
     [Column("guid", TypeName="int")]
-    public virtual uint Guid { get; set; }
+    public uint Guid { get; set; }
 
     [Column("instance", TypeName="int")]
-    public virtual uint Instance { get; set; }
+    public uint Instance { get; set; }
 
     [Column("permanent", TypeName="tinyint")]
-    public virtual byte Permanent { get; set; }
+    public byte Permanent { get; set; }
 
 }
 [Table("character_inventory")]
-public class CharacterInventory
+public sealed class CharacterInventory
 {
     [Column("bag", TypeName="int")]
-    public virtual uint Bag { get; set; }
+    public uint Bag { get; set; }
 
     /* Global Unique Identifier */
     [Column("guid", TypeName="int")]
-    public virtual uint Guid { get; set; }
+    public uint Guid { get; set; }
 
     /* Item Global Unique Identifier */
     [Column("item", TypeName="int")]
-    public virtual uint Item { get; set; }
+    public uint Item { get; set; }
 
     /* Item Identifier */
     [Column("item_template", TypeName="int")]
-    public virtual uint ItemTemplate { get; set; }
+    public uint ItemTemplate { get; set; }
 
     [Column("slot", TypeName="tinyint")]
-    public virtual byte Slot { get; set; }
+    public byte Slot { get; set; }
 
 }
 [Table("character_pet")]
-public class CharacterPet
+public sealed class CharacterPet
 {
     [Column("abdata", TypeName="longtext")]
-    public virtual string Abdata { get; set; }
+    public string Abdata { get; set; }
 
     [Column("CreatedBySpell", TypeName="int")]
-    public virtual uint CreatedBySpell { get; set; }
+    public uint CreatedBySpell { get; set; }
 
     [Column("curhappiness", TypeName="int")]
-    public virtual uint Curhappiness { get; set; }
+    public uint Curhappiness { get; set; }
 
     [Column("curhealth", TypeName="int")]
-    public virtual uint Curhealth { get; set; }
+    public uint Curhealth { get; set; }
 
     [Column("curmana", TypeName="int")]
-    public virtual uint Curmana { get; set; }
+    public uint Curmana { get; set; }
 
     [Column("entry", TypeName="int")]
-    public virtual uint Entry { get; set; }
+    public uint Entry { get; set; }
 
     [Column("exp", TypeName="int")]
-    public virtual uint Exp { get; set; }
+    public uint Exp { get; set; }
 
     [Column("id", TypeName="int")]
-    public virtual uint Id { get; set; }
+    public uint Id { get; set; }
 
     [Column("level", TypeName="int")]
-    public virtual uint Level { get; set; }
+    public uint Level { get; set; }
 
     [Column("loyalty", TypeName="int")]
-    public virtual uint Loyalty { get; set; }
+    public uint Loyalty { get; set; }
 
     [Column("loyaltypoints", TypeName="int")]
-    public virtual int Loyaltypoints { get; set; }
+    public int Loyaltypoints { get; set; }
 
     [Column("modelid", TypeName="int")]
-    public virtual uint Modelid { get; set; }
+    public uint Modelid { get; set; }
 
     [Column("name")]
     [MaxLength(100)]
-    public virtual string Name { get; set; }
+    public string Name { get; set; }
 
     [Column("owner", TypeName="int")]
-    public virtual uint Owner { get; set; }
+    public uint Owner { get; set; }
 
     [Column("PetType", TypeName="tinyint")]
-    public virtual byte PetType { get; set; }
+    public byte PetType { get; set; }
 
     [Column("Reactstate", TypeName="tinyint")]
-    public virtual byte Reactstate { get; set; }
+    public byte Reactstate { get; set; }
 
     [Column("renamed", TypeName="tinyint")]
-    public virtual byte Renamed { get; set; }
+    public byte Renamed { get; set; }
 
     [Column("resettalents_cost", TypeName="int")]
-    public virtual uint ResettalentsCost { get; set; }
+    public uint ResettalentsCost { get; set; }
 
     [Column("resettalents_time", TypeName="bigint")]
-    public virtual ulong ResettalentsTime { get; set; }
+    public ulong ResettalentsTime { get; set; }
 
     [Column("savetime", TypeName="bigint")]
-    public virtual ulong Savetime { get; set; }
+    public ulong Savetime { get; set; }
 
     [Column("slot", TypeName="int")]
-    public virtual uint Slot { get; set; }
+    public uint Slot { get; set; }
 
     [Column("teachspelldata", TypeName="longtext")]
-    public virtual string Teachspelldata { get; set; }
+    public string Teachspelldata { get; set; }
 
     [Column("trainpoint", TypeName="int")]
-    public virtual int Trainpoint { get; set; }
+    public int Trainpoint { get; set; }
 
     [Column("xpForNextLoyalty", TypeName="int")]
-    public virtual uint XpForNextLoyalty { get; set; }
+    public uint XpForNextLoyalty { get; set; }
 
 }
 [Table("character_queststatus")]
-public class CharacterQueststatus
+public sealed class CharacterQueststatus
 {
     [Column("explored", TypeName="tinyint")]
-    public virtual byte Explored { get; set; }
+    public byte Explored { get; set; }
 
     /* Global Unique Identifier */
     [Column("guid", TypeName="int")]
-    public virtual uint Guid { get; set; }
+    public uint Guid { get; set; }
 
     [Column("itemcount1", TypeName="int")]
-    public virtual uint Itemcount1 { get; set; }
+    public uint Itemcount1 { get; set; }
 
     [Column("itemcount2", TypeName="int")]
-    public virtual uint Itemcount2 { get; set; }
+    public uint Itemcount2 { get; set; }
 
     [Column("itemcount3", TypeName="int")]
-    public virtual uint Itemcount3 { get; set; }
+    public uint Itemcount3 { get; set; }
 
     [Column("itemcount4", TypeName="int")]
-    public virtual uint Itemcount4 { get; set; }
+    public uint Itemcount4 { get; set; }
 
     [Column("mobcount1", TypeName="int")]
-    public virtual uint Mobcount1 { get; set; }
+    public uint Mobcount1 { get; set; }
 
     [Column("mobcount2", TypeName="int")]
-    public virtual uint Mobcount2 { get; set; }
+    public uint Mobcount2 { get; set; }
 
     [Column("mobcount3", TypeName="int")]
-    public virtual uint Mobcount3 { get; set; }
+    public uint Mobcount3 { get; set; }
 
     [Column("mobcount4", TypeName="int")]
-    public virtual uint Mobcount4 { get; set; }
+    public uint Mobcount4 { get; set; }
 
     /* Quest Identifier */
     [Column("quest", TypeName="int")]
-    public virtual uint Quest { get; set; }
+    public uint Quest { get; set; }
 
     [Column("rewarded", TypeName="tinyint")]
-    public virtual byte Rewarded { get; set; }
+    public byte Rewarded { get; set; }
 
     [Column("status", TypeName="int")]
-    public virtual uint Status { get; set; }
+    public uint Status { get; set; }
 
     [Column("timer", TypeName="bigint")]
-    public virtual ulong Timer { get; set; }
+    public ulong Timer { get; set; }
 
 }
 [Table("character_queststatus_weekly")]
-public class CharacterQueststatusWeekly
+public sealed class CharacterQueststatusWeekly
 {
     /* Global Unique Identifier */
     [Column("guid", TypeName="int")]
-    public virtual uint Guid { get; set; }
+    public uint Guid { get; set; }
 
     /* Quest Identifier */
     [Column("quest", TypeName="int")]
-    public virtual uint Quest { get; set; }
+    public uint Quest { get; set; }
 
 }
 [Table("character_reputation")]
-public class CharacterReputation
+public sealed class CharacterReputation
 {
     [Column("faction", TypeName="int")]
-    public virtual uint Faction { get; set; }
+    public uint Faction { get; set; }
 
     [Column("flags", TypeName="int")]
-    public virtual int Flags { get; set; }
+    public int Flags { get; set; }
 
     /* Global Unique Identifier */
     [Column("guid", TypeName="int")]
-    public virtual uint Guid { get; set; }
+    public uint Guid { get; set; }
 
     [Column("standing", TypeName="int")]
-    public virtual int Standing { get; set; }
+    public int Standing { get; set; }
 
 }
 [Table("character_skills")]
-public class CharacterSkills
+public sealed class CharacterSkills
 {
     /* Global Unique Identifier */
     [Column("guid", TypeName="int")]
-    public virtual uint Guid { get; set; }
+    public uint Guid { get; set; }
 
     [Column("max", TypeName="mediumint")]
-    public virtual uint Max { get; set; }
+    public uint Max { get; set; }
 
     [Column("skill", TypeName="mediumint")]
-    public virtual uint Skill { get; set; }
+    public uint Skill { get; set; }
 
     [Column("value", TypeName="mediumint")]
-    public virtual uint Value { get; set; }
+    public uint Value { get; set; }
 
 }
 [Table("character_social")]
-public class CharacterSocial
+public sealed class CharacterSocial
 {
     /* Friend Flags */
     [Column("flags", TypeName="tinyint")]
-    public virtual byte Flags { get; set; }
+    public byte Flags { get; set; }
 
     /* Friend Global Unique Identifier */
     [Column("friend", TypeName="int")]
-    public virtual uint Friend { get; set; }
+    public uint Friend { get; set; }
 
     /* Character Global Unique Identifier */
     [Column("guid", TypeName="int")]
-    public virtual uint Guid { get; set; }
+    public uint Guid { get; set; }
 
 }
 [Table("character_spell")]
-public class CharacterSpell
+public sealed class CharacterSpell
 {
     [Column("active", TypeName="tinyint")]
-    public virtual byte Active { get; set; }
+    public byte Active { get; set; }
 
     [Column("disabled", TypeName="tinyint")]
-    public virtual byte Disabled { get; set; }
+    public byte Disabled { get; set; }
 
     /* Global Unique Identifier */
     [Column("guid", TypeName="int")]
-    public virtual uint Guid { get; set; }
+    public uint Guid { get; set; }
 
     /* Spell Identifier */
     [Column("spell", TypeName="int")]
-    public virtual uint Spell { get; set; }
+    public uint Spell { get; set; }
 
 }
 [Table("character_spell_cooldown")]
-public class CharacterSpellCooldown
+public sealed class CharacterSpellCooldown
 {
     /* Spell category */
     [Column("Category", TypeName="int")]
-    public virtual uint Category { get; set; }
+    public uint Category { get; set; }
 
     /* Spell category cooldown expire time */
     [Column("CategoryExpireTime", TypeName="bigint")]
-    public virtual ulong CategoryExpireTime { get; set; }
+    public ulong CategoryExpireTime { get; set; }
 
     /* Global Unique Identifier, Low part */
     [Column("guid", TypeName="int")]
-    public virtual uint Guid { get; set; }
+    public uint Guid { get; set; }
 
     /* Item Identifier */
     [Column("ItemId", TypeName="int")]
-    public virtual uint ItemId { get; set; }
+    public uint ItemId { get; set; }
 
     /* Spell cooldown expire time */
     [Column("SpellExpireTime", TypeName="bigint")]
-    public virtual ulong SpellExpireTime { get; set; }
+    public ulong SpellExpireTime { get; set; }
 
     /* Spell Identifier */
     [Column("SpellId", TypeName="int")]
-    public virtual uint SpellId { get; set; }
+    public uint SpellId { get; set; }
 
 }
 [Table("character_stats")]
-public class CharacterStats
+public sealed class CharacterStats
 {
     [Column("agility", TypeName="int")]
-    public virtual uint Agility { get; set; }
+    public uint Agility { get; set; }
 
     [Column("armor", TypeName="int")]
-    public virtual uint Armor { get; set; }
+    public uint Armor { get; set; }
 
     [Column("attackPower", TypeName="int")]
-    public virtual uint AttackPower { get; set; }
+    public uint AttackPower { get; set; }
 
     [Column("blockPct", TypeName="float")]
-    public virtual float BlockPct { get; set; }
+    public float BlockPct { get; set; }
 
     [Column("critPct", TypeName="float")]
-    public virtual float CritPct { get; set; }
+    public float CritPct { get; set; }
 
     [Column("dodgePct", TypeName="float")]
-    public virtual float DodgePct { get; set; }
+    public float DodgePct { get; set; }
 
     /* Global Unique Identifier, Low part */
     [Column("guid", TypeName="int")]
-    public virtual uint Guid { get; set; }
+    public uint Guid { get; set; }
 
     [Column("intellect", TypeName="int")]
-    public virtual uint Intellect { get; set; }
+    public uint Intellect { get; set; }
 
     [Column("maxhealth", TypeName="int")]
-    public virtual uint Maxhealth { get; set; }
+    public uint Maxhealth { get; set; }
 
     [Column("maxpower1", TypeName="int")]
-    public virtual uint Maxpower1 { get; set; }
+    public uint Maxpower1 { get; set; }
 
     [Column("maxpower2", TypeName="int")]
-    public virtual uint Maxpower2 { get; set; }
+    public uint Maxpower2 { get; set; }
 
     [Column("maxpower3", TypeName="int")]
-    public virtual uint Maxpower3 { get; set; }
+    public uint Maxpower3 { get; set; }
 
     [Column("maxpower4", TypeName="int")]
-    public virtual uint Maxpower4 { get; set; }
+    public uint Maxpower4 { get; set; }
 
     [Column("maxpower5", TypeName="int")]
-    public virtual uint Maxpower5 { get; set; }
+    public uint Maxpower5 { get; set; }
 
     [Column("maxpower6", TypeName="int")]
-    public virtual uint Maxpower6 { get; set; }
+    public uint Maxpower6 { get; set; }
 
     [Column("maxpower7", TypeName="int")]
-    public virtual uint Maxpower7 { get; set; }
+    public uint Maxpower7 { get; set; }
 
     [Column("parryPct", TypeName="float")]
-    public virtual float ParryPct { get; set; }
+    public float ParryPct { get; set; }
 
     [Column("rangedAttackPower", TypeName="int")]
-    public virtual uint RangedAttackPower { get; set; }
+    public uint RangedAttackPower { get; set; }
 
     [Column("rangedCritPct", TypeName="float")]
-    public virtual float RangedCritPct { get; set; }
+    public float RangedCritPct { get; set; }
 
     [Column("resArcane", TypeName="int")]
-    public virtual uint ResArcane { get; set; }
+    public uint ResArcane { get; set; }
 
     [Column("resFire", TypeName="int")]
-    public virtual uint ResFire { get; set; }
+    public uint ResFire { get; set; }
 
     [Column("resFrost", TypeName="int")]
-    public virtual uint ResFrost { get; set; }
+    public uint ResFrost { get; set; }
 
     [Column("resHoly", TypeName="int")]
-    public virtual uint ResHoly { get; set; }
+    public uint ResHoly { get; set; }
 
     [Column("resNature", TypeName="int")]
-    public virtual uint ResNature { get; set; }
+    public uint ResNature { get; set; }
 
     [Column("resShadow", TypeName="int")]
-    public virtual uint ResShadow { get; set; }
+    public uint ResShadow { get; set; }
 
     [Column("spirit", TypeName="int")]
-    public virtual uint Spirit { get; set; }
+    public uint Spirit { get; set; }
 
     [Column("stamina", TypeName="int")]
-    public virtual uint Stamina { get; set; }
+    public uint Stamina { get; set; }
 
     [Column("strength", TypeName="int")]
-    public virtual uint Strength { get; set; }
+    public uint Strength { get; set; }
 
 }
 [Table("character_tutorial")]
-public class CharacterTutorial
+public sealed class CharacterTutorial
 {
     /* Account Identifier */
     [Column("account", TypeName="bigint")]
-    public virtual ulong Account { get; set; }
+    public ulong Account { get; set; }
 
     [Column("tut0", TypeName="int")]
-    public virtual uint Tut0 { get; set; }
+    public uint Tut0 { get; set; }
 
     [Column("tut1", TypeName="int")]
-    public virtual uint Tut1 { get; set; }
+    public uint Tut1 { get; set; }
 
     [Column("tut2", TypeName="int")]
-    public virtual uint Tut2 { get; set; }
+    public uint Tut2 { get; set; }
 
     [Column("tut3", TypeName="int")]
-    public virtual uint Tut3 { get; set; }
+    public uint Tut3 { get; set; }
 
     [Column("tut4", TypeName="int")]
-    public virtual uint Tut4 { get; set; }
+    public uint Tut4 { get; set; }
 
     [Column("tut5", TypeName="int")]
-    public virtual uint Tut5 { get; set; }
+    public uint Tut5 { get; set; }
 
     [Column("tut6", TypeName="int")]
-    public virtual uint Tut6 { get; set; }
+    public uint Tut6 { get; set; }
 
     [Column("tut7", TypeName="int")]
-    public virtual uint Tut7 { get; set; }
+    public uint Tut7 { get; set; }
 
 }
 [Table("characters")]
-public class Characters
+public sealed class Characters
 {
     /* Account Identifier */
     [Column("account", TypeName="int")]
-    public virtual uint Account { get; set; }
+    public uint Account { get; set; }
 
     [Column("actionBars", TypeName="tinyint")]
-    public virtual byte ActionBars { get; set; }
+    public byte ActionBars { get; set; }
 
     [Column("ammoId", TypeName="int")]
-    public virtual uint AmmoId { get; set; }
+    public uint AmmoId { get; set; }
 
     [Column("at_login", TypeName="int")]
-    public virtual uint AtLogin { get; set; }
+    public uint AtLogin { get; set; }
 
     [Column("cinematic", TypeName="tinyint")]
-    public virtual byte Cinematic { get; set; }
+    public byte Cinematic { get; set; }
 
     [Column("Class", TypeName="tinyint")]
-    public virtual byte Class { get; set; }
+    public byte Class { get; set; }
 
     [Column("death_expire_time", TypeName="bigint")]
-    public virtual ulong DeathExpireTime { get; set; }
+    public ulong DeathExpireTime { get; set; }
 
     [Column("deleteDate", TypeName="bigint")]
-    public virtual ulong DeleteDate { get; set; }
+    public ulong DeleteDate { get; set; }
 
     [Column("deleteInfos_Account", TypeName="int")]
-    public virtual uint DeleteInfosAccount { get; set; }
+    public uint DeleteInfosAccount { get; set; }
 
     [Column("deleteInfos_Name")]
     [MaxLength(12)]
-    public virtual string DeleteInfosName { get; set; }
+    public string DeleteInfosName { get; set; }
 
     [Column("drunk", TypeName="smallint")]
-    public virtual ushort Drunk { get; set; }
+    public ushort Drunk { get; set; }
 
     [Column("equipmentCache", TypeName="longtext")]
-    public virtual string EquipmentCache { get; set; }
+    public string EquipmentCache { get; set; }
 
     [Column("exploredZones", TypeName="longtext")]
-    public virtual string ExploredZones { get; set; }
+    public string ExploredZones { get; set; }
 
     [Column("extra_flags", TypeName="int")]
-    public virtual uint ExtraFlags { get; set; }
+    public uint ExtraFlags { get; set; }
 
     [Column("gender", TypeName="tinyint")]
-    public virtual byte Gender { get; set; }
+    public byte Gender { get; set; }
 
     [Column("grantableLevels", TypeName="int")]
-    public virtual uint GrantableLevels { get; set; }
+    public uint GrantableLevels { get; set; }
 
     /* Global Unique Identifier */
     [Column("guid", TypeName="int")]
-    public virtual uint Guid { get; set; }
+    public uint Guid { get; set; }
 
     [Column("health", TypeName="int")]
-    public virtual uint Health { get; set; }
+    public uint Health { get; set; }
 
     [Column("honor_highest_rank", TypeName="int")]
-    public virtual uint HonorHighestRank { get; set; }
+    public uint HonorHighestRank { get; set; }
 
     [Column("honor_standing", TypeName="int")]
-    public virtual uint HonorStanding { get; set; }
+    public uint HonorStanding { get; set; }
 
     [Column("is_logout_resting", TypeName="tinyint")]
-    public virtual byte IsLogoutResting { get; set; }
+    public byte IsLogoutResting { get; set; }
 
     [Column("level", TypeName="tinyint")]
-    public virtual byte Level { get; set; }
+    public byte Level { get; set; }
 
     [Column("leveltime", TypeName="int")]
-    public virtual uint Leveltime { get; set; }
+    public uint Leveltime { get; set; }
 
     [Column("logout_time", TypeName="bigint")]
-    public virtual ulong LogoutTime { get; set; }
+    public ulong LogoutTime { get; set; }
 
     /* Map Identifier */
     [Column("map", TypeName="int")]
-    public virtual uint Map { get; set; }
+    public uint Map { get; set; }
 
     [Column("money", TypeName="int")]
-    public virtual uint Money { get; set; }
+    public uint Money { get; set; }
 
     [Column("name")]
     [MaxLength(12)]
-    public virtual string Name { get; set; }
+    public string Name { get; set; }
 
     [Column("online", TypeName="tinyint")]
-    public virtual byte Online { get; set; }
+    public byte Online { get; set; }
 
     [Column("orientation", TypeName="float")]
-    public virtual float Orientation { get; set; }
+    public float Orientation { get; set; }
 
     [Column("playerBytes", TypeName="int")]
-    public virtual uint PlayerBytes { get; set; }
+    public uint PlayerBytes { get; set; }
 
     [Column("playerBytes2", TypeName="int")]
-    public virtual uint PlayerBytes2 { get; set; }
+    public uint PlayerBytes2 { get; set; }
 
     [Column("playerFlags", TypeName="int")]
-    public virtual uint PlayerFlags { get; set; }
+    public uint PlayerFlags { get; set; }
 
     [Column("position_x", TypeName="float")]
-    public virtual float PositionX { get; set; }
+    public float PositionX { get; set; }
 
     [Column("position_y", TypeName="float")]
-    public virtual float PositionY { get; set; }
+    public float PositionY { get; set; }
 
     [Column("position_z", TypeName="float")]
-    public virtual float PositionZ { get; set; }
+    public float PositionZ { get; set; }
 
     [Column("power1", TypeName="int")]
-    public virtual uint Power1 { get; set; }
+    public uint Power1 { get; set; }
 
     [Column("power2", TypeName="int")]
-    public virtual uint Power2 { get; set; }
+    public uint Power2 { get; set; }
 
     [Column("power3", TypeName="int")]
-    public virtual uint Power3 { get; set; }
+    public uint Power3 { get; set; }
 
     [Column("power4", TypeName="int")]
-    public virtual uint Power4 { get; set; }
+    public uint Power4 { get; set; }
 
     [Column("power5", TypeName="int")]
-    public virtual uint Power5 { get; set; }
+    public uint Power5 { get; set; }
 
     [Column("race", TypeName="tinyint")]
-    public virtual byte Race { get; set; }
+    public byte Race { get; set; }
 
     [Column("resettalents_cost", TypeName="int")]
-    public virtual uint ResettalentsCost { get; set; }
+    public uint ResettalentsCost { get; set; }
 
     [Column("resettalents_time", TypeName="bigint")]
-    public virtual ulong ResettalentsTime { get; set; }
+    public ulong ResettalentsTime { get; set; }
 
     [Column("rest_bonus", TypeName="float")]
-    public virtual float RestBonus { get; set; }
+    public float RestBonus { get; set; }
 
     [Column("stable_slots", TypeName="tinyint")]
-    public virtual byte StableSlots { get; set; }
+    public byte StableSlots { get; set; }
 
     [Column("stored_dishonorable_kills", TypeName="int")]
-    public virtual int StoredDishonorableKills { get; set; }
+    public int StoredDishonorableKills { get; set; }
 
     [Column("stored_honor_rating", TypeName="float")]
-    public virtual float StoredHonorRating { get; set; }
+    public float StoredHonorRating { get; set; }
 
     [Column("stored_honorable_kills", TypeName="int")]
-    public virtual int StoredHonorableKills { get; set; }
+    public int StoredHonorableKills { get; set; }
 
     [Column("taxi_path", TypeName="text")]
     [MaxLength(65535)]
-    public virtual string TaxiPath { get; set; }
+    public string TaxiPath { get; set; }
 
     [Column("taximask", TypeName="longtext")]
-    public virtual string Taximask { get; set; }
+    public string Taximask { get; set; }
 
     [Column("totaltime", TypeName="int")]
-    public virtual uint Totaltime { get; set; }
+    public uint Totaltime { get; set; }
 
     [Column("trans_o", TypeName="float")]
-    public virtual float TransO { get; set; }
+    public float TransO { get; set; }
 
     [Column("trans_x", TypeName="float")]
-    public virtual float TransX { get; set; }
+    public float TransX { get; set; }
 
     [Column("trans_y", TypeName="float")]
-    public virtual float TransY { get; set; }
+    public float TransY { get; set; }
 
     [Column("trans_z", TypeName="float")]
-    public virtual float TransZ { get; set; }
+    public float TransZ { get; set; }
 
     [Column("transguid", TypeName="bigint")]
-    public virtual ulong Transguid { get; set; }
+    public ulong Transguid { get; set; }
 
     [Column("watchedFaction", TypeName="int")]
-    public virtual uint WatchedFaction { get; set; }
+    public uint WatchedFaction { get; set; }
 
     [Column("xp", TypeName="int")]
-    public virtual uint Xp { get; set; }
+    public uint Xp { get; set; }
 
     [Column("zone", TypeName="int")]
-    public virtual uint Zone { get; set; }
+    public uint Zone { get; set; }
 
 }
 [Table("corpse")]
-public class Corpse
+public sealed class Corpse
 {
     [Column("corpse_type", TypeName="tinyint")]
-    public virtual byte CorpseType { get; set; }
+    public byte CorpseType { get; set; }
 
     /* Global Unique Identifier */
     [Column("guid", TypeName="int")]
-    public virtual uint Guid { get; set; }
+    public uint Guid { get; set; }
 
     [Column("instance", TypeName="int")]
-    public virtual uint Instance { get; set; }
+    public uint Instance { get; set; }
 
     /* Map Identifier */
     [Column("map", TypeName="int")]
-    public virtual uint Map { get; set; }
+    public uint Map { get; set; }
 
     [Column("orientation", TypeName="float")]
-    public virtual float Orientation { get; set; }
+    public float Orientation { get; set; }
 
     /* Character Global Unique Identifier */
     [Column("player", TypeName="int")]
-    public virtual uint Player { get; set; }
+    public uint Player { get; set; }
 
     [Column("position_x", TypeName="float")]
-    public virtual float PositionX { get; set; }
+    public float PositionX { get; set; }
 
     [Column("position_y", TypeName="float")]
-    public virtual float PositionY { get; set; }
+    public float PositionY { get; set; }
 
     [Column("position_z", TypeName="float")]
-    public virtual float PositionZ { get; set; }
+    public float PositionZ { get; set; }
 
     [Column("time", TypeName="bigint")]
-    public virtual ulong Time { get; set; }
+    public ulong Time { get; set; }
 
 }
 [Table("creature_respawn")]
-public class CreatureRespawn
+public sealed class CreatureRespawn
 {
     /* Global Unique Identifier */
     [Column("guid", TypeName="int")]
-    public virtual uint Guid { get; set; }
+    public uint Guid { get; set; }
 
     [Column("instance", TypeName="mediumint")]
-    public virtual uint Instance { get; set; }
+    public uint Instance { get; set; }
 
     [Column("respawntime", TypeName="bigint")]
-    public virtual ulong Respawntime { get; set; }
+    public ulong Respawntime { get; set; }
 
 }
 [Table("game_event_status")]
-public class GameEventStatus
+public sealed class GameEventStatus
 {
     [Column("Event", TypeName="smallint")]
-    public virtual ushort Event { get; set; }
+    public ushort Event { get; set; }
 
 }
 [Table("gameobject_respawn")]
-public class GameobjectRespawn
+public sealed class GameobjectRespawn
 {
     /* Global Unique Identifier */
     [Column("guid", TypeName="int")]
-    public virtual uint Guid { get; set; }
+    public uint Guid { get; set; }
 
     [Column("instance", TypeName="mediumint")]
-    public virtual uint Instance { get; set; }
+    public uint Instance { get; set; }
 
     [Column("respawntime", TypeName="bigint")]
-    public virtual ulong Respawntime { get; set; }
+    public ulong Respawntime { get; set; }
 
 }
 [Table("gm_surveys")]
-public class GmSurveys
+public sealed class GmSurveys
 {
     [Column("answer1", TypeName="tinyint")]
-    public virtual byte Answer1 { get; set; }
+    public byte Answer1 { get; set; }
 
     [Column("answer10", TypeName="tinyint")]
-    public virtual byte Answer10 { get; set; }
+    public byte Answer10 { get; set; }
 
     [Column("answer2", TypeName="tinyint")]
-    public virtual byte Answer2 { get; set; }
+    public byte Answer2 { get; set; }
 
     [Column("answer3", TypeName="tinyint")]
-    public virtual byte Answer3 { get; set; }
+    public byte Answer3 { get; set; }
 
     [Column("answer4", TypeName="tinyint")]
-    public virtual byte Answer4 { get; set; }
+    public byte Answer4 { get; set; }
 
     [Column("answer5", TypeName="tinyint")]
-    public virtual byte Answer5 { get; set; }
+    public byte Answer5 { get; set; }
 
     [Column("answer6", TypeName="tinyint")]
-    public virtual byte Answer6 { get; set; }
+    public byte Answer6 { get; set; }
 
     [Column("answer7", TypeName="tinyint")]
-    public virtual byte Answer7 { get; set; }
+    public byte Answer7 { get; set; }
 
     [Column("answer8", TypeName="tinyint")]
-    public virtual byte Answer8 { get; set; }
+    public byte Answer8 { get; set; }
 
     [Column("answer9", TypeName="tinyint")]
-    public virtual byte Answer9 { get; set; }
+    public byte Answer9 { get; set; }
 
     /* Player's feedback */
     [Column("comment", TypeName="text")]
     [MaxLength(65535)]
-    public virtual string Comment { get; set; }
+    public string Comment { get; set; }
 
     /* Survey DBC entry's identifier */
     [Column("surveyid", TypeName="int")]
-    public virtual uint Surveyid { get; set; }
+    public uint Surveyid { get; set; }
 
     /* GM Ticket's unique identifier */
     [Column("ticketid", TypeName="int")]
-    public virtual uint Ticketid { get; set; }
+    public uint Ticketid { get; set; }
 
 }
 [Table("gm_tickets")]
-public class GmTickets
+public sealed class GmTickets
 {
     /* Timestamp: ticket's last time answered by a GM */
     [Column("answered", TypeName="bigint")]
-    public virtual ulong Answered { get; set; }
+    public ulong Answered { get; set; }
 
     /* Assignee's character's Global Unique Identifier */
     [Column("assignee_guid", TypeName="int")]
-    public virtual uint AssigneeGuid { get; set; }
+    public uint AssigneeGuid { get; set; }
 
     /* Assignee's character's name */
     [Column("assignee_name")]
     [MaxLength(12)]
-    public virtual string AssigneeName { get; set; }
+    public string AssigneeName { get; set; }
 
     /* Player's character Global Unique Identifier */
     [Column("author_guid", TypeName="int")]
-    public virtual uint AuthorGuid { get; set; }
+    public uint AuthorGuid { get; set; }
 
     /* Player's character name */
     [Column("author_name")]
     [MaxLength(12)]
-    public virtual string AuthorName { get; set; }
+    public string AuthorName { get; set; }
 
     /* GM Ticket Category DBC entry's identifier */
     [Column("category", TypeName="tinyint")]
-    public virtual byte Category { get; set; }
+    public byte Category { get; set; }
 
     /* Timestamp: ticket closed by a GM */
     [Column("closed", TypeName="bigint")]
-    public virtual ulong Closed { get; set; }
+    public ulong Closed { get; set; }
 
     /* Assignee's final conclusion on this ticket */
     [Column("conclusion")]
     [MaxLength(255)]
-    public virtual string Conclusion { get; set; }
+    public string Conclusion { get; set; }
 
     /* Timestamp: ticket created by a player */
     [Column("created", TypeName="bigint")]
-    public virtual ulong Created { get; set; }
+    public ulong Created { get; set; }
 
     /* GM Ticket's unique identifier */
     [Column("id", TypeName="int")]
-    public virtual uint Id { get; set; }
+    public uint Id { get; set; }
 
     /* Ticket's security level */
     [Column("level", TypeName="tinyint")]
-    public virtual byte Level { get; set; }
+    public byte Level { get; set; }
 
     /* Player's client locale name */
     [Column("locale")]
     [MaxLength(4)]
-    public virtual string Locale { get; set; }
+    public string Locale { get; set; }
 
     /* Character's map identifier on submission */
     [Column("mapid", TypeName="int")]
-    public virtual uint Mapid { get; set; }
+    public uint Mapid { get; set; }
 
     /* Additional notes for GMs */
     [Column("notes")]
     [MaxLength(10000)]
-    public virtual string Notes { get; set; }
+    public string Notes { get; set; }
 
     /* Character's orientation angle on submission */
     [Column("o", TypeName="float")]
-    public virtual float O { get; set; }
+    public float O { get; set; }
 
     /* Timestamp: ticket's last time opened by a GM */
     [Column("seen", TypeName="bigint")]
-    public virtual ulong Seen { get; set; }
+    public ulong Seen { get; set; }
 
     /* Ticket's current state */
     [Column("state", TypeName="tinyint")]
-    public virtual byte State { get; set; }
+    public byte State { get; set; }
 
     /* Ticket's current status */
     [Column("status", TypeName="tinyint")]
-    public virtual byte Status { get; set; }
+    public byte Status { get; set; }
 
     /* Ticket's message */
     [Column("text", TypeName="text")]
     [MaxLength(65535)]
-    public virtual string Text { get; set; }
+    public string Text { get; set; }
 
     /* Timestamp: ticket text's last update */
     [Column("updated", TypeName="bigint")]
-    public virtual ulong Updated { get; set; }
+    public ulong Updated { get; set; }
 
     /* Character's x coordinate on submission */
     [Column("x", TypeName="float")]
-    public virtual float X { get; set; }
+    public float X { get; set; }
 
     /* Character's y coordinate on submission */
     [Column("y", TypeName="float")]
-    public virtual float Y { get; set; }
+    public float Y { get; set; }
 
     /* Character's z coordinate on submission */
     [Column("z", TypeName="float")]
-    public virtual float Z { get; set; }
+    public float Z { get; set; }
 
 }
 [Table("group_instance")]
-public class GroupInstance
+public sealed class GroupInstance
 {
     [Column("instance", TypeName="int")]
-    public virtual uint Instance { get; set; }
+    public uint Instance { get; set; }
 
     [Column("leaderGuid", TypeName="int")]
-    public virtual uint LeaderGuid { get; set; }
+    public uint LeaderGuid { get; set; }
 
     [Column("permanent", TypeName="tinyint")]
-    public virtual byte Permanent { get; set; }
+    public byte Permanent { get; set; }
 
 }
 [Table("group_member")]
-public class GroupMember
+public sealed class GroupMember
 {
     [Column("assistant", TypeName="tinyint")]
-    public virtual byte Assistant { get; set; }
+    public byte Assistant { get; set; }
 
     [Column("groupId", TypeName="int")]
-    public virtual uint GroupId { get; set; }
+    public uint GroupId { get; set; }
 
     [Column("memberGuid", TypeName="int")]
-    public virtual uint MemberGuid { get; set; }
+    public uint MemberGuid { get; set; }
 
     [Column("subgroup", TypeName="smallint")]
-    public virtual ushort Subgroup { get; set; }
+    public ushort Subgroup { get; set; }
 
 }
 [Table("groups")]
-public class Groups
+public sealed class Groups
 {
     [Column("groupId", TypeName="int")]
-    public virtual uint GroupId { get; set; }
+    public uint GroupId { get; set; }
 
     [Column("icon1", TypeName="int")]
-    public virtual uint Icon1 { get; set; }
+    public uint Icon1 { get; set; }
 
     [Column("icon2", TypeName="int")]
-    public virtual uint Icon2 { get; set; }
+    public uint Icon2 { get; set; }
 
     [Column("icon3", TypeName="int")]
-    public virtual uint Icon3 { get; set; }
+    public uint Icon3 { get; set; }
 
     [Column("icon4", TypeName="int")]
-    public virtual uint Icon4 { get; set; }
+    public uint Icon4 { get; set; }
 
     [Column("icon5", TypeName="int")]
-    public virtual uint Icon5 { get; set; }
+    public uint Icon5 { get; set; }
 
     [Column("icon6", TypeName="int")]
-    public virtual uint Icon6 { get; set; }
+    public uint Icon6 { get; set; }
 
     [Column("icon7", TypeName="int")]
-    public virtual uint Icon7 { get; set; }
+    public uint Icon7 { get; set; }
 
     [Column("icon8", TypeName="int")]
-    public virtual uint Icon8 { get; set; }
+    public uint Icon8 { get; set; }
 
     [Column("isRaid", TypeName="tinyint")]
-    public virtual byte IsRaid { get; set; }
+    public byte IsRaid { get; set; }
 
     [Column("leaderGuid", TypeName="int")]
-    public virtual uint LeaderGuid { get; set; }
+    public uint LeaderGuid { get; set; }
 
     [Column("looterGuid", TypeName="int")]
-    public virtual uint LooterGuid { get; set; }
+    public uint LooterGuid { get; set; }
 
     [Column("lootMethod", TypeName="tinyint")]
-    public virtual byte LootMethod { get; set; }
+    public byte LootMethod { get; set; }
 
     [Column("lootThreshold", TypeName="tinyint")]
-    public virtual byte LootThreshold { get; set; }
+    public byte LootThreshold { get; set; }
 
     [Column("mainAssistant", TypeName="int")]
-    public virtual uint MainAssistant { get; set; }
+    public uint MainAssistant { get; set; }
 
     [Column("mainTank", TypeName="int")]
-    public virtual uint MainTank { get; set; }
+    public uint MainTank { get; set; }
 
 }
 [Table("guild")]
-public class Guild
+public sealed class Guild
 {
     [Column("BackgroundColor", TypeName="int")]
-    public virtual int BackgroundColor { get; set; }
+    public int BackgroundColor { get; set; }
 
     [Column("BorderColor", TypeName="int")]
-    public virtual int BorderColor { get; set; }
+    public int BorderColor { get; set; }
 
     [Column("BorderStyle", TypeName="int")]
-    public virtual int BorderStyle { get; set; }
+    public int BorderStyle { get; set; }
 
     [Column("createdate", TypeName="bigint")]
-    public virtual ulong Createdate { get; set; }
+    public ulong Createdate { get; set; }
 
     [Column("EmblemColor", TypeName="int")]
-    public virtual int EmblemColor { get; set; }
+    public int EmblemColor { get; set; }
 
     [Column("EmblemStyle", TypeName="int")]
-    public virtual int EmblemStyle { get; set; }
+    public int EmblemStyle { get; set; }
 
     [Column("guildid", TypeName="int")]
-    public virtual uint Guildid { get; set; }
+    public uint Guildid { get; set; }
 
     [Column("info")]
     [MaxLength(500)]
-    public virtual string Info { get; set; }
+    public string Info { get; set; }
 
     [Column("leaderguid", TypeName="int")]
-    public virtual uint Leaderguid { get; set; }
+    public uint Leaderguid { get; set; }
 
     [Column("motd")]
     [MaxLength(128)]
-    public virtual string Motd { get; set; }
+    public string Motd { get; set; }
 
     [Column("name")]
     [MaxLength(255)]
-    public virtual string Name { get; set; }
+    public string Name { get; set; }
 
 }
 [Table("guild_eventlog")]
-public class GuildEventlog
+public sealed class GuildEventlog
 {
     /* Event type */
     [Column("EventType", TypeName="tinyint")]
-    public virtual byte EventType { get; set; }
+    public byte EventType { get; set; }
 
     /* Guild Identificator */
     [Column("guildid", TypeName="int")]
-    public virtual uint Guildid { get; set; }
+    public uint Guildid { get; set; }
 
     /* Log record identificator - auxiliary column */
     [Column("LogGuid", TypeName="int")]
-    public virtual uint LogGuid { get; set; }
+    public uint LogGuid { get; set; }
 
     /* New rank(in case promotion/demotion) */
     [Column("NewRank", TypeName="tinyint")]
-    public virtual byte NewRank { get; set; }
+    public byte NewRank { get; set; }
 
     /* Player 1 */
     [Column("PlayerGuid1", TypeName="int")]
-    public virtual uint PlayerGuid1 { get; set; }
+    public uint PlayerGuid1 { get; set; }
 
     /* Player 2 */
     [Column("PlayerGuid2", TypeName="int")]
-    public virtual uint PlayerGuid2 { get; set; }
+    public uint PlayerGuid2 { get; set; }
 
     /* Event UNIX time */
     [Column("TimeStamp", TypeName="bigint")]
-    public virtual ulong TimeStamp { get; set; }
+    public ulong TimeStamp { get; set; }
 
 }
 [Table("guild_member")]
-public class GuildMember
+public sealed class GuildMember
 {
     [Column("guid", TypeName="int")]
-    public virtual uint Guid { get; set; }
+    public uint Guid { get; set; }
 
     [Column("guildid", TypeName="int")]
-    public virtual uint Guildid { get; set; }
+    public uint Guildid { get; set; }
 
     [Column("offnote")]
     [MaxLength(31)]
-    public virtual string Offnote { get; set; }
+    public string Offnote { get; set; }
 
     [Column("pnote")]
     [MaxLength(31)]
-    public virtual string Pnote { get; set; }
+    public string Pnote { get; set; }
 
     [Column("rank", TypeName="tinyint")]
-    public virtual byte Rank { get; set; }
+    public byte Rank { get; set; }
 
 }
 [Table("guild_rank")]
-public class GuildRank
+public sealed class GuildRank
 {
     [Column("guildid", TypeName="int")]
-    public virtual uint Guildid { get; set; }
+    public uint Guildid { get; set; }
 
     [Column("rid", TypeName="int")]
-    public virtual uint Rid { get; set; }
+    public uint Rid { get; set; }
 
     [Column("rights", TypeName="int")]
-    public virtual uint Rights { get; set; }
+    public uint Rights { get; set; }
 
     [Column("rname")]
     [MaxLength(255)]
-    public virtual string Rname { get; set; }
+    public string Rname { get; set; }
 
 }
 [Table("instance")]
-public class Instance
+public sealed class Instance
 {
     [Column("data", TypeName="longtext")]
-    public virtual string Data { get; set; }
+    public string Data { get; set; }
 
     [Column("encountersMask", TypeName="int")]
-    public virtual uint EncountersMask { get; set; }
+    public uint EncountersMask { get; set; }
 
     [Column("id", TypeName="int")]
-    public virtual uint Id { get; set; }
+    public uint Id { get; set; }
 
     [Column("map", TypeName="int")]
-    public virtual uint Map { get; set; }
+    public uint Map { get; set; }
 
     [Column("resettime", TypeName="bigint")]
-    public virtual ulong Resettime { get; set; }
+    public ulong Resettime { get; set; }
 
 }
 [Table("instance_reset")]
-public class InstanceReset
+public sealed class InstanceReset
 {
     [Column("mapid", TypeName="int")]
-    public virtual uint Mapid { get; set; }
+    public uint Mapid { get; set; }
 
     [Column("resettime", TypeName="bigint")]
-    public virtual ulong Resettime { get; set; }
+    public ulong Resettime { get; set; }
 
 }
 [Table("item_instance")]
-public class ItemInstance
+public sealed class ItemInstance
 {
     [Column("charges", TypeName="text")]
     [MaxLength(65535)]
-    public virtual string Charges { get; set; }
+    public string Charges { get; set; }
 
     [Column("count", TypeName="int")]
-    public virtual uint Count { get; set; }
+    public uint Count { get; set; }
 
     [Column("creatorGuid", TypeName="int")]
-    public virtual uint CreatorGuid { get; set; }
+    public uint CreatorGuid { get; set; }
 
     [Column("durability", TypeName="int")]
-    public virtual uint Durability { get; set; }
+    public uint Durability { get; set; }
 
     [Column("duration", TypeName="int")]
-    public virtual uint Duration { get; set; }
+    public uint Duration { get; set; }
 
     [Column("enchantments", TypeName="text")]
     [MaxLength(65535)]
-    public virtual string Enchantments { get; set; }
+    public string Enchantments { get; set; }
 
     [Column("flags", TypeName="int")]
-    public virtual uint Flags { get; set; }
+    public uint Flags { get; set; }
 
     [Column("giftCreatorGuid", TypeName="int")]
-    public virtual uint GiftCreatorGuid { get; set; }
+    public uint GiftCreatorGuid { get; set; }
 
     [Column("guid", TypeName="int")]
-    public virtual uint Guid { get; set; }
+    public uint Guid { get; set; }
 
     [Column("itemEntry", TypeName="mediumint")]
-    public virtual uint ItemEntry { get; set; }
+    public uint ItemEntry { get; set; }
 
     [Column("itemTextId", TypeName="mediumint")]
-    public virtual uint ItemTextId { get; set; }
+    public uint ItemTextId { get; set; }
 
     [Column("owner_guid", TypeName="int")]
-    public virtual uint OwnerGuid { get; set; }
+    public uint OwnerGuid { get; set; }
 
     [Column("randomPropertyId", TypeName="smallint")]
-    public virtual short RandomPropertyId { get; set; }
+    public short RandomPropertyId { get; set; }
 
 }
 [Table("item_loot")]
-public class ItemLoot
+public sealed class ItemLoot
 {
     [Column("amount", TypeName="int")]
-    public virtual uint Amount { get; set; }
+    public uint Amount { get; set; }
 
     [Column("guid", TypeName="int")]
-    public virtual uint Guid { get; set; }
+    public uint Guid { get; set; }
 
     [Column("itemid", TypeName="int")]
-    public virtual uint Itemid { get; set; }
+    public uint Itemid { get; set; }
 
     [Column("owner_guid", TypeName="int")]
-    public virtual uint OwnerGuid { get; set; }
+    public uint OwnerGuid { get; set; }
 
     [Column("property", TypeName="int")]
-    public virtual int Property { get; set; }
+    public int Property { get; set; }
 
 }
 [Table("item_text")]
-public class ItemText
+public sealed class ItemText
 {
     [Column("id", TypeName="int")]
-    public virtual uint Id { get; set; }
+    public uint Id { get; set; }
 
     [Column("text", TypeName="longtext")]
-    public virtual string Text { get; set; }
+    public string Text { get; set; }
 
 }
 [Table("mail")]
-public class Mail
+public sealed class Mail
 {
     [Column("Checked", TypeName="tinyint")]
-    public virtual byte Checked { get; set; }
+    public byte Checked { get; set; }
 
     [Column("cod", TypeName="int")]
-    public virtual uint Cod { get; set; }
+    public uint Cod { get; set; }
 
     [Column("deliver_time", TypeName="bigint")]
-    public virtual ulong DeliverTime { get; set; }
+    public ulong DeliverTime { get; set; }
 
     [Column("expire_time", TypeName="bigint")]
-    public virtual ulong ExpireTime { get; set; }
+    public ulong ExpireTime { get; set; }
 
     [Column("has_items", TypeName="tinyint")]
-    public virtual byte HasItems { get; set; }
+    public byte HasItems { get; set; }
 
     /* Identifier */
     [Column("id", TypeName="int")]
-    public virtual uint Id { get; set; }
+    public uint Id { get; set; }
 
     [Column("itemTextId", TypeName="int")]
-    public virtual uint ItemTextId { get; set; }
+    public uint ItemTextId { get; set; }
 
     [Column("mailTemplateId", TypeName="mediumint")]
-    public virtual uint MailTemplateId { get; set; }
+    public uint MailTemplateId { get; set; }
 
     [Column("messageType", TypeName="tinyint")]
-    public virtual byte MessageType { get; set; }
+    public byte MessageType { get; set; }
 
     [Column("money", TypeName="int")]
-    public virtual uint Money { get; set; }
+    public uint Money { get; set; }
 
     /* Character Global Unique Identifier */
     [Column("receiver", TypeName="int")]
-    public virtual uint Receiver { get; set; }
+    public uint Receiver { get; set; }
 
     /* Character Global Unique Identifier */
     [Column("sender", TypeName="int")]
-    public virtual uint Sender { get; set; }
+    public uint Sender { get; set; }
 
     [Column("stationery", TypeName="tinyint")]
-    public virtual sbyte Stationery { get; set; }
+    public sbyte Stationery { get; set; }
 
     [Column("subject", TypeName="longtext")]
-    public virtual string Subject { get; set; }
+    public string Subject { get; set; }
 
 }
 [Table("mail_items")]
-public class MailItems
+public sealed class MailItems
 {
     [Column("item_guid", TypeName="int")]
-    public virtual int ItemGuid { get; set; }
+    public int ItemGuid { get; set; }
 
     [Column("item_template", TypeName="int")]
-    public virtual int ItemTemplate { get; set; }
+    public int ItemTemplate { get; set; }
 
     [Column("mail_id", TypeName="int")]
-    public virtual int MailId { get; set; }
+    public int MailId { get; set; }
 
     /* Character Global Unique Identifier */
     [Column("receiver", TypeName="int")]
-    public virtual uint Receiver { get; set; }
+    public uint Receiver { get; set; }
 
 }
 [Table("pet_aura")]
-public class PetAura
+public sealed class PetAura
 {
     [Column("basepoints0", TypeName="int")]
-    public virtual int Basepoints0 { get; set; }
+    public int Basepoints0 { get; set; }
 
     [Column("basepoints1", TypeName="int")]
-    public virtual int Basepoints1 { get; set; }
+    public int Basepoints1 { get; set; }
 
     [Column("basepoints2", TypeName="int")]
-    public virtual int Basepoints2 { get; set; }
+    public int Basepoints2 { get; set; }
 
     /* Full Global Unique Identifier */
     [Column("caster_guid", TypeName="bigint")]
-    public virtual ulong CasterGuid { get; set; }
+    public ulong CasterGuid { get; set; }
 
     [Column("effIndexMask", TypeName="int")]
-    public virtual uint EffIndexMask { get; set; }
+    public uint EffIndexMask { get; set; }
 
     /* Global Unique Identifier */
     [Column("guid", TypeName="int")]
-    public virtual uint Guid { get; set; }
+    public uint Guid { get; set; }
 
     [Column("item_guid", TypeName="int")]
-    public virtual uint ItemGuid { get; set; }
+    public uint ItemGuid { get; set; }
 
     [Column("maxduration", TypeName="int")]
-    public virtual int Maxduration { get; set; }
+    public int Maxduration { get; set; }
 
     [Column("periodictime0", TypeName="int")]
-    public virtual uint Periodictime0 { get; set; }
+    public uint Periodictime0 { get; set; }
 
     [Column("periodictime1", TypeName="int")]
-    public virtual uint Periodictime1 { get; set; }
+    public uint Periodictime1 { get; set; }
 
     [Column("periodictime2", TypeName="int")]
-    public virtual uint Periodictime2 { get; set; }
+    public uint Periodictime2 { get; set; }
 
     [Column("remaincharges", TypeName="int")]
-    public virtual uint Remaincharges { get; set; }
+    public uint Remaincharges { get; set; }
 
     [Column("remaintime", TypeName="int")]
-    public virtual int Remaintime { get; set; }
+    public int Remaintime { get; set; }
 
     [Column("spell", TypeName="int")]
-    public virtual uint Spell { get; set; }
+    public uint Spell { get; set; }
 
     [Column("stackcount", TypeName="int")]
-    public virtual uint Stackcount { get; set; }
+    public uint Stackcount { get; set; }
 
 }
 [Table("pet_spell")]
-public class PetSpell
+public sealed class PetSpell
 {
     [Column("active", TypeName="int")]
-    public virtual uint Active { get; set; }
+    public uint Active { get; set; }
 
     /* Global Unique Identifier */
     [Column("guid", TypeName="int")]
-    public virtual uint Guid { get; set; }
+    public uint Guid { get; set; }
 
     /* Spell Identifier */
     [Column("spell", TypeName="int")]
-    public virtual uint Spell { get; set; }
+    public uint Spell { get; set; }
 
 }
 [Table("pet_spell_cooldown")]
-public class PetSpellCooldown
+public sealed class PetSpellCooldown
 {
     /* Global Unique Identifier, Low part */
     [Column("guid", TypeName="int")]
-    public virtual uint Guid { get; set; }
+    public uint Guid { get; set; }
 
     /* Spell Identifier */
     [Column("spell", TypeName="int")]
-    public virtual uint Spell { get; set; }
+    public uint Spell { get; set; }
 
     [Column("time", TypeName="bigint")]
-    public virtual ulong Time { get; set; }
+    public ulong Time { get; set; }
 
 }
 [Table("petition")]
-public class Petition
+public sealed class Petition
 {
     [Column("name")]
     [MaxLength(255)]
-    public virtual string Name { get; set; }
+    public string Name { get; set; }
 
     [Column("ownerguid", TypeName="int")]
-    public virtual uint Ownerguid { get; set; }
+    public uint Ownerguid { get; set; }
 
     [Column("petitionguid", TypeName="int")]
-    public virtual uint Petitionguid { get; set; }
+    public uint Petitionguid { get; set; }
 
 }
 [Table("petition_sign")]
-public class PetitionSign
+public sealed class PetitionSign
 {
     [Column("ownerguid", TypeName="int")]
-    public virtual uint Ownerguid { get; set; }
+    public uint Ownerguid { get; set; }
 
     [Column("petitionguid", TypeName="int")]
-    public virtual uint Petitionguid { get; set; }
+    public uint Petitionguid { get; set; }
 
     [Column("player_account", TypeName="int")]
-    public virtual uint PlayerAccount { get; set; }
+    public uint PlayerAccount { get; set; }
 
     [Column("playerguid", TypeName="int")]
-    public virtual uint Playerguid { get; set; }
+    public uint Playerguid { get; set; }
 
 }
 [Table("playerbot_saved_data")]
-public class PlayerbotSavedData
+public sealed class PlayerbotSavedData
 {
     [Column("combat_delay", TypeName="int")]
-    public virtual uint CombatDelay { get; set; }
+    public uint CombatDelay { get; set; }
 
     [Column("combat_order", TypeName="tinyint")]
-    public virtual byte CombatOrder { get; set; }
+    public byte CombatOrder { get; set; }
 
     [Column("guid", TypeName="int")]
-    public virtual uint Guid { get; set; }
+    public uint Guid { get; set; }
 
     [Column("pname")]
     [MaxLength(12)]
-    public virtual string Pname { get; set; }
+    public string Pname { get; set; }
 
     [Column("primary_target", TypeName="int")]
-    public virtual uint PrimaryTarget { get; set; }
+    public uint PrimaryTarget { get; set; }
 
     [Column("secondary_target", TypeName="int")]
-    public virtual uint SecondaryTarget { get; set; }
+    public uint SecondaryTarget { get; set; }
 
     [Column("sname")]
     [MaxLength(12)]
-    public virtual string Sname { get; set; }
+    public string Sname { get; set; }
 
 }
 [Table("pvpstats_battlegrounds")]
-public class PvpstatsBattlegrounds
+public sealed class PvpstatsBattlegrounds
 {
     [Column("bracket_id", TypeName="tinyint")]
-    public virtual byte BracketId { get; set; }
+    public byte BracketId { get; set; }
 
     [Column("date", TypeName="datetime")]
-    public virtual DateTime Date { get; set; }
+    public DateTime Date { get; set; }
 
     [Column("id", TypeName="bigint")]
-    public virtual ulong Id { get; set; }
+    public ulong Id { get; set; }
 
     [Column("type", TypeName="tinyint")]
-    public virtual byte Type { get; set; }
+    public byte Type { get; set; }
 
     [Column("winner_team", TypeName="tinyint")]
-    public virtual sbyte WinnerTeam { get; set; }
+    public sbyte WinnerTeam { get; set; }
 
 }
 [Table("pvpstats_players")]
-public class PvpstatsPlayers
+public sealed class PvpstatsPlayers
 {
     [Column("attr_1", TypeName="mediumint")]
-    public virtual uint Attr1 { get; set; }
+    public uint Attr1 { get; set; }
 
     [Column("attr_2", TypeName="mediumint")]
-    public virtual uint Attr2 { get; set; }
+    public uint Attr2 { get; set; }
 
     [Column("attr_3", TypeName="mediumint")]
-    public virtual uint Attr3 { get; set; }
+    public uint Attr3 { get; set; }
 
     [Column("attr_4", TypeName="mediumint")]
-    public virtual uint Attr4 { get; set; }
+    public uint Attr4 { get; set; }
 
     [Column("attr_5", TypeName="mediumint")]
-    public virtual uint Attr5 { get; set; }
+    public uint Attr5 { get; set; }
 
     [Column("battleground_id", TypeName="bigint")]
-    public virtual ulong BattlegroundId { get; set; }
+    public ulong BattlegroundId { get; set; }
 
     [Column("character_guid", TypeName="int")]
-    public virtual uint CharacterGuid { get; set; }
+    public uint CharacterGuid { get; set; }
 
     [Column("score_bonus_honor", TypeName="mediumint")]
-    public virtual uint ScoreBonusHonor { get; set; }
+    public uint ScoreBonusHonor { get; set; }
 
     [Column("score_damage_done", TypeName="mediumint")]
-    public virtual uint ScoreDamageDone { get; set; }
+    public uint ScoreDamageDone { get; set; }
 
     [Column("score_deaths", TypeName="mediumint")]
-    public virtual uint ScoreDeaths { get; set; }
+    public uint ScoreDeaths { get; set; }
 
     [Column("score_healing_done", TypeName="mediumint")]
-    public virtual uint ScoreHealingDone { get; set; }
+    public uint ScoreHealingDone { get; set; }
 
     [Column("score_honorable_kills", TypeName="mediumint")]
-    public virtual uint ScoreHonorableKills { get; set; }
+    public uint ScoreHonorableKills { get; set; }
 
     [Column("score_killing_blows", TypeName="mediumint")]
-    public virtual uint ScoreKillingBlows { get; set; }
+    public uint ScoreKillingBlows { get; set; }
 
 }
 [Table("saved_variables")]
-public class SavedVariables
+public sealed class SavedVariables
 {
     [Column("cleaning_flags", TypeName="int")]
-    public virtual uint CleaningFlags { get; set; }
+    public uint CleaningFlags { get; set; }
 
     [Column("NextMaintenanceDate", TypeName="int")]
-    public virtual uint NextMaintenanceDate { get; set; }
+    public uint NextMaintenanceDate { get; set; }
 
     [Column("NextWeeklyQuestResetTime", TypeName="bigint")]
-    public virtual ulong NextWeeklyQuestResetTime { get; set; }
+    public ulong NextWeeklyQuestResetTime { get; set; }
 
 }
 [Table("world")]
-public class World
+public sealed class World
 {
     [Column("data", TypeName="longtext")]
-    public virtual string Data { get; set; }
+    public string Data { get; set; }
 
     [Column("map", TypeName="int")]
-    public virtual uint Map { get; set; }
+    public uint Map { get; set; }
 
 }
 [Table("world_state")]
-public class WorldState
+public sealed class WorldState
 {
     [Column("Data", TypeName="longtext")]
-    public virtual string Data { get; set; }
+    public string Data { get; set; }
 
     /* Internal save ID */
     [Column("Id", TypeName="int")]
-    public virtual uint Id { get; set; }
+    public uint Id { get; set; }
 
 }

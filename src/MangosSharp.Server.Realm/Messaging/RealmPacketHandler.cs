@@ -127,9 +127,9 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
             var now = session.Created.ToUnixTimeSeconds();
 
             var ipBan = db.IpBanneds
-                .FirstOrDefault(x => (x.ExpiresAt == x.BannedAt || x.ExpiresAt > now) && x.Ip == ip);
+                .Any(x => (x.ExpiresAt == x.BannedAt || x.ExpiresAt > now) && x.Ip == ip);
 
-            if (ipBan != default)
+            if (ipBan)
             {
                 writer.Write((byte)AuthLogonResult.FAILED_FAIL_NOACCESS);
                 _logger.LogInformation("[AuthChallenge] Banned ip {} tries to login!", ip);
@@ -175,6 +175,7 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
                 .FirstOrDefault(x => x.AccountId == accountId &&
                                      x.Active == 1 &&
                                      (x.ExpiresAt > now || x.ExpiresAt == x.BannedAt));
+
             if (accountBan != default)
             {
                 if (accountBan.ExpiresAt == accountBan.BannedAt)

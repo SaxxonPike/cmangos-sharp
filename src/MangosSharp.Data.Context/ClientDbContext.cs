@@ -15,7 +15,7 @@ namespace MangosSharp.Data.Context;
 
 // Not actually a dbcontext derivative as there's no "database"
 
-public class ClientDbContext : IDisposable
+public sealed class ClientDbContext : IDisposable
 {
     private readonly ILogger _logger;
 

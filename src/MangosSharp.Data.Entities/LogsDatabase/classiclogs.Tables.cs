@@ -9,66 +9,66 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace MangosSharp.Data.Entities.LogsDatabase;
 
 [Table("logs_anticheat")]
-public class LogsAnticheat
+public sealed class LogsAnticheat
 {
     [Column("account", TypeName="int")]
-    public virtual uint Account { get; set; }
+    public uint Account { get; set; }
 
     [Column("actionMask", TypeName="int")]
-    public virtual uint ActionMask { get; set; }
+    public uint ActionMask { get; set; }
 
     [Column("fingerprint", TypeName="int")]
-    public virtual uint Fingerprint { get; set; }
+    public uint Fingerprint { get; set; }
 
     [Column("id", TypeName="int")]
-    public virtual uint Id { get; set; }
+    public uint Id { get; set; }
 
     [Column("info")]
     [MaxLength(512)]
-    public virtual string Info { get; set; }
+    public string Info { get; set; }
 
     [Column("ip")]
     [MaxLength(16)]
-    public virtual string Ip { get; set; }
+    public string Ip { get; set; }
 
     [Column("player")]
     [MaxLength(32)]
-    public virtual string Player { get; set; }
+    public string Player { get; set; }
 
     [Column("realm", TypeName="int")]
-    public virtual uint Realm { get; set; }
+    public uint Realm { get; set; }
 
     [Column("time", TypeName="datetime")]
-    public virtual DateTime Time { get; set; }
+    public DateTime Time { get; set; }
 
 }
 [Table("logs_spamdetect")]
-public class LogsSpamdetect
+public sealed class LogsSpamdetect
 {
     [Column("accountId", TypeName="int")]
-    public virtual int AccountId { get; set; }
+    public int AccountId { get; set; }
 
     [Column("comment")]
     [MaxLength(8192)]
-    public virtual string Comment { get; set; }
+    public string Comment { get; set; }
 
     [Column("fromFingerprint", TypeName="int")]
-    public virtual uint FromFingerprint { get; set; }
+    public uint FromFingerprint { get; set; }
 
     [Column("fromGuid", TypeName="bigint")]
-    public virtual ulong FromGuid { get; set; }
+    public ulong FromGuid { get; set; }
 
     [Column("fromIP")]
     [MaxLength(16)]
-    public virtual string FromIP { get; set; }
+    public string FromIP { get; set; }
 
     [Column("id", TypeName="int")]
-    public virtual uint Id { get; set; }
+    public uint Id { get; set; }
 
     [Column("realm", TypeName="int")]
-    public virtual uint Realm { get; set; }
+    public uint Realm { get; set; }
 
     [Column("time", TypeName="timestamp")]
-    public virtual DateTimeOffset Time { get; set; }
+    public DateTimeOffset Time { get; set; }
 
 }

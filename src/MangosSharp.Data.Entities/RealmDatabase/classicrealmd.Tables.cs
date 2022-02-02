@@ -9,302 +9,302 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace MangosSharp.Data.Entities.RealmDatabase;
 
 [Table("account")]
-public class Account
+public sealed class Account
 {
     [Column("active_realm_id", TypeName="int")]
-    public virtual uint ActiveRealmId { get; set; }
+    public uint ActiveRealmId { get; set; }
 
     [Column("email", TypeName="text")]
     [MaxLength(65535)]
-    public virtual string Email { get; set; }
+    public string Email { get; set; }
 
     [Column("expansion", TypeName="tinyint")]
-    public virtual byte Expansion { get; set; }
+    public byte Expansion { get; set; }
 
     [Column("failed_logins", TypeName="int")]
-    public virtual uint FailedLogins { get; set; }
+    public uint FailedLogins { get; set; }
 
     [Column("flags", TypeName="int")]
-    public virtual uint Flags { get; set; }
+    public uint Flags { get; set; }
 
     [Column("gmlevel", TypeName="tinyint")]
-    public virtual byte Gmlevel { get; set; }
+    public byte Gmlevel { get; set; }
 
     /* Identifier */
     [Column("id", TypeName="int")]
-    public virtual uint Id { get; set; }
+    public uint Id { get; set; }
 
     [Column("joindate", TypeName="timestamp")]
-    public virtual DateTimeOffset Joindate { get; set; }
+    public DateTimeOffset Joindate { get; set; }
 
     [Column("last_module")]
     [MaxLength(32)]
-    public virtual string LastModule { get; set; }
+    public string LastModule { get; set; }
 
     [Column("locale")]
     [MaxLength(4)]
-    public virtual string Locale { get; set; }
+    public string Locale { get; set; }
 
     [Column("locked", TypeName="tinyint")]
-    public virtual byte Locked { get; set; }
+    public byte Locked { get; set; }
 
     [Column("lockedIp")]
     [MaxLength(30)]
-    public virtual string LockedIp { get; set; }
+    public string LockedIp { get; set; }
 
     [Column("module_day", TypeName="mediumint")]
-    public virtual uint ModuleDay { get; set; }
+    public uint ModuleDay { get; set; }
 
     [Column("mutetime", TypeName="bigint")]
-    public virtual ulong Mutetime { get; set; }
+    public ulong Mutetime { get; set; }
 
     [Column("os")]
     [MaxLength(4)]
-    public virtual string Os { get; set; }
+    public string Os { get; set; }
 
     [Column("s", TypeName="longtext")]
-    public virtual string S { get; set; }
+    public string S { get; set; }
 
     [Column("sessionkey", TypeName="longtext")]
-    public virtual string Sessionkey { get; set; }
+    public string Sessionkey { get; set; }
 
     [Column("token", TypeName="text")]
     [MaxLength(65535)]
-    public virtual string Token { get; set; }
+    public string Token { get; set; }
 
     [Column("username")]
     [MaxLength(32)]
-    public virtual string Username { get; set; }
+    public string Username { get; set; }
 
     [Column("v", TypeName="longtext")]
-    public virtual string V { get; set; }
+    public string V { get; set; }
 
 }
 [Table("account_banned")]
-public class AccountBanned
+public sealed class AccountBanned
 {
     /* Account id */
     [Column("account_id", TypeName="int")]
-    public virtual int AccountId { get; set; }
+    public int AccountId { get; set; }
 
     [Column("active", TypeName="tinyint")]
-    public virtual byte Active { get; set; }
+    public byte Active { get; set; }
 
     [Column("banned_at", TypeName="bigint")]
-    public virtual long BannedAt { get; set; }
+    public long BannedAt { get; set; }
 
     [Column("banned_by")]
     [MaxLength(50)]
-    public virtual string BannedBy { get; set; }
+    public string BannedBy { get; set; }
 
     [Column("expires_at", TypeName="bigint")]
-    public virtual long ExpiresAt { get; set; }
+    public long ExpiresAt { get; set; }
 
     [Column("id", TypeName="int")]
-    public virtual int Id { get; set; }
+    public int Id { get; set; }
 
     [Column("reason")]
     [MaxLength(255)]
-    public virtual string Reason { get; set; }
+    public string Reason { get; set; }
 
     [Column("unbanned_at", TypeName="bigint")]
-    public virtual long UnbannedAt { get; set; }
+    public long UnbannedAt { get; set; }
 
     [Column("unbanned_by")]
     [MaxLength(50)]
-    public virtual string UnbannedBy { get; set; }
+    public string UnbannedBy { get; set; }
 
 }
 [Table("account_logons")]
-public class AccountLogons
+public sealed class AccountLogons
 {
     [Column("accountId", TypeName="int")]
-    public virtual uint AccountId { get; set; }
+    public uint AccountId { get; set; }
 
     [Column("id", TypeName="int")]
-    public virtual int Id { get; set; }
+    public int Id { get; set; }
 
     [Column("ip")]
     [MaxLength(30)]
-    public virtual string Ip { get; set; }
+    public string Ip { get; set; }
 
     [Column("loginSource", TypeName="int")]
-    public virtual uint LoginSource { get; set; }
+    public uint LoginSource { get; set; }
 
     [Column("loginTime", TypeName="timestamp")]
-    public virtual DateTimeOffset LoginTime { get; set; }
+    public DateTimeOffset LoginTime { get; set; }
 
 }
 [Table("account_raf")]
-public class AccountRaf
+public sealed class AccountRaf
 {
     [Column("referred", TypeName="int")]
-    public virtual uint Referred { get; set; }
+    public uint Referred { get; set; }
 
     [Column("referrer", TypeName="int")]
-    public virtual uint Referrer { get; set; }
+    public uint Referrer { get; set; }
 
 }
 [Table("antispam_blacklist")]
-public class AntispamBlacklist
+public sealed class AntispamBlacklist
 {
     [Column("string")]
     [MaxLength(64)]
-    public virtual string String { get; set; }
+    public string String { get; set; }
 
 }
 [Table("antispam_replacement")]
-public class AntispamReplacement
+public sealed class AntispamReplacement
 {
     [Column("from")]
     [MaxLength(32)]
-    public virtual string From { get; set; }
+    public string From { get; set; }
 
     [Column("to")]
     [MaxLength(32)]
-    public virtual string To { get; set; }
+    public string To { get; set; }
 
 }
 [Table("antispam_unicode_replacement")]
-public class AntispamUnicodeReplacement
+public sealed class AntispamUnicodeReplacement
 {
     [Column("from", TypeName="mediumint")]
-    public virtual uint From { get; set; }
+    public uint From { get; set; }
 
     [Column("to", TypeName="mediumint")]
-    public virtual uint To { get; set; }
+    public uint To { get; set; }
 
 }
 [Table("ip_banned")]
-public class IpBanned
+public sealed class IpBanned
 {
     [Column("banned_at", TypeName="bigint")]
-    public virtual long BannedAt { get; set; }
+    public long BannedAt { get; set; }
 
     [Column("banned_by")]
     [MaxLength(50)]
-    public virtual string BannedBy { get; set; }
+    public string BannedBy { get; set; }
 
     [Column("expires_at", TypeName="bigint")]
-    public virtual long ExpiresAt { get; set; }
+    public long ExpiresAt { get; set; }
 
     [Column("ip")]
     [MaxLength(32)]
-    public virtual string Ip { get; set; }
+    public string Ip { get; set; }
 
     [Column("reason")]
     [MaxLength(255)]
-    public virtual string Reason { get; set; }
+    public string Reason { get; set; }
 
 }
 [Table("realmcharacters")]
-public class Realmcharacters
+public sealed class Realmcharacters
 {
     [Column("acctid", TypeName="bigint")]
-    public virtual ulong Acctid { get; set; }
+    public ulong Acctid { get; set; }
 
     [Column("numchars", TypeName="tinyint")]
-    public virtual byte Numchars { get; set; }
+    public byte Numchars { get; set; }
 
     [Column("realmid", TypeName="int")]
-    public virtual uint Realmid { get; set; }
+    public uint Realmid { get; set; }
 
 }
 [Table("realmlist")]
-public class Realmlist
+public sealed class Realmlist
 {
     [Column("address")]
     [MaxLength(32)]
-    public virtual string Address { get; set; }
+    public string Address { get; set; }
 
     [Column("allowedSecurityLevel", TypeName="tinyint")]
-    public virtual byte AllowedSecurityLevel { get; set; }
+    public byte AllowedSecurityLevel { get; set; }
 
     [Column("icon", TypeName="tinyint")]
-    public virtual byte Icon { get; set; }
+    public byte Icon { get; set; }
 
     [Column("id", TypeName="int")]
-    public virtual uint Id { get; set; }
+    public uint Id { get; set; }
 
     [Column("name")]
     [MaxLength(32)]
-    public virtual string Name { get; set; }
+    public string Name { get; set; }
 
     [Column("population", TypeName="float")]
-    public virtual float Population { get; set; }
+    public float Population { get; set; }
 
     [Column("port", TypeName="int")]
-    public virtual int Port { get; set; }
+    public int Port { get; set; }
 
     [Column("realmbuilds")]
     [MaxLength(64)]
-    public virtual string Realmbuilds { get; set; }
+    public string Realmbuilds { get; set; }
 
     /* Supported masks: 0x1 (invalid, not show in realm list), 0x2 (offline, set by mangosd), 0x4 (show version and build), 0x20 (new players), 0x40 (recommended) */
     [Column("realmflags", TypeName="tinyint")]
-    public virtual byte Realmflags { get; set; }
+    public byte Realmflags { get; set; }
 
     [Column("timezone", TypeName="tinyint")]
-    public virtual byte Timezone { get; set; }
+    public byte Timezone { get; set; }
 
 }
 [Table("system_fingerprint_usage")]
-public class SystemFingerprintUsage
+public sealed class SystemFingerprintUsage
 {
     [Column("account", TypeName="int")]
-    public virtual uint Account { get; set; }
+    public uint Account { get; set; }
 
     [Column("activecpus", TypeName="int")]
-    public virtual uint Activecpus { get; set; }
+    public uint Activecpus { get; set; }
 
     [Column("architecture")]
     [MaxLength(16)]
-    public virtual string Architecture { get; set; }
+    public string Architecture { get; set; }
 
     [Column("cputype")]
     [MaxLength(64)]
-    public virtual string Cputype { get; set; }
+    public string Cputype { get; set; }
 
     [Column("fingerprint", TypeName="int")]
-    public virtual uint Fingerprint { get; set; }
+    public uint Fingerprint { get; set; }
 
     [Column("id", TypeName="int")]
-    public virtual uint Id { get; set; }
+    public uint Id { get; set; }
 
     [Column("ip")]
     [MaxLength(16)]
-    public virtual string Ip { get; set; }
+    public string Ip { get; set; }
 
     [Column("pagesize", TypeName="int")]
-    public virtual uint Pagesize { get; set; }
+    public uint Pagesize { get; set; }
 
     [Column("realm", TypeName="int")]
-    public virtual uint Realm { get; set; }
+    public uint Realm { get; set; }
 
     [Column("time", TypeName="datetime")]
-    public virtual DateTime Time { get; set; }
+    public DateTime Time { get; set; }
 
     [Column("totalcpus", TypeName="int")]
-    public virtual uint Totalcpus { get; set; }
+    public uint Totalcpus { get; set; }
 
 }
 [Table("uptime")]
-public class Uptime
+public sealed class Uptime
 {
     [Column("maxplayers", TypeName="smallint")]
-    public virtual ushort Maxplayers { get; set; }
+    public ushort Maxplayers { get; set; }
 
     [Column("realmid", TypeName="int")]
-    public virtual uint Realmid { get; set; }
+    public uint Realmid { get; set; }
 
     [Column("startstring")]
     [MaxLength(64)]
-    public virtual string Startstring { get; set; }
+    public string Startstring { get; set; }
 
     [Column("starttime", TypeName="bigint")]
-    public virtual ulong Starttime { get; set; }
+    public ulong Starttime { get; set; }
 
     [Column("uptime", TypeName="bigint")]
-    public virtual ulong UpTime { get; set; }
+    public ulong UpTime { get; set; }
 
 }

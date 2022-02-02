@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MangosSharp.Data.Context;
 
-public class ClassiclogsDbContext : DbContext
+public sealed class ClassiclogsDbContext : DbContext
 {
     public ClassiclogsDbContext() {}
     public ClassiclogsDbContext(DbContextOptions options) : base(options) {}
@@ -15,6 +15,6 @@ public class ClassiclogsDbContext : DbContext
         builder.Entity<LogsSpamdetect>().HasKey(e => new { e.Id });
     }
 
-    public virtual DbSet<LogsAnticheat> LogsAnticheats { get; set; }
-    public virtual DbSet<LogsSpamdetect> LogsSpamdetects { get; set; }
+    public DbSet<LogsAnticheat> LogsAnticheats { get; set; }
+    public DbSet<LogsSpamdetect> LogsSpamdetects { get; set; }
 }
