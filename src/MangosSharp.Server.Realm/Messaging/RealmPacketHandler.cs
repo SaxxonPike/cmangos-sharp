@@ -16,6 +16,7 @@ using MangosSharp.Server.Core.Sockets;
 using MangosSharp.Server.Realm.Enums;
 using MangosSharp.Server.Realm.Records;
 using MangosSharp.Server.Realm.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -320,7 +321,9 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
 
             _database.UseLogin(db =>
             {
-                var account = db.Accounts.Find((uint)session.AccountId);
+                var accountId = (uint)session.AccountId;
+                var account = db.Accounts.AsTracking()
+                    .FirstOrDefault(x => x.Id == accountId);
                 if (account == default)
                     return;
 
@@ -362,7 +365,8 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
             // Increment number of failed logins by one and if it reaches the limit temporarily ban that account or IP
             _database.UseLogin(db =>
             {
-                var account = db.Accounts.Find(session.AccountId);
+                var accountId = (uint)session.AccountId;
+                var account = db.Accounts.AsTracking().FirstOrDefault(x => x.Id == accountId);
                 if (account == default)
                     return;
 
@@ -396,6 +400,8 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
                         });
                     }
                 }
+
+                db.SaveChanges();
             });
         }
 

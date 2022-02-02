@@ -50,7 +50,7 @@ public sealed class SocketDaemon : ISocketDaemon
                 if (cancel.IsCancellationRequested)
                     break;
 
-                foreach (var (socketEndPoint, socket) in _sockets.ToList())
+                foreach (var (socketEndPoint, socket) in _sockets)
                 {
                     try
                     {
@@ -61,9 +61,9 @@ public sealed class SocketDaemon : ISocketDaemon
                         if (socket.Connected && socket.Available > 0)
                         {
                             IncrementLock(socketEndPoint);
-                            ThreadPool.QueueUserWorkItem(s =>
+                            Task.Run(() =>
                             {
-                                var wrapper = GetWrapper(socketEndPoint, s);
+                                var wrapper = GetWrapper(socketEndPoint, socket);
                                 try
                                 {
                                     handler.HandleData(wrapper);
@@ -76,7 +76,7 @@ public sealed class SocketDaemon : ISocketDaemon
                                 {
                                     DecrementLock(socketEndPoint);
                                 }
-                            }, socket, false);
+                            }, cancel);
                         }
 
                         if (socket.Connected)
@@ -91,12 +91,12 @@ public sealed class SocketDaemon : ISocketDaemon
                     {
                         // Socket cleanup.
                         IncrementLock(socketEndPoint);
-                        ThreadPool.QueueUserWorkItem(s =>
+                        Task.Run(() =>
                         {
                             var wrapper = GetWrapper(socketEndPoint, socket);
                             try
                             {
-                                s.Close();
+                                socket.Close();
                                 handler.HandleDisconnect(wrapper);
                             }
                             catch (Exception ie)
@@ -109,7 +109,7 @@ public sealed class SocketDaemon : ISocketDaemon
                                 _sockets.TryRemove(socketEndPoint, out _);
                                 _locks.TryRemove(socketEndPoint, out _);
                             }
-                        }, socket, false);
+                        }, cancel);
                     }
                     catch (Exception)
                     {
@@ -138,7 +138,7 @@ public sealed class SocketDaemon : ISocketDaemon
                     var socketEndPoint = socket.RemoteEndPoint?.ToString();
                     if (socketEndPoint == default)
                     {
-                        ThreadPool.QueueUserWorkItem(s => { s.Close(); }, socket, false);
+                        Task.Run(() => { socket.Close(); }, cancel);
                         continue;
                     }
 
@@ -151,9 +151,9 @@ public sealed class SocketDaemon : ISocketDaemon
                         });
 
                     IncrementLock(socketEndPoint);
-                    ThreadPool.QueueUserWorkItem(s =>
+                    Task.Run(() =>
                     {
-                        var wrapper = GetWrapper(socketEndPoint, s);
+                        var wrapper = GetWrapper(socketEndPoint, socket0);
                         try
                         {
                             handler.HandleConnect(wrapper);
@@ -166,7 +166,7 @@ public sealed class SocketDaemon : ISocketDaemon
                         {
                             DecrementLock(socketEndPoint);
                         }
-                    }, socket0, false);
+                    }, cancel);
                 }
                 catch (Exception e)
                 {

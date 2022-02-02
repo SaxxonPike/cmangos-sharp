@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using MangosSharp.Data.Context;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -59,7 +61,11 @@ public sealed class Database : IDatabase
         var options = new DbContextOptionsBuilder()
             .UseMySQL(builder.ToString())
             .UseMemoryCache(_memoryCache)
-            .ConfigureWarnings(w => w.Throw());
+            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+            .EnableSensitiveDataLogging(Debugger.IsAttached)
+            // [fox] Contexts are very short lived so cross-thread access is not a concern
+            .EnableThreadSafetyChecks(false)
+            .LogTo(s => _logger.LogDebug("[SQL] {}", s));
 
         return options.Options;
     }
