@@ -52,7 +52,7 @@ public sealed class CliParser : ICliParser
             if (commandData.Parameters is { Count: > 0 })
             {
                 // Do we have enough non-optional parameters specified?
-                if (fragments.Count - index - 1 >=
+                if (fragments.Count - index - 1 >
                     commandData.Parameters.TakeWhile(p => p.Value.Optional == false).Count())
                 {
                     IReadOnlyDictionary<string, IReadOnlyList<string>> paramList =
