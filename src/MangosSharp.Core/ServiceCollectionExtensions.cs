@@ -26,7 +26,7 @@ public static class ServiceCollectionExtensions
 
         return serviceCollection
             .AddSingleton(LoggerFactory.Create(f => f
-                .AddConsole(c => { c.FormatterName = "systemd"; })
+                .AddConsole()
                 .AddDebug()
             ).CreateLogger(name));
     }

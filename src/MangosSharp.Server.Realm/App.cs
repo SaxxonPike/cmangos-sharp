@@ -1,3 +1,4 @@
+using System;
 using System.Net;
 using MangosSharp.Core.Infrastructure;
 using MangosSharp.Server.Core.Cli;
@@ -43,7 +44,15 @@ public class App
         var listen = _socketDaemon.ListenAsync(worldEndpoint, _socketHandler, _appCancellation.Token);
         while (!_appCancellation.Token.IsCancellationRequested && !listen.IsCompleted)
         {
-            _cliParser.Parse(_consoleProvider.Out, _consoleProvider.In.ReadLine(), _cliCommands.Commands);
+            try
+            {
+                _cliParser.Parse(_consoleProvider.Out, _consoleProvider.In.ReadLine(), _cliCommands.Commands);
+            }
+            catch (Exception e)
+            {
+                // don't want CLI exceptions to crash the server
+                _logger.LogError("CLI exception occurred: {}", e);
+            }
         }
     }
 }
