@@ -15,5 +15,7 @@ public static class MangosServerRealmTypes
         yield return (typeof(ISocketHandler), typeof(RealmSocketHandler));
         yield return (typeof(IPacketHandler), typeof(RealmPacketHandler));
         yield return (typeof(IRealmListService), typeof(RealmListService));
+        yield return (typeof(AppCancellation), typeof(AppCancellation));
+        yield return (typeof(CliCommands), typeof(CliCommands));
     }
 }
