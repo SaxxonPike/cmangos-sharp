@@ -173,6 +173,7 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
 
             var accountId = (int)account.Id;
             var accountBan = db.AccountBanneds
+                .Select(x => new { x.AccountId, x.Active, x.ExpiresAt, x.BannedAt })
                 .FirstOrDefault(x => x.AccountId == accountId &&
                                      x.Active == 1 &&
                                      (x.ExpiresAt > now || x.ExpiresAt == x.BannedAt));
@@ -533,7 +534,9 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
         var realmCharacters = _database.UseLogin(db =>
         {
             var accountId = (ulong)session.AccountId;
-            return db.Realmcharacters.Where(x => x.Acctid == accountId).ToList();
+            return db.Realmcharacters
+                .Where(x => x.Acctid == accountId)
+                .ToList();
         });
 
         var mem = new MemoryStream();

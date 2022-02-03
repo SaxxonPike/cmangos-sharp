@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+
+#pragma warning disable CS4014
 
 namespace MangosSharp.Server.Core.Sockets;
 
@@ -36,10 +37,6 @@ public sealed class SocketDaemon : ISocketDaemon
 
     public Task ListenAsync(IPEndPoint endpoint, ISocketHandler handler, CancellationToken cancel)
     {
-        // ReSharper disable once LocalFunctionHidesMethod
-        SocketStream GetWrapper(string socketEndPoint, Socket socket) =>
-            this.GetWrapper(socketEndPoint, socket, cancel);
-
         void StartHandlerLoopAsync()
         {
             _logger.LogDebug("{} started", nameof(StartHandlerLoopAsync));
@@ -52,68 +49,31 @@ public sealed class SocketDaemon : ISocketDaemon
 
                 foreach (var (socketEndPoint, socket) in _sockets)
                 {
+                    // Socket ingress.
                     try
                     {
-                        // Socket ingress.
                         if (IsLocked(socketEndPoint))
                             continue;
 
                         if (socket.Connected && socket.Available > 0)
-                        {
-                            IncrementLock(socketEndPoint);
-                            Task.Run(() =>
-                            {
-                                var wrapper = GetWrapper(socketEndPoint, socket);
-                                try
-                                {
-                                    handler.HandleData(wrapper);
-                                }
-                                catch (Exception ie)
-                                {
-                                    handler.HandleException(wrapper, ie);
-                                }
-                                finally
-                                {
-                                    DecrementLock(socketEndPoint);
-                                }
-                            }, cancel);
-                        }
-
-                        if (socket.Connected)
-                            continue;
+                            ReceiveSocketAsync(socketEndPoint, socket, handler, cancel);
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
-                        // Do nothing, continue loop.
+                        // handled in async
                     }
 
+                    // Socket cleanup.
                     try
                     {
-                        // Socket cleanup.
-                        IncrementLock(socketEndPoint);
-                        Task.Run(() =>
-                        {
-                            var wrapper = GetWrapper(socketEndPoint, socket);
-                            try
-                            {
-                                socket.Close();
-                                handler.HandleDisconnect(wrapper);
-                            }
-                            catch (Exception ie)
-                            {
-                                handler.HandleException(wrapper, ie);
-                            }
-                            finally
-                            {
-                                _wrappers.TryRemove(socketEndPoint, out _);
-                                _sockets.TryRemove(socketEndPoint, out _);
-                                _locks.TryRemove(socketEndPoint, out _);
-                            }
-                        }, cancel);
+                        if (socket.Connected)
+                            continue;
+
+                        CleanUpSocketAsync(socketEndPoint, socket, handler, cancel);
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
-                        // Do nothing, continue loop.
+                        // handled in async
                     }
                 }
             }
@@ -138,7 +98,7 @@ public sealed class SocketDaemon : ISocketDaemon
                     var socketEndPoint = socket.RemoteEndPoint?.ToString();
                     if (socketEndPoint == default)
                     {
-                        Task.Run(() => { socket.Close(); }, cancel);
+                        CloseSocketAsync(socket);
                         continue;
                     }
 
@@ -150,27 +110,12 @@ public sealed class SocketDaemon : ISocketDaemon
                             return socket;
                         });
 
-                    IncrementLock(socketEndPoint);
-                    Task.Run(() =>
-                    {
-                        var wrapper = GetWrapper(socketEndPoint, socket0);
-                        try
-                        {
-                            handler.HandleConnect(wrapper);
-                        }
-                        catch (Exception ie)
-                        {
-                            handler.HandleException(wrapper, ie);
-                        }
-                        finally
-                        {
-                            DecrementLock(socketEndPoint);
-                        }
-                    }, cancel);
+                    ConnectSocketAsync(socketEndPoint, socket0, handler, cancel);
                 }
                 catch (Exception e)
                 {
-                    handler.HandleException(new SocketEndpoints((IPEndPoint)listener.LocalEndpoint, default), e);
+                    handler.HandleException(new SocketEndpoints(
+                        listener.LocalEndpoint as IPEndPoint, default), e);
                 }
             }
 
@@ -198,6 +143,80 @@ public sealed class SocketDaemon : ISocketDaemon
 
         task.Start();
         return task;
+    }
+
+    private Task ConnectSocketAsync(string socketEndPoint, Socket socket, ISocketHandler handler, CancellationToken cancel)
+    {
+        IncrementLock(socketEndPoint);
+
+        return Task.Run(() =>
+        {
+            var wrapper = GetWrapper(socketEndPoint, socket, cancel);
+            try
+            {
+                handler.HandleConnect(wrapper);
+            }
+            catch (Exception ie)
+            {
+                handler.HandleException(wrapper, ie);
+            }
+            finally
+            {
+                DecrementLock(socketEndPoint);
+            }
+        }, cancel);
+    }
+
+    private Task CloseSocketAsync(Socket socket) =>
+        Task.Run(socket.Close);
+
+    private Task ReceiveSocketAsync(string socketEndPoint, Socket socket, ISocketHandler handler, CancellationToken cancel)
+    {
+        IncrementLock(socketEndPoint);
+
+        return Task.Run(() =>
+        {
+            var wrapper = GetWrapper(socketEndPoint, socket, cancel);
+            try
+            {
+                handler.HandleData(wrapper);
+            }
+            catch (Exception ie)
+            {
+                handler.HandleException(wrapper, ie);
+            }
+            finally
+            {
+                DecrementLock(socketEndPoint);
+            }
+        }, cancel);
+    }
+
+    private Task CleanUpSocketAsync(string socketEndPoint, Socket socket, ISocketHandler handler, CancellationToken cancel)
+    {
+        IncrementLock(socketEndPoint);
+
+        return Task.Run(() =>
+        {
+            var wrapper = GetWrapper(socketEndPoint, socket, cancel);
+            try
+            {
+                socket.Close();
+                handler.HandleDisconnect(wrapper);
+            }
+            catch (Exception ie)
+            {
+                handler.HandleException(wrapper, ie);
+            }
+            finally
+            {
+                _wrappers.TryRemove(socketEndPoint, out var w);
+                _sockets.TryRemove(socketEndPoint, out var s);
+                _locks.TryRemove(socketEndPoint, out _);
+                w?.Dispose();
+                s?.Dispose();
+            }
+        }, cancel);
     }
 
     public Task SendAsync(IPEndPoint endPoint, Action<SocketStream> func, CancellationToken cancel)

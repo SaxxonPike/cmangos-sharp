@@ -15,7 +15,7 @@ public sealed class SocketStream : Stream, ISocketEndpoints
     private BinaryReader _reader;
     private BinaryWriter _writer;
     private long _position;
-    private MemoryStream _outputBuffer;
+    private readonly MemoryStream _outputBuffer;
 
     public SocketStream(Socket socket, CancellationToken cancel)
     {
@@ -92,5 +92,11 @@ public sealed class SocketStream : Stream, ISocketEndpoints
     {
         get => _position;
         set => throw new NotImplementedException();
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        _outputBuffer.Dispose();
+        base.Dispose(disposing);
     }
 }
