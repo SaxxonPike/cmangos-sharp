@@ -237,6 +237,19 @@ public sealed class App
                 contextWriter.Write(string.Join(", ", pkeys[tableName].Select(pk => $"e.{GetFancyName(pk)}")));
                 contextWriter.WriteLine($" }});");
             }
+
+            foreach (var (tableName, columnInfos) in tables)
+            {
+                var fancyTableName = GetFancyName(tableName);
+                foreach (var columnInfo in columnInfos)
+                {
+                    if (columnInfo.ColumnDefault != null)
+                    {
+                        var fancyColumName = GetFancyName(columnInfo.ColumnName);
+                        contextWriter.WriteLine($"        builder.Entity<{fancyTableName}>().Property(e => e.{fancyColumName}).HasDefaultValue();");
+                    }
+                }
+            }
             
             contextWriter.WriteLine("    }");
             contextWriter.WriteLine();
@@ -335,6 +348,6 @@ public sealed class App
             }
         }
 
-        return result;
+        return result.OrderBy(x => x.TableName).ThenBy(x => x.ColumnName).ToList();
     }
 }
