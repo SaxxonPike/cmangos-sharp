@@ -17,16 +17,18 @@ public sealed class SocketStream : Stream, ISocketEndpoints
     private long _position;
     private readonly MemoryStream _outputBuffer;
 
-    public SocketStream(Socket socket, CancellationToken cancel)
+    public SocketStream(string localEndPoint, string remoteEndpoint, Socket socket, CancellationToken cancel)
     {
         _socket = socket;
         _cancel = cancel;
         _outputBuffer = new MemoryStream();
+        RemoteEndPoint = remoteEndpoint;
+        LocalEndPoint = localEndPoint;
     }
     
     public int Available => _socket?.Connected ?? false ? _socket.Available : 0;
-    public string LocalEndPoint => _socket.Connected ? _socket?.LocalEndPoint?.ToString() : default;
-    public string RemoteEndPoint => _socket.Connected ? _socket?.RemoteEndPoint?.ToString() : default;
+    public string LocalEndPoint { get; }
+    public string RemoteEndPoint { get; }
 
     public void Disconnect() => _socket?.Close();
 
