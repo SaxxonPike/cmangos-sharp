@@ -12,230 +12,123 @@ namespace MangosSharp.Server.Core.Sockets;
 
 public sealed class SocketDaemon : ISocketDaemon
 {
+    private record struct Connection
+    {
+        public Socket Socket;
+        public SocketStream Stream;
+        public ISocketHandler Handler;
+        public CancellationToken Cancel;
+    }
+
     private readonly ILogger _logger;
 
-    private readonly ConcurrentDictionary<string, Socket> _sockets = new();
-    private readonly ConcurrentDictionary<string, int> _locks = new();
-    private readonly ConcurrentDictionary<string, SocketStream> _wrappers = new();
+    private readonly ConcurrentDictionary<string, Connection> _connections = new();
 
     public SocketDaemon(ILogger logger)
     {
         _logger = logger;
     }
 
-    private SocketStream GetWrapper(string socketEndPoint, Socket socket, CancellationToken cancel) =>
-        _wrappers.AddOrUpdate(socketEndPoint, _ => new SocketStream(socket, cancel), (_, w) => w);
-
-    private void IncrementLock(string socketEndPoint) =>
-        _locks.AddOrUpdate(socketEndPoint, _ => 1, (_, v) => v + 1);
-
-    private void DecrementLock(string socketEndPoint) =>
-        _locks.AddOrUpdate(socketEndPoint, _ => 0, (_, v) => v - 1);
-
-    private bool IsLocked(string socketEndPoint) =>
-        _locks.TryGetValue(socketEndPoint, out var count) && count > 0;
-
     public Task ListenAsync(IPEndPoint endpoint, ISocketHandler handler, CancellationToken cancel)
     {
-        void StartHandlerLoopAsync()
+        return Task.Run(async () =>
         {
-            _logger.LogDebug("{} started", nameof(StartHandlerLoopAsync));
-
-            while (true)
-            {
-                SpinWait.SpinUntil(() => cancel.IsCancellationRequested, 1);
-                if (cancel.IsCancellationRequested)
-                    break;
-
-                foreach (var (socketEndPoint, socket) in _sockets)
-                {
-                    // Socket ingress.
-                    try
-                    {
-                        if (IsLocked(socketEndPoint))
-                            continue;
-
-                        if (socket.Connected && socket.Available > 0)
-                            ReceiveSocketAsync(socketEndPoint, socket, handler, cancel);
-                    }
-                    catch (Exception e)
-                    {
-                        // handled in async
-                    }
-
-                    // Socket cleanup.
-                    try
-                    {
-                        if (socket.Connected)
-                            continue;
-
-                        CleanUpSocketAsync(socketEndPoint, socket, handler, cancel);
-                    }
-                    catch (Exception e)
-                    {
-                        // handled in async
-                    }
-                }
-            }
-
-            _logger.LogDebug("{} stopped", nameof(StartHandlerLoopAsync));
-        }
-
-        async void StartSocketLoopAsync()
-        {
-            _logger.LogDebug("{} started", nameof(StartSocketLoopAsync));
-
             var listener = new TcpListener(endpoint);
             listener.Start();
-            while (true)
+            while (!cancel.IsCancellationRequested)
             {
-                try
+                var socket = await listener.AcceptSocketAsync(cancel);
+                var socketEndpoint = socket.RemoteEndPoint?.ToString();
+                var connection = new Connection
                 {
-                    var socket = await listener.AcceptSocketAsync(cancel);
-                    if (cancel.IsCancellationRequested)
-                        break;
+                    Socket = socket,
+                    Stream = new SocketStream(socket, cancel),
+                    Cancel = cancel,
+                    Handler = handler
+                };
+                _connections.AddOrUpdate(socketEndpoint, _ => connection, (_, _) => connection);
 
-                    var socketEndPoint = socket.RemoteEndPoint?.ToString();
-                    if (socketEndPoint == default)
+                Task.Run(async () =>
+                {
+                    await ConnectSocketAsync(connection);
+                    while (socket.Connected)
                     {
-                        CloseSocketAsync(socket);
-                        continue;
+                        socket.Receive(Span<byte>.Empty, SocketFlags.None, out var socketError);
+                        var available = socket.Available;
+
+                        if (available == 0 || socketError != SocketError.Success || cancel.IsCancellationRequested)
+                            break;
+
+                        await ReceiveSocketAsync(connection);
                     }
 
-                    var socket0 = _sockets.AddOrUpdate(socketEndPoint,
-                        _ => socket,
-                        (_, existing) =>
-                        {
-                            existing?.Close();
-                            return socket;
-                        });
-
-                    ConnectSocketAsync(socketEndPoint, socket0, handler, cancel);
-                }
-                catch (Exception e)
-                {
-                    handler.HandleException(new SocketEndpoints(
-                        listener.LocalEndpoint as IPEndPoint, default), e);
-                }
+                    await CleanUpSocketAsync(connection);
+                    _connections.TryRemove(socketEndpoint, out _);
+                    return Task.CompletedTask;
+                }, cancel);
             }
 
-            _logger.LogDebug("{} stopped", nameof(StartSocketLoopAsync));
-        }
-
-
-        var task = new Task<Task>(() =>
-        {
-            _logger.LogWarning("Started socket daemon: endpoint={}", endpoint);
-            var socketLoop = new Task(StartSocketLoopAsync, cancel, TaskCreationOptions.LongRunning);
-            var handlerLoop = new Task(StartHandlerLoopAsync, cancel, TaskCreationOptions.LongRunning);
-            socketLoop.Start();
-            handlerLoop.Start();
-            return Task.WhenAll(socketLoop, handlerLoop);
-        });
-
-        task.Unwrap()
-            .ContinueWith(t =>
-            {
-                _logger.LogWarning("Stopped socket daemon: endpoint={}", endpoint);
-                if (t.Exception is { } exception)
-                    _logger.LogWarning("Socket daemon reported exception: {}", exception);
-            }, TaskContinuationOptions.ExecuteSynchronously);
-
-        task.Start();
-        return task;
-    }
-
-    private Task ConnectSocketAsync(string socketEndPoint, Socket socket, ISocketHandler handler, CancellationToken cancel)
-    {
-        IncrementLock(socketEndPoint);
-
-        return Task.Run(() =>
-        {
-            var wrapper = GetWrapper(socketEndPoint, socket, cancel);
-            try
-            {
-                handler.HandleConnect(wrapper);
-            }
-            catch (Exception ie)
-            {
-                handler.HandleException(wrapper, ie);
-            }
-            finally
-            {
-                DecrementLock(socketEndPoint);
-            }
+            return Task.CompletedTask;
         }, cancel);
     }
 
-    private Task CloseSocketAsync(Socket socket) =>
-        Task.Run(socket.Close);
-
-    private Task ReceiveSocketAsync(string socketEndPoint, Socket socket, ISocketHandler handler, CancellationToken cancel)
-    {
-        IncrementLock(socketEndPoint);
-
-        return Task.Run(() =>
+    private static Task ConnectSocketAsync(Connection connection) =>
+        Task.Run(() =>
         {
-            var wrapper = GetWrapper(socketEndPoint, socket, cancel);
             try
             {
-                handler.HandleData(wrapper);
+                connection.Handler.HandleConnect(connection.Stream);
             }
             catch (Exception ie)
             {
-                handler.HandleException(wrapper, ie);
+                connection.Handler.HandleException(connection.Stream, ie);
             }
-            finally
-            {
-                DecrementLock(socketEndPoint);
-            }
-        }, cancel);
-    }
+        }, connection.Cancel);
 
-    private Task CleanUpSocketAsync(string socketEndPoint, Socket socket, ISocketHandler handler, CancellationToken cancel)
-    {
-        IncrementLock(socketEndPoint);
-
-        return Task.Run(() =>
+    private static Task ReceiveSocketAsync(Connection connection) =>
+        Task.Run(() =>
         {
-            var wrapper = GetWrapper(socketEndPoint, socket, cancel);
             try
             {
-                socket.Close();
-                handler.HandleDisconnect(wrapper);
+                connection.Handler.HandleData(connection.Stream);
             }
             catch (Exception ie)
             {
-                handler.HandleException(wrapper, ie);
+                connection.Handler.HandleException(connection.Stream, ie);
             }
-            finally
+        }, connection.Cancel);
+
+    private static Task CleanUpSocketAsync(Connection connection)
+    {
+        return Task.Run(() =>
+        {
+            try
             {
-                _wrappers.TryRemove(socketEndPoint, out var w);
-                _sockets.TryRemove(socketEndPoint, out var s);
-                _locks.TryRemove(socketEndPoint, out _);
-                w?.Dispose();
-                s?.Dispose();
+                connection.Socket.Close();
+                connection.Handler.HandleDisconnect(connection.Stream);
             }
-        }, cancel);
+            catch (Exception ie)
+            {
+                connection.Handler.HandleException(connection.Stream, ie);
+            }
+        }, connection.Cancel);
     }
 
     public Task SendAsync(IPEndPoint endPoint, Action<SocketStream> func, CancellationToken cancel)
     {
         var socketEndPoint = endPoint.ToString();
-        if (!_sockets.TryGetValue(socketEndPoint, out var socket))
+        if (!_connections.TryGetValue(socketEndPoint, out var connection))
             throw new Exception("Socket is not available");
 
-        IncrementLock(socketEndPoint);
         return Task.Run(() =>
         {
-            var wrapper = GetWrapper(socketEndPoint, socket, cancel);
             try
             {
-                func?.Invoke(wrapper);
+                func?.Invoke(connection.Stream);
             }
-            finally
+            catch (Exception e)
             {
-                DecrementLock(socketEndPoint);
+                connection.Handler.HandleException(connection.Stream, e);
             }
         }, cancel);
     }
