@@ -1,42 +1,58 @@
+using System;
 using System.Net;
 using System.Threading;
 using MangosSharp.Core.Infrastructure;
-using MangosSharp.Server.Core.Services;
+using MangosSharp.Server.Core;
+using MangosSharp.Server.Core.Cli;
 using MangosSharp.Server.Core.Sockets;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace MangosSharp.Server.World;
 
 public class App
 {
     private readonly IConfiguration _configuration;
-    private readonly IDatabase _database;
     private readonly ISocketDaemon _socketDaemon;
     private readonly ISocketHandler _socketHandler;
     private readonly IConsoleProvider _consoleProvider;
+    private readonly IAppCancellation _appCancellation;
+    private readonly ICliParser _cliParser;
+    private readonly ILogger _logger;
+    private readonly ICliCommands _cliCommands;
 
-    public App(IConfiguration configuration, IDatabase database, ISocketDaemon socketDaemon,
-        ISocketHandler socketHandler, IConsoleProvider consoleProvider)
+    public App(IConfiguration configuration, ISocketDaemon socketDaemon, ISocketHandler socketHandler, 
+        IConsoleProvider consoleProvider, IAppCancellation appCancellation, ICliParser cliParser, ILogger logger,
+        ICliCommands cliCommands)
     {
         _configuration = configuration;
-        _database = database;
         _socketDaemon = socketDaemon;
         _socketHandler = socketHandler;
         _consoleProvider = consoleProvider;
+        _appCancellation = appCancellation;
+        _cliParser = cliParser;
+        _logger = logger;
+        _cliCommands = cliCommands;
     }
 
-    public void Run(string[] args)
+    public void Run()
     {
         var worldEndpoint = new IPEndPoint(
             IPAddress.Parse(_configuration["BindIP"]),
             int.Parse(_configuration["WorldServerPort"]));
 
-        var cancel = new CancellationTokenSource();
-        _socketDaemon.ListenAsync(worldEndpoint, _socketHandler, cancel.Token);
-        while (!cancel.IsCancellationRequested)
+        var listen = _socketDaemon.ListenAsync(worldEndpoint, _socketHandler, _appCancellation.Token);
+        while (!_appCancellation.Token.IsCancellationRequested && !listen.IsCompleted)
         {
-            _consoleProvider.In.ReadLine();
-            cancel.Cancel();
+            try
+            {
+                _cliParser.Parse(_consoleProvider.Out, _consoleProvider.In.ReadLine(), _cliCommands.Commands);
+            }
+            catch (Exception e)
+            {
+                // don't want CLI exceptions to crash the server
+                _logger.LogError("CLI exception occurred: {}", e);
+            }
         }
     }
 }

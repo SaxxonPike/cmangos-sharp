@@ -21,7 +21,9 @@ public interface IAuthService
     ReadOnlyMemory<byte> CalculateXorHash();
     ReadOnlyMemory<byte> CalculateReconnectProof(ReadOnlySpan<char> username, ReadOnlySpan<byte> clientData, ReadOnlySpan<byte> serverData, ReadOnlySpan<byte> sessionKey);
     Memory<byte> Encrypt(ReadOnlySpan<byte> data, AuthState state);
+    void EncryptInPlace(Span<byte> data, AuthState state);
     Memory<byte> Decrypt(ReadOnlySpan<byte> data, AuthState state);
+    void DecryptInPlace(Span<byte> data, AuthState state);
     ReadOnlyMemory<byte> GetLargeSafePrime();
     ReadOnlyMemory<byte> GetGenerator();
     Memory<byte> GenerateSalt();

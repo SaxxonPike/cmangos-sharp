@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using MangosSharp.Server.Core;
+using MangosSharp.Server.Core.Cli;
 using MangosSharp.Server.Core.Messages;
 using MangosSharp.Server.Core.Sockets;
 using MangosSharp.Server.Realm.Messaging;
@@ -15,7 +17,6 @@ public static class MangosServerRealmTypes
         yield return (typeof(ISocketHandler), typeof(RealmSocketHandler));
         yield return (typeof(IPacketHandler), typeof(RealmPacketHandler));
         yield return (typeof(IRealmListService), typeof(RealmListService));
-        yield return (typeof(AppCancellation), typeof(AppCancellation));
-        yield return (typeof(CliCommands), typeof(CliCommands));
+        yield return (typeof(ICliCommands), typeof(CliCommands));
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using MangosSharp.Core.Config;
 using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 
@@ -11,13 +12,15 @@ namespace MangosSharp.Tool.ExtractSchema;
 public sealed class App
 {
     private readonly ILogger _logger;
+    private readonly ICommandLine _commandLine;
 
-    public App(ILogger logger)
+    public App(ILogger logger, ICommandLine commandLine)
     {
         _logger = logger;
+        _commandLine = commandLine;
     }
 
-    public void Run(string[] args)
+    public void Run()
     {
         _logger.LogInformation("* DBContext code generator *");
         _logger.LogInformation("");
@@ -28,7 +31,9 @@ public sealed class App
         _logger.LogInformation("only a code developer tool. ");
         _logger.LogInformation("");
 
-        if (args.Length < 4)
+        var args = _commandLine.Args[string.Empty];
+        
+        if (args.Count < 4)
         {
             _logger.LogInformation("To begin, on the command line, specify the MySQL server. ");
             _logger.LogInformation("");

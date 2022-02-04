@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MangosSharp.Server.Realm.Enums;
+namespace MangosSharp.Server.Core.Enums;
 
 [Flags]
 public enum AccountFlags

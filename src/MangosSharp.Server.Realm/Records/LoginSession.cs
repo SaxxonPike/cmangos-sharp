@@ -1,4 +1,5 @@
 ﻿using System;
+using MangosSharp.Server.Core.Enums;
 using MangosSharp.Server.Realm.Enums;
 
 namespace MangosSharp.Server.Realm.Records;

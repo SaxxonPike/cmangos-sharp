@@ -5,6 +5,9 @@ namespace MangosSharp.Server.World.Messaging;
 
 public interface IWorldOpcodeGateway
 {
+    int MinOpcode { get; }
+    int MaxOpcode { get; }
+    
     void StoreOpcode(WorldOpcode worldOpcode, string name, SessionStatus status, PacketProcessing packetProcessing,
         Action handler);
 

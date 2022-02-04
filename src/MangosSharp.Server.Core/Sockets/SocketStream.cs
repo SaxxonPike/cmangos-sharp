@@ -45,6 +45,11 @@ public sealed class SocketStream : Stream, ISocketEndpoints
         }
     }
 
+    public void FlushWithHeader(ReadOnlySpan<byte> header)
+    {
+        
+    }
+
     public async Task<int> Read(Memory<byte> buffer)
     {
         var result = await _socket.ReceiveAsync(buffer, SocketFlags.None, _cancel);

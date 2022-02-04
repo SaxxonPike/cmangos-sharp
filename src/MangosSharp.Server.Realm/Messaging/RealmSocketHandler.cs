@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
+using MangosSharp.Core.Security;
 using MangosSharp.Server.Core.Messages;
 using MangosSharp.Server.Core.Sockets;
 using Microsoft.Extensions.Logging;
@@ -13,19 +15,21 @@ public sealed class RealmSocketHandler : ISocketHandler
     
     private readonly ILogger _logger;
     private readonly IPacketHandler _handler;
+    private readonly IAuthService _authService;
 
-    public RealmSocketHandler(ILogger logger, IPacketHandler handler)
+    public RealmSocketHandler(ILogger logger, IPacketHandler handler, IAuthService authService)
     {
         _logger = logger;
         _handler = handler;
+        _authService = authService;
     }
     
-    public void HandleConnect(SocketStream stream)
+    public async Task HandleConnect(SocketStream stream)
     {
         _logger.LogInformation("Connected realm socket: ip={}", stream.RemoteEndPoint);
     }
 
-    public void HandleData(SocketStream stream)
+    public async Task HandleData(SocketStream stream)
     {
         _logger.LogInformation("Received realm data: ip={}", stream.RemoteEndPoint);
 
@@ -37,16 +41,17 @@ public sealed class RealmSocketHandler : ISocketHandler
         while (stream.Available > 0 && !cancel.Token.IsCancellationRequested)
         {
             _handler.Handle(stream, cancel.Token);
-            stream.FlushAsync(cancel.Token);
+            await stream.FlushAsync(cancel.Token);
         }
     }
 
-    public void HandleDisconnect(SocketStream stream)
+    public async Task HandleDisconnect(SocketStream stream)
     {
+        _authService.DeleteState(stream.RemoteEndPoint);
         _logger.LogInformation("Disconnected realm socket: ip={}", stream.RemoteEndPoint);
     }
 
-    public void HandleException(ISocketEndpoints endpoints, Exception e)
+    public async Task HandleException(ISocketEndpoints endpoints, Exception e)
     {
         _logger.LogError("Realm handler exception: {} ip={}", e, endpoints.RemoteEndPoint);
     }

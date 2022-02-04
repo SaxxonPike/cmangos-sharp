@@ -10,6 +10,7 @@ using System.Threading;
 using MangosSharp.Core;
 using MangosSharp.Core.Security;
 using MangosSharp.Data.Entities.RealmDatabase;
+using MangosSharp.Server.Core.Enums;
 using MangosSharp.Server.Core.Messages;
 using MangosSharp.Server.Core.Services;
 using MangosSharp.Server.Core.Sockets;
@@ -29,16 +30,18 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
     private readonly IConfiguration _configuration;
     private readonly IAuthService _authService;
     private readonly IRealmListService _realmListService;
+    private readonly IBuildInfoService _buildInfoService;
     private readonly IDictionary<string, LoginSession> _sessions;
 
     public RealmPacketHandler(ILogger logger, IDatabase database, IConfiguration configuration, IAuthService authService,
-        IRealmListService realmListService)
+        IRealmListService realmListService, IBuildInfoService buildInfoService)
     {
         _logger = logger;
         _database = database;
         _configuration = configuration;
         _authService = authService;
         _realmListService = realmListService;
+        _buildInfoService = buildInfoService;
         _sessions = new Dictionary<string, LoginSession>();
     }
 
@@ -501,7 +504,7 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
     }
 
     private RealmBuildInfo FindBuildInfo(int build) =>
-        _realmListService.Builds.TryGetValue(build, out var info) ? info : default;
+        _buildInfoService.Builds.TryGetValue(build, out var info) ? info : default;
 
     private bool HandleReconnectChallenge(RealmOpcode opcode, SocketStream stream, CancellationToken cancel)
     {
@@ -542,7 +545,7 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
         var mem = new MemoryStream();
         var writer = new BinaryWriter(mem);
 
-        var build = _realmListService.Builds.FirstOrDefault(b => b.Key == session.Build).Value;
+        var build = _buildInfoService.Builds.FirstOrDefault(b => b.Key == session.Build).Value;
 
         // 1.x clients not support explicitly REALM_FLAG_SPECIFYBUILD, so manually form similar name as show in more recent clients
         string GetRealmName(RealmEntry re) =>
@@ -552,7 +555,7 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
                 : string.Empty);
 
         bool IsOkBuild() =>
-            build != null && _realmListService.Builds.ContainsKey(build.Build);
+            build != null && _buildInfoService.Builds.ContainsKey(build.Build);
 
         var visibleRealms = realms
             .OrderBy(x => x.Name)

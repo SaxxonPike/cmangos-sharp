@@ -2,20 +2,21 @@
 using System.IO;
 using System.Linq;
 using MangosSharp.Core.Security;
+using MangosSharp.Server.Core;
 using MangosSharp.Server.Core.Cli;
 using MangosSharp.Server.Core.Services;
 
 namespace MangosSharp.Server.Realm;
 
-public sealed class CliCommands
+public sealed class CliCommands : ICliCommands
 {
-    private readonly AppCancellation _appCancellation;
+    private readonly IAppCancellation _appCancellation;
     private readonly IAuthService _authService;
     private readonly IDatabase _database;
     private readonly IAccountService _accountService;
     public IReadOnlyDictionary<string, CliCommand> Commands { get; }
 
-    public CliCommands(AppCancellation appCancellation, IAuthService authService, IDatabase database,
+    public CliCommands(IAppCancellation appCancellation, IAuthService authService, IDatabase database,
         IAccountService accountService)
     {
         _appCancellation = appCancellation;

@@ -11,5 +11,7 @@ public static class MangosServerCoreTypes
     {
         yield return (typeof(IAccountService), typeof(AccountService));
         yield return (typeof(ISocketDaemon), typeof(SocketDaemon));
+        yield return (typeof(IAppCancellation), typeof(AppCancellation));
+        yield return (typeof(IBuildInfoService), typeof(BuildInfoService));
     }
 }

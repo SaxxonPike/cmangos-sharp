@@ -12,15 +12,16 @@ namespace MangosSharp.Core;
 public static class ServiceCollectionExtensions
 {
     public static IServiceCollection MapServices(
-        this IServiceCollection sc, 
+        this IServiceCollection sc,
         params IEnumerable<(Type Service, Type Implementation)>[] maps)
     {
         foreach (var (service, implementation) in maps.SelectMany(m => m))
             sc.AddSingleton(service, implementation);
         return sc;
     }
-    
-    public static IServiceCollection AddInfrastructure(this IServiceCollection serviceCollection)
+
+    public static IServiceCollection AddInfrastructure(this IServiceCollection serviceCollection,
+        IEnumerable<string> args)
     {
         var name = Assembly.GetCallingAssembly().GetName().Name;
 
@@ -28,7 +29,8 @@ public static class ServiceCollectionExtensions
             .AddSingleton(LoggerFactory.Create(f => f
                 .AddConsole()
                 .AddDebug()
-            ).CreateLogger(name));
+            ).CreateLogger(name))
+            .AddSingleton(typeof(ICommandLine), _ => new CommandLine(args));
     }
 
     public static IServiceCollection AddConf(this IServiceCollection serviceCollection, string fileName, string section)

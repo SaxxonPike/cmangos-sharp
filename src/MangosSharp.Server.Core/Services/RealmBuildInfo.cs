@@ -1,6 +1,6 @@
 using System;
 
-namespace MangosSharp.Server.Realm.Records;
+namespace MangosSharp.Server.Core.Services;
 
 public sealed class RealmBuildInfo
 {

@@ -1,6 +1,8 @@
 using System;
 using System.Net;
+using MangosSharp.Core.Config;
 using MangosSharp.Core.Infrastructure;
+using MangosSharp.Server.Core;
 using MangosSharp.Server.Core.Cli;
 using MangosSharp.Server.Core.Sockets;
 using Microsoft.Extensions.Configuration;
@@ -16,12 +18,13 @@ public class App
     private readonly IConfiguration _configuration;
     private readonly IConsoleProvider _consoleProvider;
     private readonly ICliParser _cliParser;
-    private readonly AppCancellation _appCancellation;
-    private readonly CliCommands _cliCommands;
+    private readonly IAppCancellation _appCancellation;
+    private readonly ICliCommands _cliCommands;
+    private readonly ICommandLine _commandLine;
 
     public App(ILogger logger, ISocketHandler socketHandler, ISocketDaemon socketDaemon, IConfiguration configuration,
-        IConsoleProvider consoleProvider, ICliParser cliParser, AppCancellation appCancellation,
-        CliCommands cliCommands)
+        IConsoleProvider consoleProvider, ICliParser cliParser, IAppCancellation appCancellation,
+        ICliCommands cliCommands, ICommandLine commandLine)
     {
         _logger = logger;
         _socketHandler = socketHandler;
@@ -31,17 +34,16 @@ public class App
         _cliParser = cliParser;
         _appCancellation = appCancellation;
         _cliCommands = cliCommands;
+        _commandLine = commandLine;
     }
 
-    public void Run(string[] args)
+    public void Run()
     {
-        _logger.LogInformation("Realm server args ({}) {}", args.Length, string.Join(" ", args));
-
-        var worldEndpoint = new IPEndPoint(
+        var realmEndpoint = new IPEndPoint(
             IPAddress.Parse(_configuration["BindIP"]),
             int.Parse(_configuration["RealmServerPort"]));
 
-        var listen = _socketDaemon.ListenAsync(worldEndpoint, _socketHandler, _appCancellation.Token);
+        var listen = _socketDaemon.ListenAsync(realmEndpoint, _socketHandler, _appCancellation.Token);
         while (!_appCancellation.Token.IsCancellationRequested && !listen.IsCompleted)
         {
             try

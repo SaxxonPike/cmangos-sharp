@@ -86,43 +86,43 @@ public sealed class SocketDaemon : ISocketDaemon
     }
 
     private static Task ConnectSocketAsync(Connection connection) =>
-        Task.Run(() =>
+        Task.Run(async () =>
         {
             try
             {
-                connection.Handler.HandleConnect(connection.Stream);
+                await connection.Handler.HandleConnect(connection.Stream);
             }
             catch (Exception ie)
             {
-                connection.Handler.HandleException(connection.Stream, ie);
+                await connection.Handler.HandleException(connection.Stream, ie);
             }
         }, connection.Cancel);
 
     private static Task ReceiveSocketAsync(Connection connection) =>
-        Task.Run(() =>
+        Task.Run(async () =>
         {
             try
             {
-                connection.Handler.HandleData(connection.Stream);
+                await connection.Handler.HandleData(connection.Stream);
             }
             catch (Exception ie)
             {
-                connection.Handler.HandleException(connection.Stream, ie);
+                await connection.Handler.HandleException(connection.Stream, ie);
             }
         }, connection.Cancel);
 
     private static Task CleanUpSocketAsync(Connection connection)
     {
-        return Task.Run(() =>
+        return Task.Run(async () =>
         {
             try
             {
                 connection.Socket.Close();
-                connection.Handler.HandleDisconnect(connection.Stream);
+                await connection.Handler.HandleDisconnect(connection.Stream);
             }
             catch (Exception ie)
             {
-                connection.Handler.HandleException(connection.Stream, ie);
+                await connection.Handler.HandleException(connection.Stream, ie);
             }
         }, connection.Cancel);
     }
@@ -133,7 +133,7 @@ public sealed class SocketDaemon : ISocketDaemon
         if (!_connections.TryGetValue(endPoint, out var connection))
             throw new Exception("Socket is not available");
 
-        return Task.Run(() =>
+        return Task.Run(async () =>
         {
             try
             {
@@ -143,7 +143,7 @@ public sealed class SocketDaemon : ISocketDaemon
             }
             catch (Exception e)
             {
-                connection.Handler.HandleException(connection.Stream, e);
+                await connection.Handler.HandleException(connection.Stream, e);
             }
         }, cancel);
     }

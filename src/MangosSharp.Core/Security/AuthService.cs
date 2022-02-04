@@ -330,33 +330,43 @@ public sealed class AuthService : IAuthService
     public Memory<byte> Encrypt(ReadOnlySpan<byte> data, AuthState state)
     {
         var result = new byte[data.Length];
+        data.CopyTo(result);
+        EncryptInPlace(result, state);
+        return result;
+    }
+
+    public void EncryptInPlace(Span<byte> data, AuthState state)
+    {
         for (var i = 0; i < data.Length; i++)
         {
             var d = data[i];
             var x = unchecked((byte)(d ^ state.SessionKey.Span[state.EncryptionKeyIndex++]));
             var a = unchecked((byte)(x + state.LastEncryptedValue));
-            result[i] = a;
+            data[i] = a;
             state.LastEncryptedValue = a;
             state.EncryptionKeyIndex %= state.SessionKey.Length;
         }
-
-        return result;
     }
 
     public Memory<byte> Decrypt(ReadOnlySpan<byte> data, AuthState state)
     {
         var result = new byte[data.Length];
+        data.CopyTo(result);
+        DecryptInPlace(result, state);
+        return result;
+    }
+
+    public void DecryptInPlace(Span<byte> data, AuthState state)
+    {
         for (var i = 0; i < data.Length; i++)
         {
             var a = data[i];
             var x = unchecked((byte)(a - state.LastDecryptedValue));
             var d = unchecked((byte)(x ^ state.SessionKey.Span[state.DecryptionKeyIndex++]));
-            result[i] = d;
+            data[i] = d;
             state.LastDecryptedValue = a;
             state.DecryptionKeyIndex %= state.SessionKey.Length;
         }
-
-        return result;
     }
 
     public ReadOnlyMemory<byte> GetLargeSafePrime() => LargeSafePrimeBytes.AsMemory();

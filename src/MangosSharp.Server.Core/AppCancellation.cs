@@ -1,8 +1,8 @@
 ﻿using System.Threading;
 
-namespace MangosSharp.Server.Realm;
+namespace MangosSharp.Server.Core;
 
-public sealed class AppCancellation
+public sealed class AppCancellation : IAppCancellation
 {
     private readonly CancellationTokenSource _cancel;
 
