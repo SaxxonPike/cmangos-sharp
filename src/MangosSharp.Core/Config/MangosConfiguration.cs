@@ -7,12 +7,19 @@ using Microsoft.Extensions.Primitives;
 
 namespace MangosSharp.Core.Config;
 
+/// <summary>
+/// Represents a .conf file, used with Mangos based services.
+/// </summary>
 public sealed class MangosConfiguration : IConfigurationRoot
 {
     private readonly string _fileName;
     private readonly IConfigurationProvider _provider;
     private ChangeToken _changeToken;
 
+    /// <summary>
+    /// Create a Mangos configuration by parsing the specified file.
+    /// </summary>
+    /// <param name="fileName">Path to the .conf file.</param>
     public MangosConfiguration(string fileName)
     {
         _fileName = fileName;
@@ -88,6 +95,9 @@ public sealed class MangosConfiguration : IConfigurationRoot
         }
     }
 
+    /// <summary>
+    /// Gets a configuration value, traversing any subsections in the key.
+    /// </summary>
     private bool TryGet(string key, out string value)
     {
         if (key == default)
@@ -113,6 +123,9 @@ public sealed class MangosConfiguration : IConfigurationRoot
         return false;
     }
 
+    /// <summary>
+    /// Sets a configuration value, traversing any subsections in the key.
+    /// </summary>
     private void Set(string key, string value)
     {
         if (key == default)

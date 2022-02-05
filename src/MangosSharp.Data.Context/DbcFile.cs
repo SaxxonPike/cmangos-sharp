@@ -9,8 +9,15 @@ using MangosSharp.Data.Entities;
 
 namespace MangosSharp.Data.Context;
 
+/// <summary>
+/// Reads and deserializes DBC tables.
+/// </summary>
 public sealed class DbcFile
 {
+    /// <summary>
+    /// Read all records from a DBC table.
+    /// </summary>
+    /// <param name="stream">Stream containing the DBC table data.</param>
     public DbcFile(Stream stream)
     {
         var reader = new BinaryReader(stream);
@@ -38,41 +45,91 @@ public sealed class DbcFile
             .ToList();
     }
 
+    /// <summary>
+    /// Holds the raw strings block of a DBC file.
+    /// </summary>
     private ReadOnlyMemory<byte> Strings { get; }
+    
+    /// <summary>
+    /// Holds the raw data field block of a DBC file.
+    /// </summary>
     private ReadOnlyMemory<byte> Data { get; }
+    
+    /// <summary>
+    /// Number of bytes per record, as reported by the DBC header.
+    /// </summary>
     private int RecordSize { get; }
+    
+    /// <summary>
+    /// Number of records in the DBC table, as reported by the header.
+    /// </summary>
     private int RecordCount { get; }
+    
+    /// <summary>
+    /// Number of fields per record, as reported by the DBC header.
+    /// </summary>
     public int FieldCount { get; }
+    
+    /// <summary>
+    /// All records that were read from the table.
+    /// </summary>
     public IReadOnlyList<Record> Records { get; }
 
+    /// <summary>
+    /// Encapsulates a single record within a DBC table.
+    /// </summary>
     public sealed class Record
     {
         private readonly ReadOnlyMemory<byte> _record;
         private readonly ReadOnlyMemory<byte> _strings;
 
-        public Record(ReadOnlyMemory<byte> record, ReadOnlyMemory<byte> strings)
+        internal Record(ReadOnlyMemory<byte> record, ReadOnlyMemory<byte> strings)
         {
             _record = record;
             _strings = strings;
         }
 
+        /// <summary>
+        /// Get a float value from the record.
+        /// </summary>
+        /// <param name="field">Index of the field to deserialize.</param>
         public float GetFloat(int field) => 
             field < _record.Span.Length / 4 ? MemoryMarshal.Cast<byte, float>(_record.Span)[field] : default;
 
+        /// <summary>
+        /// Get an unsigned 32-bit value from the record.
+        /// </summary>
+        /// <param name="field">Index of the field to deserialize.</param>
         public uint GetUInt(int field) => 
             field < _record.Span.Length / 4 ? MemoryMarshal.Cast<byte, uint>(_record.Span)[field] : default;
 
+        /// <summary>
+        /// Get a signed 32-bit value from the record.
+        /// </summary>
+        /// <param name="field">Index of the field to deserialize.</param>
         public int GetInt(int field) => 
             field < _record.Span.Length / 4 ? MemoryMarshal.Cast<byte, int>(_record.Span)[field] : default;
 
+        /// <summary>
+        /// Get an unsigned 8-bit value from the record.
+        /// </summary>
+        /// <param name="field">Index of the field to deserialize.</param>
         public byte GetByte(int field, int offset) => 
             field < _record.Span.Length + offset ? _record.Span[field * 4 + offset] : default;
 
+        /// <summary>
+        /// Get a sequential segment of unsigned 8-bit values from the record.
+        /// </summary>
+        /// <param name="field">Index of the field to deserialize.</param>
         public byte[] GetBytes(int field, int offset, int length) => 
             field < _record.Span.Length + offset + length 
                 ? _record.Span.Slice(field * 4 + offset, length).ToArray() 
                 : default;
 
+        /// <summary>
+        /// Get a UTF8 string from the record. The string data comes from the string block at the end of the DBC file.
+        /// </summary>
+        /// <param name="field">Index of the field to deserialize.</param>
         public string GetString(int field)
         {
             if (field >= _record.Length / 4)
@@ -93,6 +150,11 @@ public sealed class DbcFile
         }
     }
 
+    /// <summary>
+    /// Converts the table to a strongly typed list of objects.
+    /// </summary>
+    /// <param name="excludeClientOnlyFields">If true, values will not be read for fields marked client-only.</param>
+    /// <typeparam name="TEntity">Type representing a deserialized record in this TBC table.</typeparam>
     private List<KeyValuePair<int, TEntity>> ToEntities<TEntity>(bool excludeClientOnlyFields)
     {
         var constructor = typeof(TEntity).GetConstructor(Array.Empty<Type>());
@@ -170,9 +232,19 @@ public sealed class DbcFile
         return result;
     }
 
+    /// <summary>
+    /// Converts the table to a strongly typed dictionary. Field index 0 is used as the primary key.
+    /// </summary>
+    /// <param name="excludeClientOnlyFields">If true, values will not be read for fields marked client-only.</param>
+    /// <typeparam name="TEntity">Type representing a deserialized record in this TBC table.</typeparam>
     public Dictionary<int, TEntity> ToDictionary<TEntity>(bool excludeClientOnlyFields = false) =>
         ToEntities<TEntity>(excludeClientOnlyFields).ToDictionary(kv => kv.Key, kv => kv.Value);
 
+    /// <summary>
+    /// Converts the table to a strongly typed list.
+    /// </summary>
+    /// <param name="excludeClientOnlyFields">If true, values will not be read for fields marked client-only.</param>
+    /// <typeparam name="TEntity">Type representing a deserialized record in this TBC table.</typeparam>
     public List<TEntity> ToList<TEntity>(bool excludeClientOnlyFields = false) =>
         ToEntities<TEntity>(excludeClientOnlyFields).Select(kv => kv.Value).ToList();
 }

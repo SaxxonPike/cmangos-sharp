@@ -5,8 +5,12 @@ using System.Text;
 
 namespace MangosSharp.Core.Config;
 
+/// <inheritdoc />
 public sealed class CommandLine : ICommandLine
 {
+    /// <summary>
+    /// Parses the specified command line parameters into the Args property.
+    /// </summary>
     public CommandLine(IEnumerable<string> args)
     {
         var result = new List<KeyValuePair<string, string>>();

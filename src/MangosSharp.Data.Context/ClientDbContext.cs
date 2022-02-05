@@ -13,8 +13,12 @@ using Microsoft.Extensions.Logging;
 
 namespace MangosSharp.Data.Context;
 
-// Not actually a dbcontext derivative as there's no "database"
-
+/// <summary>
+/// Database where DBC tables are stored.
+/// 
+/// ClientDbContext is not actually derivative of DbContext at all, because it does not use Entity Framework in order
+/// to perform operations. We parse DBC on our own and fully cache the tables we load.
+/// </summary>
 public sealed class ClientDbContext : IDisposable
 {
     private readonly ILogger _logger;
