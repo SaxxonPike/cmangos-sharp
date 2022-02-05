@@ -143,7 +143,7 @@ public sealed class App
 
                     var type = column.DataType switch
                     {
-                        "tinyint" => unsigned ? "byte" : "sbyte",
+                        "tinyint" => "byte",
                         "smallint" => unsigned ? "ushort" : "short",
                         "mediumint" => unsigned ? "uint" : "int",
                         "int" => unsigned ? "uint" : "int",
