@@ -34,7 +34,8 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
     private readonly IAccountService _accountService;
     private readonly IDictionary<string, LoginSession> _sessions;
 
-    public RealmPacketHandler(ILogger logger, IDatabase database, IConfiguration configuration, IAuthService authService,
+    public RealmPacketHandler(ILogger logger, IDatabase database, IConfiguration configuration,
+        IAuthService authService,
         IRealmListService realmListService, IBuildInfoService buildInfoService, IAccountService accountService)
     {
         _logger = logger;
@@ -199,6 +200,7 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
 
             var challenge = _authService.CreateChallenge(stream.RemoteEndPoint, account.Id, account.Username.AsMemory(),
                 accountV, accountS);
+            stream.SetMetadata(nameof(AuthChallengeClient), challenge);
             writer.Write((byte)AuthLogonResult.SUCCESS);
 
             // B may be calculated < 32B so we force minimal length to 32B
@@ -288,55 +290,66 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
             return false;
         }
 
-        var result = _authService.VerifyChallenge(stream.RemoteEndPoint, a, m1);
-        if (result is { SessionKey.IsEmpty: false })
+        var challenge = stream.GetAndClearMetadata<AuthChallengeClient>(nameof(AuthChallengeClient));
+
+        if (challenge.Expiry > DateTimeOffset.Now)
         {
-            if (!string.IsNullOrEmpty(session.Token) || session.Flags.HasFlag(SecurityFlag.AUTHENTICATOR))
+            var result = _authService.VerifyChallenge(challenge, a, m1);
+            if (result is { SessionKey.IsEmpty: false })
             {
-                var pinCount = reader.ReadByte();
-                var keys = reader.ReadBytes(pinCount);
-                var serverToken = GenerateToken(session.Token);
-                var clientToken = int.Parse(Encoding.UTF8.GetString(keys));
-                if (serverToken != clientToken)
+                if (!string.IsNullOrEmpty(session.Token) || session.Flags.HasFlag(SecurityFlag.AUTHENTICATOR))
                 {
-                    _logger.LogInformation(
-                        "[AuthChallenge] Account {} tried to login with wrong pincode! Given {} expected {} pin count {}",
-                        session.Name, clientToken, serverToken, pinCount);
+                    var pinCount = reader.ReadByte();
+                    var keys = reader.ReadBytes(pinCount);
+                    var serverToken = GenerateToken(session.Token);
+                    var clientToken = int.Parse(Encoding.UTF8.GetString(keys));
+                    if (serverToken != clientToken)
+                    {
+                        _logger.LogInformation(
+                            "[AuthChallenge] Account {} tried to login with wrong pincode! Given {} expected {} pin count {}",
+                            session.Name, clientToken, serverToken, pinCount);
+                        DestroySession(stream);
+                        return false;
+                    }
+                }
+
+                if (!VerifyVersion(session, a, crcHash, false))
+                {
+                    _logger.LogInformation("[AuthChallenge] Account {} tried to login with modified client!",
+                        session.Name);
                     DestroySession(stream);
                     return false;
                 }
+
+                _logger.LogInformation("User '{}' successfully authenticated", session.Name);
+
+                _database.UseLogin(db =>
+                {
+                    var accountId = (uint)session.AccountId;
+                    var account = db.Accounts.AsTracking()
+                        .FirstOrDefault(x => x.Id == accountId);
+                    if (account == default)
+                        return;
+
+                    account.Sessionkey = Convert.ToHexString(result.SessionKey.Reversed());
+                    account.Locale = session.Locale;
+                    account.FailedLogins = 0;
+                    account.Os = session.Os;
+
+                    _accountService.LogAccountLogin(db, session.AccountId, stream.RemoteEndPoint, LoginType.REALMD);
+
+                    db.SaveChanges();
+                });
+
+                SendProof(session, stream, result);
+                session.Status = SessionStatus.AUTHED;
+                return true;
             }
-
-            if (!VerifyVersion(session, a, crcHash, false))
-            {
-                _logger.LogInformation("[AuthChallenge] Account {} tried to login with modified client!", session.Name);
-                DestroySession(stream);
-                return false;
-            }
-
-            _logger.LogInformation("User '{}' successfully authenticated", session.Name);
-
-            _database.UseLogin(db =>
-            {
-                var accountId = (uint)session.AccountId;
-                var account = db.Accounts.AsTracking()
-                    .FirstOrDefault(x => x.Id == accountId);
-                if (account == default)
-                    return;
-
-                account.Sessionkey = Convert.ToHexString(result.SessionKey.Reversed());
-                account.Locale = session.Locale;
-                account.FailedLogins = 0;
-                account.Os = session.Os;
-
-                _accountService.LogAccountLogin(db, session.AccountId, stream.RemoteEndPoint, LoginType.REALMD);
-
-                db.SaveChanges();
-            });
-
-            SendProof(session, stream, result);
-            session.Status = SessionStatus.AUTHED;
-            return true;
+        }
+        else
+        {
+            _logger.LogInformation("[AuthChallenge] User '{}' failed to log in: challenge expired",
+                session.Name);
         }
 
         writer.Write((byte)RealmOpcode.CMD_AUTH_LOGON_PROOF);

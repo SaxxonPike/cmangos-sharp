@@ -48,7 +48,6 @@ public sealed class RealmSocketHandler : ISocketHandler
 
     public Task HandleDisconnect(SocketStream stream)
     {
-        _authService.DeleteState(stream.RemoteEndPoint);
         _logger.LogInformation("Disconnected realm socket: ip={}", stream.RemoteEndPoint);
         return Task.CompletedTask;
     }

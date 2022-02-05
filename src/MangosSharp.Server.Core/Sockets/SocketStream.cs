@@ -19,11 +19,11 @@ public sealed class SocketStream : Stream, ISocketEndpoints
     private readonly MemoryStream _outputBuffer;
     private readonly MemoryStream _inputBuffer;
     private long _inputBufferIndex;
-    private readonly Dictionary<string, string> _metadata;
+    private readonly Dictionary<string, object> _metadata;
 
     public SocketStream(string localEndPoint, string remoteEndpoint, Socket socket, CancellationToken cancel)
     {
-        _metadata = new Dictionary<string, string>();
+        _metadata = new Dictionary<string, object>();
         _socket = socket;
         _cancel = cancel;
         _outputBuffer = new MemoryStream();
@@ -133,22 +133,24 @@ public sealed class SocketStream : Stream, ISocketEndpoints
 
     protected override void Dispose(bool disposing)
     {
+        _metadata.Clear();
+        _inputBuffer.Dispose();
         _outputBuffer.Dispose();
         base.Dispose(disposing);
     }
 
-    public void SetMetadata(string key, string value) => _metadata[key] = value;
+    public void SetMetadata(string key, object value) => _metadata[key] = value;
 
-    public string GetMetadata(string key) => _metadata.TryGetValue(key, out var value) ? value : default;
+    public T GetMetadata<T>(string key) => _metadata.TryGetValue(key, out var value) ? (T)value : default;
 
-    public string ClearMetadata(string key)
+    public T GetAndClearMetadata<T>(string key)
     {
-        if (!_metadata.TryGetValue(key, out var value))
-            return default;
-
-        _metadata.Remove(key);
-        return value;
+        var result = GetMetadata<T>(key);
+        ClearMetadata(key);
+        return result;
     }
+
+    public void ClearMetadata(string key) => _metadata.Remove(key);
 
     public void Insert(ReadOnlySpan<byte> data)
     {

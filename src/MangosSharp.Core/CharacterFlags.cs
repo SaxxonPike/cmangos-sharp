@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MangosSharp.Entities;
+namespace MangosSharp.Core;
 
 [Flags]
 public enum CharacterFlags

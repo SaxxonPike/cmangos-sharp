@@ -5,12 +5,9 @@ namespace MangosSharp.Core.Security;
 public interface IAuthService
 {
     AuthChallengeClient CreateChallenge(string endpoint, long id, ReadOnlyMemory<char> username, ReadOnlyMemory<byte> passwordVerifier, ReadOnlyMemory<byte> salt);
-    AuthChallengeServer VerifyChallenge(string endpoint, ReadOnlySpan<byte> clientPublicKey, ReadOnlySpan<byte> clientProof);
-    AuthState CreateState(string endpoint, long id, ReadOnlyMemory<char> username, ReadOnlyMemory<byte> sessionKey);
-    AuthState RefreshState(string endpoint);
-    AuthState GetState(string endpoint);
-    void DeleteState(string endpoint);
-    void ResetState(string endpoint);
+    AuthChallengeServer VerifyChallenge(AuthChallengeClient challenge, ReadOnlySpan<byte> clientPublicKey, ReadOnlySpan<byte> clientProof);
+    AuthState CreateState(long id, ReadOnlyMemory<char> username, ReadOnlyMemory<byte> sessionKey);
+    void ResetState(AuthState state);
     ReadOnlyMemory<byte> CalculatePasswordVerifier(ReadOnlySpan<char> username, ReadOnlySpan<char> password, ReadOnlySpan<byte> salt);
     ReadOnlyMemory<byte> CalculateX(ReadOnlySpan<char> username, ReadOnlySpan<char> password, ReadOnlySpan<byte> salt);
     ReadOnlyMemory<byte> CalculateServerPublicKey(ReadOnlySpan<byte> passwordVerifier, ReadOnlySpan<byte> serverPrivateKey);
@@ -27,5 +24,4 @@ public interface IAuthService
     ReadOnlyMemory<byte> GetLargeSafePrime();
     ReadOnlyMemory<byte> GetGenerator();
     Memory<byte> GenerateSalt();
-    string LookupIpByAccountId(int accountId);
 }

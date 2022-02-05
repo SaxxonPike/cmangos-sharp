@@ -6,7 +6,6 @@ public sealed class AuthState
 {
     public long AccountId { get; set; }
     public ReadOnlyMemory<byte> SessionKey { get; set; }
-    public DateTimeOffset Expiry { get; set; }
     public int EncryptionKeyIndex { get; set; }
     public byte LastEncryptedValue { get; set; }
     public int DecryptionKeyIndex { get; set; }

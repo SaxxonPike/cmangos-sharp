@@ -1,0 +1,36 @@
+﻿namespace MangosSharp.Server.Core.Enums;
+
+public enum GameObjectType
+{
+    DOOR = 0,
+    BUTTON = 1,
+    QUESTGIVER = 2,
+    CHEST = 3,
+    BINDER = 4,
+    GENERIC = 5,
+    TRAP = 6,
+    CHAIR = 7,
+    SPELL_FOCUS = 8,
+    TEXT = 9,
+    GOOBER = 10,
+    TRANSPORT = 11,
+    AREADAMAGE = 12,
+    CAMERA = 13,
+    MAP_OBJECT = 14,
+    MO_TRANSPORT = 15,
+    DUEL_ARBITER = 16,
+    FISHINGNODE = 17,
+    SUMMONING_RITUAL = 18,
+    MAILBOX = 19,
+    AUCTIONHOUSE = 20,
+    GUARDPOST = 21,
+    SPELLCASTER = 22,
+    MEETINGSTONE = 23,
+    FLAGSTAND = 24,
+    FISHINGHOLE = 25,
+    FLAGDROP = 26,
+    MINI_GAME = 27,
+    LOTTERY_KIOSK = 28,
+    CAPTURE_POINT = 29,
+    AURA_GENERATOR = 30
+}

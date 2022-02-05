@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
@@ -14,10 +13,6 @@ public sealed class AuthService : IAuthService
     // Reference: https://gtker.com/implementation-guide-for-the-world-of-warcraft-flavor-of-srp6/
     // C# implementation: Saxxon Fox
 
-    private readonly Dictionary<string, AuthState> _states = new();
-    private readonly Dictionary<string, AuthChallengeClient> _challenges = new();
-
-    private static readonly TimeSpan StateTtl = TimeSpan.FromMinutes(10);
     private static readonly TimeSpan ChallengeTtl = TimeSpan.FromSeconds(30);
 
     // aka: N (do not change)
@@ -93,17 +88,12 @@ public sealed class AuthService : IAuthService
             LargeSafePrime = LargeSafePrimeBytes.AsMemory()
         };
 
-        _challenges[endpoint] = result;
         return result;
     }
 
-    public AuthChallengeServer VerifyChallenge(string endpoint, ReadOnlySpan<byte> clientPublicKey,
+    public AuthChallengeServer VerifyChallenge(AuthChallengeClient challenge, ReadOnlySpan<byte> clientPublicKey,
         ReadOnlySpan<byte> clientProof)
     {
-        if (!_challenges.TryGetValue(endpoint, out var challenge) || challenge.Expiry < DateTimeOffset.Now)
-            return default;
-        _challenges.Remove(endpoint);
-
         // Verify the proofs.
         var sKey = CalculateServerSKey(clientPublicKey, challenge.PasswordVerifier.Span,
             CalculateU(clientPublicKey, challenge.ServerPublicKey.Span).Span, challenge.ServerPrivateKey.Span);
@@ -114,8 +104,7 @@ public sealed class AuthService : IAuthService
             return new AuthChallengeServer { Username = challenge.Username };
 
         // Success, now generate auth state with the key.
-        DeleteState(endpoint);
-        CreateState(endpoint, challenge.AccountId, challenge.Username, sessionKey);
+        CreateState(challenge.AccountId, challenge.Username, sessionKey);
 
         return new AuthChallengeServer
         {
@@ -126,60 +115,25 @@ public sealed class AuthService : IAuthService
         };
     }
 
-    public AuthState CreateState(string endpoint, long id, ReadOnlyMemory<char> username, ReadOnlyMemory<byte> sessionKey)
+    public AuthState CreateState(long id, ReadOnlyMemory<char> username, ReadOnlyMemory<byte> sessionKey)
     {
-        if (_states.TryGetValue(endpoint, out var existing))
-            return existing;
-
-        // This immediately invalidates all state of previous connections from the same user ID.
-        foreach (var kv in _states.Where(s => s.Value?.AccountId == id).ToList())
-            _states.Remove(kv.Key);
-
         var state = new AuthState
         {
             AccountId = id,
             Username = username,
             SessionKey = sessionKey,
         };
-        _states.Add(endpoint, state);
-        RefreshState(endpoint);
 
         return state;
     }
 
-    public AuthState RefreshState(string endpoint)
+    public void ResetState(AuthState state)
     {
-        if (_states.TryGetValue(endpoint, out var state))
-            state.Expiry = DateTimeOffset.Now + StateTtl;
-        return state;
-    }
-
-    public AuthState GetState(string endpoint)
-    {
-        // Reuse existing auth state if it's not expired yet.
-        if (!_states.TryGetValue(endpoint, out var result) || result.Expiry < DateTimeOffset.Now)
-            return default;
-
-        // Auto refresh states in active use.
-        RefreshState(endpoint);
-        return result;
-    }
-
-    public void DeleteState(string endpoint)
-    {
-        _states.Remove(endpoint);
-    }
-
-    public void ResetState(string endpoint)
-    {
-        if (!_states.TryGetValue(endpoint, out var result))
-            return;
-
-        result.Encrypted = false;
-        result.DecryptionKeyIndex = 0;
-        result.EncryptionKeyIndex = 0;
-        result.LastDecryptedValue = 0;
-        result.LastEncryptedValue = 0;
+        state.Encrypted = false;
+        state.DecryptionKeyIndex = 0;
+        state.EncryptionKeyIndex = 0;
+        state.LastDecryptedValue = 0;
+        state.LastEncryptedValue = 0;
     }
 
     // Calculates password verifier. This is what logins will be compared against.
@@ -379,7 +333,4 @@ public sealed class AuthService : IAuthService
         Random.Shared.NextBytes(salt);
         return salt;
     }
-
-    public string LookupIpByAccountId(int accountId) =>
-        _states.FirstOrDefault(s => s.Value?.AccountId == accountId).Key;
 }

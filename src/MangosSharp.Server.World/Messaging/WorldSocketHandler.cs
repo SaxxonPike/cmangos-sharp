@@ -28,12 +28,14 @@ public class WorldSocketHandler : ISocketHandler
 
     public async Task HandleConnect(SocketStream stream)
     {
-        _authService.DeleteState(stream.RemoteEndPoint);
-        await _worldPacketSender.Send(stream.RemoteEndPoint, WorldOpcode.SMSG_AUTH_CHALLENGE, writer =>
+        _worldPacketSender.Send(stream, WorldOpcode.SMSG_AUTH_CHALLENGE, writer =>
         {
-            var seeds = new byte[40];
+            var serverSeed = new byte[4];
+            Random.Shared.NextBytes(serverSeed);
+            writer.Write(serverSeed);
+            var seeds = new byte[32];
             Random.Shared.NextBytes(seeds);
-            stream.SetMetadata("seed", Convert.ToHexString(seeds.AsSpan(0, 4)));
+            stream.SetMetadata("ServerSeed", serverSeed);
             writer.Write(seeds);
         });
         await stream.FlushAsync();
@@ -49,7 +51,7 @@ public class WorldSocketHandler : ISocketHandler
             var header = new byte[6];
             await stream.ReadAsync(header, cancel.Token);
 
-            var state = _authService.GetState(stream.RemoteEndPoint);
+            var state = stream.GetMetadata<AuthState>(nameof(AuthState));
             if (state is { Encrypted: true })
             {
                 _authService.DecryptInPlace(header, state);
@@ -57,6 +59,13 @@ public class WorldSocketHandler : ISocketHandler
 
             var length = header[1] | (header[0] << 8);
             var opcode = header[2] | (header[3] << 8) | (header[4] << 16) | (header[5] << 24);
+
+            if (state is not { } && opcode != (int)WorldOpcode.CMSG_AUTH_SESSION)
+            {
+                _logger.LogError("WorldSocket::ProcessIncomingData: requires CMSG_AUTH_SESSION");
+                stream.Disconnect();
+                return;
+            }
 
             // there must always be at least four bytes for the opcode,
             // and 0x2800 is the largest supported buffer in the client
@@ -73,14 +82,15 @@ public class WorldSocketHandler : ISocketHandler
             if (data.Length > 4)
                 await stream.ReadAsync(data.AsMemory(4), Debugger.IsAttached ? CancellationToken.None : cancel.Token);
 
-            // Copy over the opcode as well
+            // Copy over the opcode as well in case the handler needs it (movement handlers are one example.)
             header.AsSpan(2, 4).CopyTo(data.AsSpan());
-            //await using var packetStream = new ReadOnlyMemoryStream(data);
+            
             stream.Insert(data);
+
             if (!_packetHandler.Handle(stream, Debugger.IsAttached ? CancellationToken.None : cancel.Token))
-            {
                 _logger.LogWarning("Unhandled packet cmd = {:X8} ({})", opcode, (WorldOpcode)opcode);
-            }
+
+            // Flush whatever remainder of unread packet we have from the buffer.
             stream.Discard();
         }
         
@@ -89,7 +99,6 @@ public class WorldSocketHandler : ISocketHandler
 
     public Task HandleDisconnect(SocketStream stream)
     {
-        _authService.DeleteState(stream.RemoteEndPoint);
         _logger.LogInformation("Disconnected world socket: ip={}", stream.RemoteEndPoint);
         return Task.CompletedTask;
     }

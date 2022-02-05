@@ -4,6 +4,7 @@ using MangosSharp.Server.Core.Cli;
 using MangosSharp.Server.Core.Messages;
 using MangosSharp.Server.Core.Sockets;
 using MangosSharp.Server.World.Messaging;
+using MangosSharp.Server.World.Presence;
 
 namespace MangosSharp.Server.World;
 
@@ -16,5 +17,6 @@ public static class MangosServerWorldTypes
         yield return (typeof(ICliCommands), typeof(CliCommands));
         yield return (typeof(IPacketHandler), typeof(WorldPacketHandler));
         yield return (typeof(IWorldPacketSender), typeof(WorldPacketSender));
+        yield return (typeof(IUniverse), typeof(Universe));
     }
 }

@@ -23,7 +23,7 @@ public class WorldPacketSender : IWorldPacketSender
         _socketDaemon = socketDaemon;
     }
 
-    private MemoryStream Build(string endpoint, WorldOpcode opcode, Action<BinaryWriter> context)
+    private static MemoryStream Build(WorldOpcode opcode, Action<BinaryWriter> context)
     {
         var mem = new MemoryStream(2);
         var writer = new BinaryWriter(mem);
@@ -39,29 +39,35 @@ public class WorldPacketSender : IWorldPacketSender
         mem.WriteByte(unchecked((byte)length));
         writer.Write((short)opcode);
             
-        var bytes = mem.AsMemory();
-            
-        if (_authService.GetState(endpoint) is { Encrypted: true } state)
-            _authService.EncryptInPlace(bytes.Span[..4], state);
-
         mem.Position = 0;
         return mem;
+    }
+
+    private void Encrypt(SocketStream stream, Memory<byte> bytes)
+    {
+        if (stream.GetMetadata<AuthState>(nameof(AuthState)) is { Encrypted: true } state)
+            _authService.EncryptInPlace(bytes.Span[..4], state);
     }
     
     public void Send(SocketStream socket, WorldOpcode opcode, Action<BinaryWriter> context)
     {
-        using var mem = Build(socket.RemoteEndPoint, opcode, context);
-        socket.Write(mem.AsMemory());
+        using var mem = Build(opcode, context);
+        var bytes = mem.AsMemory();
+        Encrypt(socket, bytes);
+        socket.Write(bytes);
     }
 
     public async Task Send(string endpoint, WorldOpcode opcode, Action<BinaryWriter> context)
     {
-        // Keep in mind: packets sent out of order cause huge issues
-        var mem = Build(endpoint, opcode, context);
+        var mem = Build(opcode, context);
         using var cancel = new CancellationTokenSource(10000);
         await _socketDaemon.SendAsync(endpoint, stream =>
             {
-                stream.Write(mem.AsMemory());
+                // Keep in mind: packets sent out of order cause issues
+                // so keep encryption as close to transmission as possible
+                var bytes = mem.AsMemory();
+                Encrypt(stream, bytes);
+                stream.Write(bytes);
                 mem.Dispose();
             },
             Debugger.IsAttached ? CancellationToken.None : cancel.Token);

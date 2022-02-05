@@ -161,12 +161,16 @@ public sealed class App
                         _ => throw new Exception($"Unsupported type {column.DataType}")
                     };
 
+                    if (column.IsNullable && type != "string")
+                        type += "?";
+
                     var name = column.ColumnName switch
                     {
                         "class" => "Class",
                         "event" => "Event",
                         "checked" => "Checked",
                         "unchecked" => "Unchecked",
+                        "Uptime" => "UpTime", // duplicate column name / class error
                         _ => column.ColumnName
                     };
                     
