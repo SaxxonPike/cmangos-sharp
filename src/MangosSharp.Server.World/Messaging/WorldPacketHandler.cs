@@ -68,21 +68,6 @@ public class WorldPacketHandler : PacketHandler<WorldOpcode, SocketStream>
         const uint currentSlot = (uint)PetSaveMode.PET_SAVE_AS_CURRENT;
         var accountId = (uint)state.AccountId;
 
-        // var characters = _database.UseCharacter(db => (from character in db.Characters
-        //     join guildMember in db.GuildMembers on character.Guid equals guildMember.Guid into ownedGuilds
-        //     join pet in db.CharacterPets on character.Guid equals pet.Owner into ownedPets
-        //     from ownedPet in ownedPets.DefaultIfEmpty()
-        //     from ownedGuild in ownedGuilds.DefaultIfEmpty()
-        //     where character.Account == accountId
-        //     where ownedPet.Slot == currentSlot
-        //     select new
-        //     {
-        //         character.Guid, character.Name, character.Race, character.Class, character.Gender,
-        //         character.PlayerBytes, character.PlayerBytes2, CharLevel = character.Level, character.Zone,
-        //         character.Map, character.PositionX, character.PositionY, character.PositionZ, Guild = ownedGuild,
-        //         character.PlayerFlags, character.AtLogin, Pet = ownedPet, character.EquipmentCache
-        //     }).ToList());
-
         var characters = _database.UseCharacter(db =>
         {
             var chars = db.Characters.Where(x => x.Account == accountId).ToList();
@@ -100,15 +85,15 @@ public class WorldPacketHandler : PacketHandler<WorldOpcode, SocketStream>
                     character.Map, character.PositionX, character.PositionY, character.PositionZ,
                     Guild = guild, character.PlayerFlags, character.AtLogin, Pet = pet, character.EquipmentCache
                 };
-            });
+            }).ToList();
         });
 
         var characterItems = _database.UseWorld(db2 =>
         {
             var itemEntries = characters
                 .Where(c => !string.IsNullOrWhiteSpace(c.EquipmentCache))
-                .SelectMany(c => c.EquipmentCache.Split(' '))
-                .Select(uint.Parse)
+                .SelectMany(c => c.EquipmentCache.Split(' ', StringSplitOptions.RemoveEmptyEntries))
+                .Select(c => uint.TryParse(c, out var v) ? v : 0)
                 .Distinct()
                 .ToList();
 
@@ -119,6 +104,8 @@ public class WorldPacketHandler : PacketHandler<WorldOpcode, SocketStream>
 
         _sender.Send(stream, WorldOpcode.SMSG_CHAR_ENUM, writer =>
         {
+            writer.Write((byte) characters.Count);
+            
             foreach (var character in characters)
             {
                 _logger.LogTrace("Build enum data for char guid {} from account {}. ", character.Guid, accountId);
@@ -176,7 +163,7 @@ public class WorldPacketHandler : PacketHandler<WorldOpcode, SocketStream>
                     {
                         petDisplayId = character.Pet?.Modelid ?? 0;
                         petLevel = character.Pet?.Level ?? 0;
-                        petFamily = unchecked((uint)(template.Family));
+                        petFamily = template.Family;
                     }
                 }
 
@@ -185,11 +172,11 @@ public class WorldPacketHandler : PacketHandler<WorldOpcode, SocketStream>
                 writer.Write(petFamily);
 
                 var slots = character.EquipmentCache
-                    .Split(' ')
-                    .Select(uint.Parse)
+                    .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(c => uint.TryParse(c, out var v) ? v : 0)
                     .ToList();
 
-                for (var slot = 0; slot < (int)EquipmentSlot.INVENTORY_SLOT_BAG_1; slot++)
+                for (var slot = 0; slot <= (int)EquipmentSlot.INVENTORY_SLOT_BAG_1; slot++)
                 {
                     var entry = slots[slot * 2]; // entry, perm ench., temp ench.
                     if (characterItems.TryGetValue(entry, out var template))
