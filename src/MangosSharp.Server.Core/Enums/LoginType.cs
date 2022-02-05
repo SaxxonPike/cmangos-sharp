@@ -1,4 +1,4 @@
-﻿namespace MangosSharp.Server.Realm.Enums;
+﻿namespace MangosSharp.Server.Core.Enums;
 
 public enum LoginType
 {

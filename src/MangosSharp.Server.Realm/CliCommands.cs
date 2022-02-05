@@ -105,13 +105,17 @@ public sealed class CliCommands : ICliCommands
 
     private void AccountCreate(TextWriter output, IReadOnlyDictionary<string, IReadOnlyList<string>> parameters)
     {
-        var username = parameters["username"].Single().ToUpper();
-        var password = parameters["password"].Single().ToUpper();
-        var email = parameters["email"].Single();
-        var account = _accountService.Create(username, password, email);
-        output.WriteLine(account != default
-            ? $"* Created account {username} with ID {account.Id}"
-            : $"* Account {username} could not be created.");
+        _database.UseLogin(db =>
+        {
+            var username = parameters["username"].Single().ToUpper();
+            var password = parameters["password"].Single().ToUpper();
+            var email = parameters["email"].Single();
+            var account = _accountService.CreateAccount(db, username, password, email);
+            db.SaveChanges();
+            output.WriteLine(account != default
+                ? $"* Created account {username} with ID {account.Id}"
+                : $"* Account {username} could not be created.");
+        });
     }
 
     private void AccountDelete(TextWriter output, IReadOnlyDictionary<string, IReadOnlyList<string>> parameters)

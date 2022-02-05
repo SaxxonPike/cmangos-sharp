@@ -31,10 +31,11 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
     private readonly IAuthService _authService;
     private readonly IRealmListService _realmListService;
     private readonly IBuildInfoService _buildInfoService;
+    private readonly IAccountService _accountService;
     private readonly IDictionary<string, LoginSession> _sessions;
 
     public RealmPacketHandler(ILogger logger, IDatabase database, IConfiguration configuration, IAuthService authService,
-        IRealmListService realmListService, IBuildInfoService buildInfoService)
+        IRealmListService realmListService, IBuildInfoService buildInfoService, IAccountService accountService)
     {
         _logger = logger;
         _database = database;
@@ -42,6 +43,7 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
         _authService = authService;
         _realmListService = realmListService;
         _buildInfoService = buildInfoService;
+        _accountService = accountService;
         _sessions = new Dictionary<string, LoginSession>();
     }
 
@@ -128,12 +130,8 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
 
         var account = _database.UseLogin(db =>
         {
-            var now = session.Created.ToUnixTimeSeconds();
-
-            var ipBan = db.IpBanneds
-                .Any(x => (x.ExpiresAt == x.BannedAt || x.ExpiresAt > now) && x.Ip == ip);
-
-            if (ipBan)
+            var ipBan = _accountService.GetActiveIpBan(db, ip);
+            if (ipBan != default)
             {
                 writer.Write((byte)AuthLogonResult.FAILED_FAIL_NOACCESS);
                 _logger.LogInformation("[AuthChallenge] Banned ip {} tries to login!", ip);
@@ -153,7 +151,7 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
             {
                 _logger.LogDebug("[AuthChallenge] Account '{}' is locked to IP - '{}'", name, account.LockedIp);
                 _logger.LogDebug("[AuthChallenge] Player address is '{}'", stream.RemoteEndPoint);
-                if (stream.RemoteEndPoint.Split(';')[0] != account.LockedIp)
+                if (stream.RemoteEndPoint.Split(':')[0] != account.LockedIp)
                 {
                     _logger.LogDebug("[AuthChallenge] Account IP differs");
                     writer.Write((byte)AuthLogonResult.FAILED_SUSPENDED);
@@ -175,12 +173,7 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
             }
 
             var accountId = (int)account.Id;
-            var accountBan = db.AccountBanneds
-                //.Select(x => new { x.AccountId, x.Active, x.ExpiresAt, x.BannedAt })
-                .FirstOrDefault(x => x.AccountId == accountId &&
-                                     x.Active == 1 &&
-                                     (x.ExpiresAt > now || x.ExpiresAt == x.BannedAt));
-
+            var accountBan = _accountService.GetActiveAccountBan(db, accountId);
             if (accountBan != default)
             {
                 if (accountBan.ExpiresAt == accountBan.BannedAt)
@@ -336,13 +329,7 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
                 account.FailedLogins = 0;
                 account.Os = session.Os;
 
-                db.AccountLogons.Add(new AccountLogons
-                {
-                    AccountId = (uint)session.AccountId,
-                    Ip = stream.RemoteEndPoint.Split(';')[0],
-                    LoginTime = DateTime.Now,
-                    LoginSource = (uint)LoginType.REALMD
-                });
+                _accountService.LogAccountLogin(db, session.AccountId, stream.RemoteEndPoint, LoginType.REALMD);
 
                 db.SaveChanges();
             });
@@ -396,7 +383,7 @@ public sealed class RealmPacketHandler : PacketHandler<RealmOpcode, SocketStream
                     {
                         db.IpBanneds.Add(new IpBanned
                         {
-                            Ip = stream.RemoteEndPoint.Split(';')[0],
+                            Ip = stream.RemoteEndPoint.Split(':')[0],
                             BannedAt = DateTimeOffset.Now.ToUnixTimeSeconds(),
                             ExpiresAt = DateTimeOffset.Now.AddSeconds(wrongPassBanTime).ToUnixTimeSeconds(),
                             BannedBy = "MaNGOS realmd",

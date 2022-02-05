@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
@@ -16,17 +17,25 @@ public sealed class SocketStream : Stream, ISocketEndpoints
     private BinaryWriter _writer;
     private long _position;
     private readonly MemoryStream _outputBuffer;
+    private readonly MemoryStream _inputBuffer;
+    private long _inputBufferIndex;
+    private readonly Dictionary<string, string> _metadata;
 
     public SocketStream(string localEndPoint, string remoteEndpoint, Socket socket, CancellationToken cancel)
     {
+        _metadata = new Dictionary<string, string>();
         _socket = socket;
         _cancel = cancel;
         _outputBuffer = new MemoryStream();
+        _inputBuffer = new MemoryStream();
+        _inputBufferIndex = 0;
         RemoteEndPoint = remoteEndpoint;
         LocalEndPoint = localEndPoint;
     }
-    
-    public int Available => _socket?.Connected ?? false ? _socket.Available : 0;
+
+    public int Available => (int)(_inputBuffer.Length - _inputBufferIndex) +
+                            (_socket?.Connected ?? false ? _socket.Available : 0);
+
     public string LocalEndPoint { get; }
     public string RemoteEndPoint { get; }
 
@@ -34,37 +43,58 @@ public sealed class SocketStream : Stream, ISocketEndpoints
 
     public BinaryReader Reader => _reader ??= new BinaryReader(this, Encoding.UTF8);
     public BinaryWriter Writer => _writer ??= new BinaryWriter(_outputBuffer, Encoding.UTF8);
-    
+
     public override void Flush()
     {
         lock (_outputBuffer)
         {
-            _socket.Send(_outputBuffer.AsSpan());
+            if (_socket.Connected)
+                _socket.Send(_outputBuffer.AsSpan());
             _outputBuffer.Position = 0;
             _outputBuffer.SetLength(0);
         }
     }
 
-    public void FlushWithHeader(ReadOnlySpan<byte> header)
+    public void Discard()
     {
-        
+        lock (_inputBuffer)
+        {
+            _inputBuffer.Position = 0;
+            _inputBuffer.SetLength(0);
+            _inputBufferIndex = 0;
+        }
     }
 
     public async Task<int> Read(Memory<byte> buffer)
     {
+        // Take bytes from the internal buffer first.
+        var copyLength = (int)Math.Min(buffer.Length, _inputBuffer.Length - _inputBufferIndex);
+        if (copyLength > 0)
+        {
+            _inputBuffer.AsSpan().Slice((int)_inputBufferIndex, copyLength).CopyTo(buffer.Span);
+            _inputBufferIndex += copyLength;
+            buffer = buffer[copyLength..];
+            _position += copyLength;
+
+            // If we only need to read from the buffer, don't bother using the socket.
+            if (buffer.Length == 0)
+                return copyLength;
+        }
+
+        // Read the rest from the socket itself.
         var result = await _socket.ReceiveAsync(buffer, SocketFlags.None, _cancel);
         _position += result;
         return result;
     }
 
-    // ReSharper disable once UnusedMethodReturnValue.Global
-    public async Task<int> Read(Memory<byte> buffer, CancellationToken cancel)
-    {
-        using var compoundToken = CancellationTokenSource.CreateLinkedTokenSource(_cancel, cancel);
-        var result = await _socket.ReceiveAsync(buffer, SocketFlags.None, compoundToken.Token);
-        _position += result;
-        return result;
-    }
+    // // ReSharper disable once UnusedMethodReturnValue.Global
+    // public async Task<int> Read(Memory<byte> buffer, CancellationToken cancel)
+    // {
+    //     using var compoundToken = CancellationTokenSource.CreateLinkedTokenSource(_cancel, cancel);
+    //     var result = await _socket.ReceiveAsync(buffer, SocketFlags.None, compoundToken.Token);
+    //     _position += result;
+    //     return result;
+    // }
 
     public override int Read(byte[] buffer, int offset, int count)
     {
@@ -74,13 +104,13 @@ public sealed class SocketStream : Stream, ISocketEndpoints
         return task.Result;
     }
 
-    public override long Seek(long offset, SeekOrigin origin) => 
+    public override long Seek(long offset, SeekOrigin origin) =>
         throw new NotImplementedException();
 
-    public override void SetLength(long value) => 
+    public override void SetLength(long value) =>
         throw new NotImplementedException();
 
-    public async Task<int> Write(Memory<byte> buffer) => 
+    public async Task<int> Write(Memory<byte> buffer) =>
         await _socket.SendAsync(buffer, SocketFlags.None, _cancel);
 
     public override void Write(byte[] buffer, int offset, int count)
@@ -105,5 +135,23 @@ public sealed class SocketStream : Stream, ISocketEndpoints
     {
         _outputBuffer.Dispose();
         base.Dispose(disposing);
+    }
+
+    public void SetMetadata(string key, string value) => _metadata[key] = value;
+
+    public string GetMetadata(string key) => _metadata.TryGetValue(key, out var value) ? value : default;
+
+    public string ClearMetadata(string key)
+    {
+        if (!_metadata.TryGetValue(key, out var value))
+            return default;
+
+        _metadata.Remove(key);
+        return value;
+    }
+
+    public void Insert(ReadOnlySpan<byte> data)
+    {
+        _inputBuffer.Write(data);
     }
 }

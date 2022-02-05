@@ -15,5 +15,6 @@ public static class MangosServerWorldTypes
         yield return (typeof(ISocketHandler), typeof(WorldSocketHandler));
         yield return (typeof(ICliCommands), typeof(CliCommands));
         yield return (typeof(IPacketHandler), typeof(WorldPacketHandler));
+        yield return (typeof(IWorldPacketSender), typeof(WorldPacketSender));
     }
 }

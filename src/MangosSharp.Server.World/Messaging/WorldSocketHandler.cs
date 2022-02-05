@@ -16,7 +16,6 @@ public class WorldSocketHandler : ISocketHandler
     private readonly ILogger _logger;
     private readonly IPacketHandler _packetHandler;
     private readonly IWorldPacketSender _worldPacketSender;
-    private readonly int _seed;
 
     public WorldSocketHandler(IAuthService authService, ILogger logger, IPacketHandler packetHandler,
         IWorldPacketSender worldPacketSender)
@@ -25,7 +24,6 @@ public class WorldSocketHandler : ISocketHandler
         _logger = logger;
         _packetHandler = packetHandler;
         _worldPacketSender = worldPacketSender;
-        _seed = Random.Shared.Next();
     }
 
     public async Task HandleConnect(SocketStream stream)
@@ -33,10 +31,10 @@ public class WorldSocketHandler : ISocketHandler
         _authService.DeleteState(stream.RemoteEndPoint);
         await _worldPacketSender.Send(stream.RemoteEndPoint, WorldOpcode.SMSG_AUTH_CHALLENGE, writer =>
         {
-            writer.Write(_seed);
-            var seedBytes = new byte[32];
-            Random.Shared.NextBytes(seedBytes);
-            writer.Write(seedBytes);
+            var seeds = new byte[40];
+            Random.Shared.NextBytes(seeds);
+            stream.SetMetadata("seed", Convert.ToHexString(seeds.AsSpan(0, 4)));
+            writer.Write(seeds);
         });
         await stream.FlushAsync();
     }
@@ -72,29 +70,33 @@ public class WorldSocketHandler : ISocketHandler
             }
 
             var data = new byte[length];
-            if (data.Length > 0)
-                await stream.ReadAsync(data.AsMemory(4), cancel.Token);
+            if (data.Length > 4)
+                await stream.ReadAsync(data.AsMemory(4), Debugger.IsAttached ? CancellationToken.None : cancel.Token);
 
             // Copy over the opcode as well
             header.AsSpan(2, 4).CopyTo(data.AsSpan());
-            await using var packetStream = new ReadOnlyMemoryStream(data);
-            if (!_packetHandler.Handle(packetStream, Debugger.IsAttached ? CancellationToken.None : cancel.Token))
+            //await using var packetStream = new ReadOnlyMemoryStream(data);
+            stream.Insert(data);
+            if (!_packetHandler.Handle(stream, Debugger.IsAttached ? CancellationToken.None : cancel.Token))
             {
                 _logger.LogWarning("Unhandled packet cmd = {:X8} ({})", opcode, (WorldOpcode)opcode);
             }
+            stream.Discard();
         }
         
         await stream.FlushAsync();
     }
 
-    public async Task HandleDisconnect(SocketStream stream)
+    public Task HandleDisconnect(SocketStream stream)
     {
         _authService.DeleteState(stream.RemoteEndPoint);
         _logger.LogInformation("Disconnected world socket: ip={}", stream.RemoteEndPoint);
+        return Task.CompletedTask;
     }
 
-    public async Task HandleException(ISocketEndpoints endpoints, Exception e)
+    public Task HandleException(ISocketEndpoints endpoints, Exception e)
     {
         _logger.LogError("World handler exception: {} ip={}", e, endpoints.RemoteEndPoint);
+        return Task.CompletedTask;
     }
 }

@@ -24,9 +24,10 @@ public sealed class RealmSocketHandler : ISocketHandler
         _authService = authService;
     }
     
-    public async Task HandleConnect(SocketStream stream)
+    public Task HandleConnect(SocketStream stream)
     {
         _logger.LogInformation("Connected realm socket: ip={}", stream.RemoteEndPoint);
+        return Task.CompletedTask;
     }
 
     public async Task HandleData(SocketStream stream)
@@ -45,14 +46,16 @@ public sealed class RealmSocketHandler : ISocketHandler
         }
     }
 
-    public async Task HandleDisconnect(SocketStream stream)
+    public Task HandleDisconnect(SocketStream stream)
     {
         _authService.DeleteState(stream.RemoteEndPoint);
         _logger.LogInformation("Disconnected realm socket: ip={}", stream.RemoteEndPoint);
+        return Task.CompletedTask;
     }
 
-    public async Task HandleException(ISocketEndpoints endpoints, Exception e)
+    public Task HandleException(ISocketEndpoints endpoints, Exception e)
     {
         _logger.LogError("Realm handler exception: {} ip={}", e, endpoints.RemoteEndPoint);
+        return Task.CompletedTask;
     }
 }

@@ -37,7 +37,6 @@ public sealed class SocketDaemon : ISocketDaemon
         _logger = logger;
     }
 
-    /// <inheritdoc />
     public Task ListenAsync(IPEndPoint endpoint, ISocketHandler handler, CancellationToken cancel)
     {
         return Task.Run(async () =>
@@ -63,7 +62,9 @@ public sealed class SocketDaemon : ISocketDaemon
                         await ConnectSocketAsync(connection);
                         while (socket.Connected)
                         {
-                            socket.Receive(Span<byte>.Empty, SocketFlags.None, out var socketError);
+                            var socketError = SocketError.Success;
+                            if (socket.Available < 1)
+                                socket.Receive(Span<byte>.Empty, SocketFlags.None, out socketError);
                             var available = socket.Available;
 
                             if (available == 0 || socketError != SocketError.Success || cancel.IsCancellationRequested)
@@ -127,7 +128,6 @@ public sealed class SocketDaemon : ISocketDaemon
         }, connection.Cancel);
     }
 
-    /// <inheritdoc />
     public Task SendAsync(string endPoint, Action<SocketStream> func, CancellationToken cancel)
     {
         if (!_connections.TryGetValue(endPoint, out var connection))
