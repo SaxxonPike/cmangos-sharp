@@ -1,6 +1,5 @@
 using System;
 using System.Net;
-using System.Threading;
 using MangosSharp.Core.Infrastructure;
 using MangosSharp.Server.Core;
 using MangosSharp.Server.Core.Cli;

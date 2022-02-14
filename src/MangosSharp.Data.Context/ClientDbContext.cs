@@ -54,6 +54,7 @@ public sealed class ClientDbContext : IDisposable
     public IQueryable<BankBagSlotPrice> BankBagSlotPrices => Set<BankBagSlotPrice>();
     public IQueryable<CharacterClass> CharacterClasses => Set<CharacterClass>();
     public IQueryable<CharacterRace> CharacterRaces => Set<CharacterRace>();
+    public IQueryable<CharacterSection> CharacterSections => Set<CharacterSection>();
     public IQueryable<CharacterStartingOutfit> CharacterStartingOutfits => Set<CharacterStartingOutfit>();
     public IQueryable<ChatChannel> ChatChannels => Set<ChatChannel>();
     public IQueryable<CinematicSequence> CinematicSequences => Set<CinematicSequence>();

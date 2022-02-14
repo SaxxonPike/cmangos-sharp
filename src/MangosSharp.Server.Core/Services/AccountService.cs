@@ -3,6 +3,7 @@ using System.Linq;
 using MangosSharp.Core;
 using MangosSharp.Core.Security;
 using MangosSharp.Data.Context;
+using MangosSharp.Data.Entities.CharacterDatabase;
 using MangosSharp.Data.Entities.RealmDatabase;
 using MangosSharp.Server.Core.Enums;
 
@@ -67,19 +68,21 @@ public class AccountService : IAccountService
             .FirstOrDefault(x => (x.ExpiresAt == x.BannedAt || x.ExpiresAt > now) && x.Ip == ip);
     }
 
-    public Account GetActiveAccount(ClassicrealmdDbContext db, string username)
+    public Account GetAccount(ClassicrealmdDbContext db, string username)
     {
         return db.Accounts.FirstOrDefault(x => x.Username == username);
     }
+
+    // For now, we don't have the concept of a "disabled" account
+    public Account GetActiveAccount(ClassicrealmdDbContext db, string username) => GetAccount(db, username);
 
     public bool IsAccountAuthorized(ClassicrealmdDbContext db, long id, AccountType minimum)
     {
         if (minimum <= AccountType.PLAYER)
             return true;
 
-        var xid = (uint)id;
         var gmLevel = (byte)minimum;
-        return db.Accounts.Any(x => x.Id == xid && x.Gmlevel >= gmLevel);
+        return db.Accounts.Any(x => x.Id == id && x.Gmlevel >= gmLevel);
     }
 
     public void LogAccountLogin(ClassicrealmdDbContext db, long id, string endpoint, LoginType loginType)
@@ -91,5 +94,20 @@ public class AccountService : IAccountService
             LoginTime = DateTime.Now,
             LoginSource = (uint)loginType
         });
+    }
+
+    public int GetGlobalCharacterCount(ClassicrealmdDbContext db, long id)
+    {
+        return db.Realmcharacters.Where(x => x.Acctid == (ulong)id).Sum(x => x.Numchars);
+    }
+
+    public int GetRealmCharacterCount(ClassiccharactersDbContext db, long id)
+    {
+        return db.Characters.Count(x => x.Account == id);
+    }
+
+    public Characters GetCharacter(ClassiccharactersDbContext db, string name)
+    {
+        return db.Characters.FirstOrDefault(x => x.Name == name);
     }
 }

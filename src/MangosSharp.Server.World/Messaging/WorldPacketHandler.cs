@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -8,13 +7,15 @@ using System.Threading;
 using MangosSharp.Core;
 using MangosSharp.Core.Security;
 using MangosSharp.Data.Entities.CharacterDatabase;
-using MangosSharp.Data.Entities.RealmDatabase;
+using MangosSharp.Data.Entities.ClientDatabase;
+using MangosSharp.Server.Core;
 using MangosSharp.Server.Core.Enums;
 using MangosSharp.Server.Core.Messages;
 using MangosSharp.Server.Core.Services;
 using MangosSharp.Server.Core.Sockets;
 using MangosSharp.Server.World.Enums;
 using MangosSharp.Server.World.Presence;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace MangosSharp.Server.World.Messaging;
@@ -28,9 +29,12 @@ public class WorldPacketHandler : PacketHandler<WorldOpcode, SocketStream>
     private readonly IWorldPacketSender _sender;
     private readonly IAccountService _accountService;
     private readonly IUniverse _universe;
+    private readonly IConfiguration _configuration;
+    private readonly IFacts _facts;
 
     public WorldPacketHandler(IAuthService authService, IDatabase database, IBuildInfoService buildInfoService,
-        ILogger logger, IWorldPacketSender sender, IAccountService accountService, IUniverse universe)
+        ILogger logger, IWorldPacketSender sender, IAccountService accountService, IUniverse universe,
+        IConfiguration configuration, IFacts facts)
     {
         _authService = authService;
         _database = database;
@@ -39,13 +43,9 @@ public class WorldPacketHandler : PacketHandler<WorldOpcode, SocketStream>
         _sender = sender;
         _accountService = accountService;
         _universe = universe;
+        _configuration = configuration;
+        _facts = facts;
     }
-
-    private static AuthState GetState(SocketStream stream) =>
-        stream.GetMetadata<AuthState>(nameof(AuthState));
-
-    private static void SetState(SocketStream stream, AuthState state) =>
-        stream.SetMetadata(nameof(AuthState), state);
 
     protected override int ReadOpcode(SocketStream stream) =>
         stream.Reader.ReadInt32();
@@ -56,17 +56,151 @@ public class WorldPacketHandler : PacketHandler<WorldOpcode, SocketStream>
 
         return new Dictionary<WorldOpcode, OpcodeHandler<WorldOpcode, SocketStream>>
         {
+            { WorldOpcode.CMSG_CHAR_CREATE, Handle_CMSG_CHAR_CREATE },
+            { WorldOpcode.CMSG_CHAR_ENUM, Handle_CMSG_CHAR_ENUM },
+            { WorldOpcode.CMSG_PING, Handle_CMSG_PING },
             { WorldOpcode.CMSG_AUTH_SESSION, Handle_CMSG_AUTH_SESSION },
-            { WorldOpcode.CMSG_CHAR_ENUM, Handle_CMSG_CHAR_ENUM }
         };
+    }
+
+    private bool Handle_CMSG_CHAR_CREATE(WorldOpcode opcode, SocketStream stream, CancellationToken cancel)
+    {
+        var reader = stream.Reader;
+
+        var name = reader.ReadNullTerminatedString();
+        var race = reader.ReadByte();
+        var klass = reader.ReadByte();
+        var gender = reader.ReadByte();
+        var skin = reader.ReadByte();
+        var face = reader.ReadByte();
+        var hairStyle = reader.ReadByte();
+        var hairColor = reader.ReadByte();
+        var facialHair = reader.ReadByte();
+        var outfitId = reader.ReadByte();
+
+        var state = stream.GetSocketState();
+        var auth = stream.GetAuthState();
+
+        if (state.Security == AccountType.PLAYER)
+        {
+            var mask = _configuration.GetValue<int>(Conf.CHARACTERS_CREATING_DISABLED);
+            if (mask != 0)
+            {
+                var disabled = false;
+                var team = _facts.GetTeamForRace(race);
+                switch (team)
+                {
+                    case Team.ALLIANCE:
+                        disabled = (mask & 0b01) != 0;
+                        break;
+                    case Team.HORDE:
+                        disabled = (mask & 0b10) != 0;
+                        break;
+                }
+
+                if (disabled)
+                {
+                    _sender.Send(stream, WorldOpcode.SMSG_CHAR_CREATE,
+                        writer => { writer.Write((byte)ResponseCode.CHAR_CREATE_DISABLED); });
+                    return true;
+                }
+            }
+        }
+
+        CharacterClass classEntry = default;
+        CharacterRace raceEntry = default;
+        _database.UseClient(db =>
+        {
+            classEntry = db.CharacterClasses.FirstOrDefault(x => x.Id == klass);
+            raceEntry = db.CharacterRaces.FirstOrDefault(x => x.Id == race);
+        });
+
+        void Fail(ResponseCode code)
+        {
+            _sender.Send(stream, WorldOpcode.SMSG_CHAR_CREATE, writer => { writer.Write((byte)code); });
+        }
+
+        if (classEntry == default || raceEntry == default)
+        {
+            Fail(ResponseCode.CHAR_CREATE_FAILED);
+            _logger.LogError("Account:[{}] attempted to create character of invalid Class ({}) or Race ({})",
+                auth?.AccountId, klass, race);
+            return true;
+        }
+
+        if (!_facts.ValidateAppearance(race, klass, gender, hairStyle, hairColor, face, facialHair, skin))
+        {
+            Fail(ResponseCode.CHAR_CREATE_FAILED);
+            _logger.LogError("Account:[{}] attempted to create character with invalid appearance attributes",
+                auth?.AccountId);
+            return true;
+        }
+
+        name = _facts.NormalizePlayerName(name);
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            Fail(ResponseCode.CHAR_NAME_NO_NAME);
+            _logger.LogError("Account:[{}] attempted to create character with invalid name",
+                auth?.AccountId);
+            return true;
+        }
+
+        var nameResult = _facts.CheckPlayerName(name);
+        if (nameResult != ResponseCode.CHAR_NAME_SUCCESS)
+        {
+            Fail(nameResult);
+            return true;
+        }
+
+        if (state.Security == AccountType.PLAYER && _database.UseWorld(db2 => _facts.IsReservedName(db2, name)))
+        {
+            Fail(ResponseCode.CHAR_NAME_RESERVED);
+            return true;
+        }
+
+        if (_database.UseCharacter(db2 => _accountService.GetCharacter(db2, name) != default))
+        {
+            Fail(ResponseCode.CHAR_CREATE_NAME_IN_USE);
+            return true;
+        }
+
+        if (_database.UseLogin(db =>
+            {
+                if (_accountService.GetGlobalCharacterCount(db, auth.AccountId) <
+                    _configuration.GetValue<int>(Conf.CHARACTERS_PER_ACCOUNT))
+                    return false;
+
+                Fail(ResponseCode.CHAR_CREATE_ACCOUNT_LIMIT);
+                return true;
+            }))
+            return true;
+
+        if (_database.UseCharacter(db =>
+            {
+                if (_accountService.GetRealmCharacterCount(db, auth.AccountId) <
+                    _configuration.GetValue<int>(Conf.CHARACTERS_PER_REALM))
+                    return false;
+                Fail(ResponseCode.CHAR_CREATE_SERVER_LIMIT);
+                return true;
+            }))
+            return true;
+        
+        // TODO: actually create the character!
+
+        _sender.Send(stream, WorldOpcode.SMSG_CHAR_CREATE, writer =>
+        {
+            writer.Write((byte) ResponseCode.CHAR_CREATE_SUCCESS);
+        });
+        
+        return true;
     }
 
     private bool Handle_CMSG_CHAR_ENUM(WorldOpcode opcode, SocketStream stream, CancellationToken cancel)
     {
-        var state = GetState(stream);
+        var auth = stream.GetAuthState();
 
         const uint currentSlot = (uint)PetSaveMode.PET_SAVE_AS_CURRENT;
-        var accountId = (uint)state.AccountId;
+        var accountId = (uint)auth.AccountId;
 
         var characters = _database.UseCharacter(db =>
         {
@@ -104,8 +238,8 @@ public class WorldPacketHandler : PacketHandler<WorldOpcode, SocketStream>
 
         _sender.Send(stream, WorldOpcode.SMSG_CHAR_ENUM, writer =>
         {
-            writer.Write((byte) characters.Count);
-            
+            writer.Write((byte)characters.Count);
+
             foreach (var character in characters)
             {
                 _logger.LogTrace("Build enum data for char guid {} from account {}. ", character.Guid, accountId);
@@ -192,7 +326,37 @@ public class WorldPacketHandler : PacketHandler<WorldOpcode, SocketStream>
                 }
             }
         });
-        
+
+        return true;
+    }
+
+    private bool Handle_CMSG_PING(WorldOpcode opcode, SocketStream stream, CancellationToken cancel)
+    {
+        var reader = stream.Reader;
+        var state = stream.GetSocketState();
+
+        var ping = reader.ReadInt32();
+        state.Latency = reader.ReadInt32();
+
+        if (state.LastPing == default)
+        {
+            state.LastPing = DateTimeOffset.Now;
+        }
+        else if ((DateTimeOffset.Now - state.LastPing).TotalSeconds < 27)
+        {
+            state.OverSpeedPings++;
+            var max = _configuration.GetValue<int>(Conf.MAX_OVERSPEED_PINGS);
+            if (max > 0 && state.OverSpeedPings >= max && state.Security == AccountType.PLAYER)
+            {
+                _logger.LogError("WorldSocket::HandlePing: Player kicked for overspeeded pings address = {}",
+                    stream.RemoteEndPoint);
+                stream.Disconnect();
+                return true;
+            }
+        }
+
+        _sender.Send(stream, WorldOpcode.SMSG_PONG, writer => { writer.Write(ping); });
+
         return true;
     }
 
@@ -250,10 +414,6 @@ public class WorldPacketHandler : PacketHandler<WorldOpcode, SocketStream>
             if (security > AccountType.ADMINISTRATOR)
                 security = AccountType.ADMINISTRATOR;
 
-            state = _authService.CreateState(accountId, userName.AsMemory(),
-                Convert.FromHexString(account.Sessionkey).AsMemory().Reversed());
-            stream.SetMetadata(nameof(AuthState), state);
-            state.Encrypted = true;
 
             var muteTime = DateTimeOffset.FromUnixTimeSeconds((long)account.Mutetime);
             var locale = account.Locale;
@@ -306,6 +466,16 @@ public class WorldPacketHandler : PacketHandler<WorldOpcode, SocketStream>
                     accountId);
                 return false;
             }
+
+            stream.SetSocketState(new SocketState
+            {
+                Security = (AccountType)account.Gmlevel
+            });
+
+            state = _authService.CreateState(accountId, userName.AsMemory(),
+                Convert.FromHexString(account.Sessionkey).AsMemory().Reversed());
+            stream.SetAuthState(state);
+            state.Encrypted = true;
 
             _logger.LogDebug("WorldSocket::HandleAuthSession: Client '{}' authenticated successfully from {}. ",
                 name, stream.RemoteEndPoint);

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using MangosSharp.Server.Core;
 using MangosSharp.Server.Core.Cli;
 using MangosSharp.Server.Core.Messages;
 using MangosSharp.Server.Core.Sockets;

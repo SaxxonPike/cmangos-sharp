@@ -1,4 +1,4 @@
-﻿namespace MangosSharp.Server.World.Messaging;
+﻿namespace MangosSharp.Server.Core.Enums;
 
 public enum ResponseCode
 {

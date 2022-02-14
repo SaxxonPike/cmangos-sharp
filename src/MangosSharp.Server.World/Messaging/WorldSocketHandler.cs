@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using MangosSharp.Core;
 using MangosSharp.Core.Security;
 using MangosSharp.Server.Core.Messages;
 using MangosSharp.Server.Core.Sockets;
@@ -51,16 +50,16 @@ public class WorldSocketHandler : ISocketHandler
             var header = new byte[6];
             await stream.ReadAsync(header, cancel.Token);
 
-            var state = stream.GetMetadata<AuthState>(nameof(AuthState));
-            if (state is { Encrypted: true })
+            var auth = stream.GetAuthState();
+            if (auth is { Encrypted: true })
             {
-                _authService.DecryptInPlace(header, state);
+                _authService.DecryptInPlace(header, auth);
             }
 
             var length = header[1] | (header[0] << 8);
             var opcode = header[2] | (header[3] << 8) | (header[4] << 16) | (header[5] << 24);
 
-            if (state is not { } && opcode != (int)WorldOpcode.CMSG_AUTH_SESSION)
+            if (auth is not { } && opcode != (int)WorldOpcode.CMSG_AUTH_SESSION)
             {
                 _logger.LogError("WorldSocket::ProcessIncomingData: requires CMSG_AUTH_SESSION");
                 stream.Disconnect();

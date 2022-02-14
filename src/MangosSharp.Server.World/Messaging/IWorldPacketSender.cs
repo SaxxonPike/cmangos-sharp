@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using MangosSharp.Core.Security;
 using MangosSharp.Server.Core.Sockets;
 
 namespace MangosSharp.Server.World.Messaging;

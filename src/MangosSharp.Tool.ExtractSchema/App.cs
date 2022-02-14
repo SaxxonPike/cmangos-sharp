@@ -79,11 +79,25 @@ public sealed class App
             .GroupBy(ci => ci.TableSchema)
             .ToDictionary(g => g.Key, g => g.ToList());
 
-        string GetFancyName(string a) =>
-            string.Join("", a.Split('_').Select(s => $"{s[..1].ToUpper()}{s[1..]}"));
+        string GetFancyName(string a)
+        {
+            var b = string.Join("", a.Split('_').Select(s => $"{s[..1].ToUpper()}{s[1..]}"));
+            b = b switch
+            {
+                "class" => "Class",
+                "event" => "Event",
+                "checked" => "Checked",
+                "unchecked" => "Unchecked",
+                "Uptime" => "UpTime", // duplicate column name / class error
+                _ => b
+            };
+            return b;
+        }
 
         string Pluralize(string a)
         {
+            if (a.EndsWith("ss"))
+                return $"{a}es";
             if (a.EndsWith('s'))
                 return a;
             if (a.EndsWith('y'))
@@ -127,7 +141,7 @@ public sealed class App
 
                 var fancyTableName = GetFancyName(tableName);
                 
-                schemaWriter.WriteLine($"[Table(\"{tableName}\")]");
+                //schemaWriter.WriteLine($"[Table(\"{tableName}\")]");
                 schemaWriter.WriteLine($"public sealed class {fancyTableName}");
                 schemaWriter.WriteLine('{');
 
@@ -164,17 +178,17 @@ public sealed class App
                     if (column.IsNullable && type != "string")
                         type += "?";
 
-                    var name = column.ColumnName switch
-                    {
-                        "class" => "Class",
-                        "event" => "Event",
-                        "checked" => "Checked",
-                        "unchecked" => "Unchecked",
-                        "Uptime" => "UpTime", // duplicate column name / class error
-                        _ => column.ColumnName
-                    };
-                    
-                    var fancyColumnName = GetFancyName(name);
+                    // var name = column.ColumnName switch
+                    // {
+                    //     "class" => "Class",
+                    //     "event" => "Event",
+                    //     "checked" => "Checked",
+                    //     "unchecked" => "Unchecked",
+                    //     "Uptime" => "UpTime", // duplicate column name / class error
+                    //     _ => column.ColumnName
+                    // };
+                    //
+                    var fancyColumnName = GetFancyName(column.ColumnName);
                     
                     if (!string.IsNullOrEmpty(column.ColumnComment))
                         schemaWriter.WriteLine($"    /* {column.ColumnComment} */");
@@ -182,22 +196,25 @@ public sealed class App
                     {
                         if (!pkeys.ContainsKey(tableName))
                             pkeys[tableName] = new List<string>();
-                        pkeys[tableName].Add(name);
+                        pkeys[tableName].Add(fancyColumnName);
                     }
-                    schemaWriter.Write($"    [Column(\"{name}\"");
-                    switch (column.DataType)
-                    {
-                        case "":
-                        case "varchar":
-                        case "char":
-                            break;
-                        default:
-                            schemaWriter.Write($", TypeName=\"{column.DataType}\"");
-                            break;
-                    }
-                    schemaWriter.WriteLine(")]");
-                    if (column.CharacterMaximumLength is > 0 and < int.MaxValue)
-                        schemaWriter.WriteLine($"    [MaxLength({column.CharacterMaximumLength})]");
+                    // schemaWriter.Write($"    [Column(\"{name}\"");
+                    // switch (column.DataType)
+                    // {
+                    //     case "":
+                    //     case "varchar":
+                    //     case "char":
+                    //         break;
+                    //     default:
+                    //         schemaWriter.Write($", TypeName=\"{column.DataType}");
+                    //         if (unsigned)
+                    //             schemaWriter.Write(" unsigned");
+                    //         schemaWriter.Write('\"');
+                    //         break;
+                    // }
+                    // schemaWriter.WriteLine(")]");
+                    // if (column.CharacterMaximumLength is > 0 and < int.MaxValue)
+                    //     schemaWriter.WriteLine($"    [MaxLength({column.CharacterMaximumLength})]");
                     schemaWriter.Write($"    public {type} {fancyColumnName} ");
                     schemaWriter.Write('{');
                     schemaWriter.Write(" get; set; ");
@@ -245,6 +262,7 @@ public sealed class App
                 contextWriter.Write($"        builder.Entity<{fancyTableName}>().HasKey(e => new {{ ");
                 contextWriter.Write(string.Join(", ", pkeys[tableName].Select(pk => $"e.{GetFancyName(pk)}")));
                 contextWriter.WriteLine($" }});");
+                contextWriter.WriteLine($"        builder.Entity<{fancyTableName}>().ToTable(\"{tableName}\");");
             }
 
             foreach (var (tableName, columnInfos) in tables)
@@ -252,11 +270,18 @@ public sealed class App
                 var fancyTableName = GetFancyName(tableName);
                 foreach (var columnInfo in columnInfos)
                 {
+                    var fancyColumName = GetFancyName(columnInfo.ColumnName);
+                    contextWriter.WriteLine($"        builder.Entity<{fancyTableName}>().Property(e => e.{fancyColumName}).HasColumnName(\"{columnInfo.ColumnName}\");");
+                    contextWriter.WriteLine($"        builder.Entity<{fancyTableName}>().Property(e => e.{fancyColumName}).HasColumnType(\"{columnInfo.ColumnType}\");");
+
                     if (columnInfo.ColumnDefault != null)
-                    {
-                        var fancyColumName = GetFancyName(columnInfo.ColumnName);
                         contextWriter.WriteLine($"        builder.Entity<{fancyTableName}>().Property(e => e.{fancyColumName}).HasDefaultValue();");
-                    }
+
+                    if (!columnInfo.IsNullable)
+                        contextWriter.WriteLine($"        builder.Entity<{fancyTableName}>().Property(e => e.{fancyColumName}).IsRequired();");
+                    
+                    if (columnInfo.CharacterMaximumLength is <= int.MaxValue)
+                        contextWriter.WriteLine($"        builder.Entity<{fancyTableName}>().Property(e => e.{fancyColumName}).HasMaxLength({columnInfo.CharacterMaximumLength});");
                 }
             }
             

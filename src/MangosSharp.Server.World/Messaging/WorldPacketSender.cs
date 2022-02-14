@@ -45,7 +45,7 @@ public class WorldPacketSender : IWorldPacketSender
 
     private void Encrypt(SocketStream stream, Memory<byte> bytes)
     {
-        if (stream.GetMetadata<AuthState>(nameof(AuthState)) is { Encrypted: true } state)
+        if (stream.GetAuthState() is { Encrypted: true } state)
             _authService.EncryptInPlace(bytes.Span[..4], state);
     }
     

@@ -10,6 +10,8 @@ public static class ServiceCollectionExtensions
     {
         serviceCollection.AddSingleton(typeof(IDatabase), typeof(Database));
         serviceCollection.AddSingleton(typeof(ICliParser), typeof(CliParser));
+        serviceCollection.AddSingleton(typeof(IFacts), typeof(Facts));
+        serviceCollection.AddSingleton(typeof(IAccountService), typeof(AccountService));
         return serviceCollection;
     }
 }
