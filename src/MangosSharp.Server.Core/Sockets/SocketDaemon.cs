@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -146,5 +148,26 @@ public sealed class SocketDaemon : ISocketDaemon
                 await connection.Handler.HandleException(connection.Stream, e);
             }
         }, cancel);
+    }
+
+    public IPEndPoint ParseEndpoint([NotNull] string hostOrIp, [NotNull] string port)
+    {
+        if (string.IsNullOrWhiteSpace(hostOrIp) || string.IsNullOrWhiteSpace(port))
+            return default;
+        
+        if (IPAddress.TryParse(hostOrIp, out var ipAddress))
+            return new IPEndPoint(ipAddress, int.Parse(port));
+
+        var addresses = Dns.GetHostAddresses(hostOrIp, AddressFamily.InterNetwork);
+        switch (addresses.Length)
+        {
+            case > 1:
+                throw new Exception($"\"{hostOrIp}\" resolves to multiple IP addresses.");
+            case < 1:
+                throw new Exception($"\"{hostOrIp}\" resolves to no IP addresses.");
+        }
+
+        var address = addresses[0];
+        return new IPEndPoint(address, int.Parse(port));
     }
 }

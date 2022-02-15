@@ -36,9 +36,7 @@ public class App
 
     public void Run()
     {
-        var worldEndpoint = new IPEndPoint(
-            IPAddress.Parse(_configuration["BindIP"]),
-            int.Parse(_configuration["WorldServerPort"]));
+        var worldEndpoint = _socketDaemon.ParseEndpoint(_configuration["BindIP"], _configuration["WorldServerPort"]);
 
         var listen = _socketDaemon.ListenAsync(worldEndpoint, _socketHandler, _appCancellation.Token);
         while (!_appCancellation.Token.IsCancellationRequested && !listen.IsCompleted)
@@ -53,5 +51,7 @@ public class App
                 _logger.LogError("CLI exception occurred: {}", e);
             }
         }
+        
+        listen.Wait();
     }
 }

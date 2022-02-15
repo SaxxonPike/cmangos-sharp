@@ -10,10 +10,13 @@ public sealed class CliParser : ICliParser
 {
     public void Parse(TextWriter output, string line, IReadOnlyDictionary<string, CliCommand> commands)
     {
+        if (string.IsNullOrWhiteSpace(line))
+            return;
+
         Parse(output, GetFragments(line), 0, commands);
     }
 
-    private void Parse(TextWriter output, IReadOnlyList<string> fragments, int index,
+    private static void Parse(TextWriter output, IReadOnlyList<string> fragments, int index,
         IReadOnlyDictionary<string, CliCommand> commands)
     {
         // Has the user entered enough fragments for the command(s) chosen?

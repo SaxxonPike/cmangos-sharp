@@ -27,4 +27,12 @@ public interface ISocketDaemon
     /// <param name="cancel">A cancellation token that, when cancelled, will abort transmitting the message.</param>
     /// <returns>A task which represents the send process.</returns>
     Task SendAsync(string endPoint, Action<SocketStream> func, CancellationToken cancel);
+
+    /// <summary>
+    /// Return the IP address from the input, resolving DNS if needed.
+    /// </summary>
+    /// <param name="hostOrIp">Hostname or IP address.</param>
+    /// <param name="port">Network port.</param>
+    /// <returns>IP address that was parsed/resolved.</returns>
+    IPEndPoint ParseEndpoint(string hostOrIp, string port);
 }

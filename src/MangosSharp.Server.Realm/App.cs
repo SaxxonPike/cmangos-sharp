@@ -39,10 +39,8 @@ public class App
 
     public void Run()
     {
-        var realmEndpoint = new IPEndPoint(
-            IPAddress.Parse(_configuration["BindIP"]),
-            int.Parse(_configuration["RealmServerPort"]));
-
+        var realmEndpoint = _socketDaemon.ParseEndpoint(_configuration["BindIP"], _configuration["RealmServerPort"]);
+        
         var listen = _socketDaemon.ListenAsync(realmEndpoint, _socketHandler, _appCancellation.Token);
         while (!_appCancellation.Token.IsCancellationRequested && !listen.IsCompleted)
         {
@@ -56,5 +54,7 @@ public class App
                 _logger.LogError("CLI exception occurred: {}", e);
             }
         }
+
+        listen.Wait();
     }
 }
